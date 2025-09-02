@@ -157,9 +157,10 @@ export default function PublishedPage() {
             <Button variant="outline" size="sm">
                 &lsaquo;
             </Button>
-            <span>
-                <Input readOnly type="number" value="1" className="w-12 h-8 text-center" /> of 1
-            </span>
+            <div className="flex items-center gap-2">
+                <Input readOnly type="number" value="1" className="w-12 h-8 text-center" />
+                <span>of 1</span>
+            </div>
              <Button variant="outline" size="sm">
                 &rsaquo;
             </Button>

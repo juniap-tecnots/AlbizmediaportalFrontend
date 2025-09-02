@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
 const articles = [
   {
@@ -157,9 +157,10 @@ export default function AllArticlesPage() {
             <Button variant="outline" size="sm" disabled>
                 &lsaquo;
             </Button>
-            <span>
-                <Input readOnly type="number" value="1" className="w-12 h-8 text-center" /> of 3
-            </span>
+            <div className="flex items-center gap-2">
+                <Input readOnly type="number" value="1" className="w-12 h-8 text-center" />
+                <span>of 3</span>
+            </div>
              <Button variant="outline" size="sm">
                 &rsaquo;
             </Button>
