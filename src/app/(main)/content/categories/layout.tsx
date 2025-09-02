@@ -7,7 +7,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const tabs = [
     { value: 'categories', label: 'Categories', href: '/content/categories' },
-    { value: 'tags', label: 'Tags', href: '/content/tags' },
 ];
 
 export default function CategoriesLayout({
@@ -32,8 +31,8 @@ export default function CategoriesLayout({
   return (
     <div className="p-6 md:p-8">
       <PageHeader
-        title="Categories & Tags"
-        description="Manage your categories and tags."
+        title="Categories"
+        description="Manage your categories."
       />
       <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
         <TabsList>
