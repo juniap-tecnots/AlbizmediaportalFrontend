@@ -38,7 +38,7 @@ interface Block {
   content: string;
 }
 
-const allCategories = [
+const initialCategories = [
     { id: 'business', label: 'Business' },
     { id: 'life-style', label: 'Life Style' },
     { id: 'tech', label: 'Tech' },
@@ -145,13 +145,26 @@ function BlockComponent({ block, updateBlock, removeBlock }: { block: Block, upd
 
 
 export default function NewArticlePage() {
+    const [title, setTitle] = useState('');
+    const [slug, setSlug] = useState('');
     const [blocks, setBlocks] = useState<Block[]>([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [isTagsOpen, setIsTagsOpen] = useState(true);
     const [tagInput, setTagInput] = useState('');
     const [tags, setTags] = useState<string[]>([]);
+    
+    const [allCategories, setAllCategories] = useState(initialCategories);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(['uncategorized']);
     const [categorySearch, setCategorySearch] = useState('');
+    const [isAddingCategory, setIsAddingCategory] = useState(false);
+    const [newCategoryInput, setNewCategoryInput] = useState('');
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTitle = e.target.value;
+        setTitle(newTitle);
+        setSlug(newTitle.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
+    };
 
     const addBlock = (type: BlockType) => {
         const newBlock: Block = { id: Date.now().toString(), type, content: '' };
@@ -178,6 +191,30 @@ export default function NewArticlePage() {
         setTags(tags.filter(tag => tag !== tagToRemove));
     }
 
+    const handleCategoryChange = (categoryId: string) => {
+        setSelectedCategories(prev =>
+            prev.includes(categoryId)
+                ? prev.filter(id => id !== categoryId)
+                : [...prev, categoryId]
+        );
+    };
+
+    const addNewCategory = () => {
+        if (newCategoryInput.trim() === '') return;
+        const newCategory = {
+            id: newCategoryInput.toLowerCase().replace(/\s+/g, '-'),
+            label: newCategoryInput.trim(),
+        };
+        if (allCategories.some(cat => cat.id === newCategory.id)) {
+            // Optional: handle category already exists error
+            return;
+        }
+        setAllCategories([...allCategories, newCategory]);
+        setSelectedCategories([...selectedCategories, newCategory.id]);
+        setNewCategoryInput('');
+        setIsAddingCategory(false);
+    };
+
     const filteredCategories = allCategories.filter(category =>
         category.label.toLowerCase().includes(categorySearch.toLowerCase())
     );
@@ -191,6 +228,8 @@ export default function NewArticlePage() {
                  <Input
                     placeholder="Add title"
                     className="border-none text-3xl font-bold shadow-none focus-visible:ring-0 h-auto"
+                    value={title}
+                    onChange={handleTitleChange}
                 />
                 <div className="relative">
                      <Popover>
@@ -312,7 +351,7 @@ export default function NewArticlePage() {
             </div>
              <div className="space-y-2">
                 <Label>Slug</Label>
-                <Input defaultValue="" placeholder="post-slug-here" />
+                <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="post-slug-here" />
             </div>
 
             <Separator />
@@ -356,15 +395,34 @@ export default function NewArticlePage() {
                             <div className="space-y-2 pr-4">
                                 {filteredCategories.map(category => (
                                     <div key={category.id} className="flex items-center gap-2">
-                                        <Checkbox id={`cat-${category.id}`} />
+                                        <Checkbox 
+                                            id={`cat-${category.id}`} 
+                                            checked={selectedCategories.includes(category.id)}
+                                            onCheckedChange={() => handleCategoryChange(category.id)}
+                                        />
                                         <Label htmlFor={`cat-${category.id}`} className="font-normal">{category.label}</Label>
                                     </div>
                                 ))}
                             </div>
                         </ScrollArea>
-                        <Button variant="link" size="sm" className="p-0 h-auto">
-                            Add New Category
-                        </Button>
+                        {!isAddingCategory ? (
+                            <Button variant="link" size="sm" className="p-0 h-auto" onClick={() => setIsAddingCategory(true)}>
+                                Add New Category
+                            </Button>
+                        ) : (
+                            <div className="space-y-2">
+                                <Input 
+                                    placeholder="New Category Name"
+                                    value={newCategoryInput}
+                                    onChange={(e) => setNewCategoryInput(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && addNewCategory()}
+                                />
+                                <div className="flex gap-2">
+                                    <Button size="sm" onClick={addNewCategory}>Add New Category</Button>
+                                    <Button size="sm" variant="ghost" onClick={() => setIsAddingCategory(false)}>Cancel</Button>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </CollapsibleContent>
             </Card>
