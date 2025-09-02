@@ -68,7 +68,7 @@ interface MenuItemProps {
 
 export function AdminSidebar() {
   const pathname = usePathname()
-  const [expandedItems, setExpandedItems] = useState<string[]>(['approval-workflow', 'comments-interactions']);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -115,7 +115,7 @@ export function AdminSidebar() {
                         )}>
                             <item.icon size={20} />
                         </span>
-                        <span className="font-medium">
+                        <span className="font-medium text-sm">
                             {item.label}
                         </span>
                     </div>
