@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { MessageSquare, ArrowUpDown } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 
 const articles = [
   {
@@ -27,50 +27,40 @@ const articles = [
     author: "albiz",
     categories: ["Uncategorized"],
     tags: [],
-    comments: 0,
     date: "2025/09/01 at 6:07 am",
     status: "Published",
-    views: 9,
   },
   {
     title: "One swallow does not make the spring",
     author: "albiz",
     categories: ["Life Style"],
     tags: ["Games"],
-    comments: 1,
     date: "2025/09/01 at 5:40 am",
     status: "Published",
-    views: 1256,
   },
   {
     title: "Tip of the day: That man again",
     author: "albiz",
     categories: ["Life Style"],
     tags: ["Team"],
-    comments: 1,
     date: "2025/09/01 at 5:40 am",
     status: "Published",
-    views: 4586,
   },
   {
     title: "Hibs and Ross County fans on final",
     author: "albiz",
     categories: ["Life Style"],
     tags: ["Color"],
-    comments: 1,
     date: "2025/09/01 at 5:40 am",
     status: "Published",
-    views: 4072,
   },
   {
     title: "Persuasion is often more effectual than force",
     author: "albiz",
     categories: ["Life Style"],
     tags: ["Content"],
-    comments: 1,
     date: "2025/09/01 at 5:40 am",
     status: "Published",
-    views: 2994,
   },
 ]
 
@@ -153,16 +143,8 @@ export default function AllArticlesPage() {
               <TableHead>Categories</TableHead>
               <TableHead>Tags</TableHead>
               <TableHead>
-                 <MessageSquare className="w-5 h-5" />
-              </TableHead>
-              <TableHead>
                 <Button variant="ghost" size="sm">
                   Date <ArrowUpDown className="w-4 h-4 ml-2" />
-                </Button>
-              </TableHead>
-              <TableHead>
-                 <Button variant="ghost" size="sm">
-                  Views <ArrowUpDown className="w-4 h-4 ml-2" />
                 </Button>
               </TableHead>
             </TableRow>
@@ -188,17 +170,9 @@ export default function AllArticlesPage() {
                   )) : '—'}
                 </TableCell>
                 <TableCell>
-                  {article.comments > 0 ? (
-                     <div className="flex items-center justify-center bg-gray-700 text-white w-6 h-6 rounded">
-                        {article.comments}
-                     </div>
-                  ) : '—'}
-                </TableCell>
-                <TableCell>
                     {article.status}<br/>
                     <span className="text-muted-foreground">{article.date}</span>
                 </TableCell>
-                <TableCell>{article.views.toLocaleString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>
