@@ -1,6 +1,7 @@
 
 'use client'
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -23,80 +24,211 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GalleryHorizontal, Heading, Image as ImageIcon, List, Pilcrow, Plus, PlusCircle, Quote, Search } from "lucide-react"
+import { GalleryHorizontal, Heading, Image as ImageIcon, List, Pilcrow, Plus, PlusCircle, Quote, Search, X } from "lucide-react"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
+
+type BlockType = 'paragraph' | 'heading' | 'list' | 'quote' | 'image' | 'gallery';
+
+interface Block {
+  id: string;
+  type: BlockType;
+  content: string;
+}
+
+const blockTypes = [
+    { type: 'paragraph', icon: Pilcrow, label: 'Paragraph' },
+    { type: 'heading', icon: Heading, label: 'Heading' },
+    { type: 'list', icon: List, label: 'List' },
+    { type: 'quote', icon: Quote, label: 'Quote' },
+    { type: 'image', icon: ImageIcon, label: 'Image' },
+    { type: 'gallery', icon: GalleryHorizontal, label: 'Gallery' },
+] as const;
+
+const blockCategories = [
+    { 
+        name: 'Text', 
+        blocks: blockTypes.filter(b => ['paragraph', 'heading', 'list', 'quote'].includes(b.type)) 
+    },
+    {
+        name: 'Media',
+        blocks: blockTypes.filter(b => ['image', 'gallery'].includes(b.type))
+    }
+]
+
+function BlockComponent({ block, updateBlock, removeBlock }: { block: Block, updateBlock: (id: string, content: string) => void, removeBlock: (id: string) => void }) {
+    const commonClasses = "w-full p-2 border-none focus:outline-none focus:ring-2 focus:ring-ring"
+    switch (block.type) {
+        case 'heading':
+            return (
+                <div className="relative group">
+                    <Input
+                        type="text"
+                        placeholder="Heading"
+                        value={block.content}
+                        onChange={(e) => updateBlock(block.id, e.target.value)}
+                        className={cn(commonClasses, "text-2xl font-bold")}
+                    />
+                     <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
+                </div>
+            )
+        case 'list':
+             return (
+                <div className="relative group">
+                    <Textarea
+                        placeholder="List item..."
+                        value={block.content}
+                        onChange={(e) => updateBlock(block.id, e.target.value)}
+                        className={cn(commonClasses, "leading-loose list-disc pl-8")}
+                    />
+                    <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
+                </div>
+            )
+        case 'quote':
+             return (
+                <div className="relative group">
+                     <Textarea
+                        placeholder="Quote..."
+                        value={block.content}
+                        onChange={(e) => updateBlock(block.id, e.target.value)}
+                        className={cn(commonClasses, "border-l-4 border-primary pl-4 italic")}
+                    />
+                    <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
+                </div>
+            )
+        case 'image':
+            return (
+                <div className="relative group p-2">
+                    <div className="flex items-center justify-center border-2 border-dashed rounded-lg h-48">
+                        <Button variant="outline">Upload Image</Button>
+                    </div>
+                     <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
+                </div>
+            )
+        case 'gallery':
+            return (
+                <div className="relative group p-2">
+                    <div className="flex items-center justify-center border-2 border-dashed rounded-lg h-48">
+                        <Button variant="outline">Create Gallery</Button>
+                    </div>
+                     <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
+                </div>
+            )
+        default:
+            return (
+                 <div className="relative group">
+                    <Textarea
+                        placeholder="Type / to choose a block"
+                        value={block.content}
+                        onChange={(e) => updateBlock(block.id, e.target.value)}
+                        className={commonClasses}
+                        rows={1}
+                    />
+                    <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
+                </div>
+            )
+    }
+}
+
 
 export default function NewArticlePage() {
+    const [blocks, setBlocks] = useState<Block[]>([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+    const addBlock = (type: BlockType) => {
+        const newBlock: Block = { id: Date.now().toString(), type, content: '' };
+        setBlocks([...blocks, newBlock]);
+        setIsSheetOpen(false);
+    }
+    
+    const updateBlock = (id: string, content: string) => {
+        setBlocks(blocks.map(b => b.id === id ? { ...b, content } : b));
+    }
+
+    const removeBlock = (id: string) => {
+        setBlocks(blocks.filter(b => b.id !== id));
+    }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <div className="lg:col-span-2 space-y-6">
         <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-4 space-y-4">
                  <Input
                     placeholder="Add title"
-                    className="border-none text-2xl font-bold shadow-none focus-visible:ring-0"
+                    className="border-none text-3xl font-bold shadow-none focus-visible:ring-0 h-auto"
                 />
                 <div className="relative">
-                    <Popover>
+                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button size="icon" variant="ghost" className="absolute top-2 left-2 z-10 h-8 w-8">
+                            <Button size="icon" variant="outline" className="h-8 w-8">
                                 <Plus className="h-4 w-4" />
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-80">
-                            <Tabs defaultValue="block">
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="post">Post</TabsTrigger>
-                                    <TabsTrigger value="block">Block</TabsTrigger>
-                                </TabsList>
-                                <TabsContent value="block">
-                                    <div className="relative my-2">
-                                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                                        <Input placeholder="Search" className="pl-8" />
-                                    </div>
-                                    <div className="grid grid-cols-3 gap-2">
-                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-                                            <Pilcrow />
-                                            <span className="text-xs">Paragraph</span>
+                        <PopoverContent className="w-80 p-2">
+                            <div className="p-2">
+                                <Input placeholder="Search" className="mb-2" />
+                                <div className="grid grid-cols-3 gap-2">
+                                    {blockTypes.map(block => (
+                                        <Button key={block.type} variant="outline" className="h-auto flex-col gap-2 p-4" onClick={() => addBlock(block.type)}>
+                                            <block.icon />
+                                            <span className="text-xs">{block.label}</span>
                                         </Button>
-                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-                                            <List />
-                                            <span className="text-xs">List</span>
-                                        </Button>
-                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-                                            <ImageIcon />
-                                            <span className="text-xs">Image</span>
-                                        </Button>
-                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-                                            <GalleryHorizontal />
-                                            <span className="text-xs">Gallery</span>
-                                        </Button>
-                                         <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-                                            <Heading />
-                                            <span className="text-xs">Heading</span>
-                                        </Button>
-                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
-                                            <Quote />
-                                            <span className="text-xs">Quote</span>
-                                        </Button>
-                                    </div>
-                                    <Button className="w-full mt-2">Browse all</Button>
-                                </TabsContent>
-                                <TabsContent value="post">
-                                     <div className="flex items-center justify-center h-32">
-                                        <p className="text-muted-foreground">Post settings placeholder</p>
-                                    </div>
-                                </TabsContent>
-                            </Tabs>
+                                    ))}
+                                </div>
+                                <Button className="w-full mt-2" onClick={() => setIsSheetOpen(true)}>Browse all</Button>
+                            </div>
                         </PopoverContent>
                     </Popover>
-                    <Textarea
-                        placeholder="Type / to choose a block"
-                        className="min-h-[300px] border-none shadow-none focus-visible:ring-0 pl-12 pt-2"
-                    />
+                </div>
+                <div className="space-y-2">
+                    {blocks.map(block => (
+                        <BlockComponent key={block.id} block={block} updateBlock={updateBlock} removeBlock={removeBlock} />
+                    ))}
                 </div>
             </CardContent>
         </Card>
       </div>
+
+       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetContent>
+                <SheetHeader>
+                    <SheetTitle>Blocks</SheetTitle>
+                     <div className="relative my-4">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Search" className="pl-8" />
+                    </div>
+                </SheetHeader>
+                <Tabs defaultValue="blocks">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="blocks">Blocks</TabsTrigger>
+                        <TabsTrigger value="patterns">Patterns</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="blocks">
+                        <div className="space-y-4 mt-4">
+                            {blockCategories.map(category => (
+                                <div key={category.name}>
+                                    <h3 className="font-semibold mb-2">{category.name}</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {category.blocks.map(block => (
+                                            <Button key={block.type} variant="outline" className="h-auto justify-start gap-3 p-4" onClick={() => addBlock(block.type)}>
+                                                <block.icon className="text-primary" />
+                                                <span className="text-sm">{block.label}</span>
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </TabsContent>
+                     <TabsContent value="patterns">
+                        <div className="flex items-center justify-center h-48">
+                            <p className="text-muted-foreground">Patterns coming soon.</p>
+                        </div>
+                    </TabsContent>
+                </Tabs>
+            </SheetContent>
+        </Sheet>
 
       <div className="space-y-6">
         <Card>
@@ -204,3 +336,5 @@ export default function NewArticlePage() {
     </div>
   )
 }
+
+    
