@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, Folder, CheckSquare, Tag, Library, MessageSquare } from 'lucide-react'
+import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, Folder, CheckSquare, Tag, Library, MessageSquare, ChevronDown } from 'lucide-react'
 
 import {
   Sidebar,
@@ -93,7 +93,7 @@ export function AdminSidebar() {
           {menuItems.map(({ href, label, icon: Icon }) => (
             <SidebarMenuItem key={href}>
               <SidebarMenuButton asChild isActive={isActive(href)} tooltip={label}>
-                <Link href={href}>
+                <Link href={href} className="flex items-center gap-2">
                   <Icon />
                   <span>{label}</span>
                 </Link>
@@ -114,7 +114,7 @@ export function AdminSidebar() {
                     return (
                         <SidebarMenuItem key={item.label}>
                             <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={item.label}>
-                                <Link href={item.href}>
+                                <Link href={item.href} className="flex items-center gap-2">
                                     <item.icon />
                                     <span>{item.label}</span>
                                 </Link>
@@ -135,6 +135,7 @@ export function AdminSidebar() {
                                         <item.icon />
                                         <span>{item.label}</span>
                                     </div>
+                                    <ChevronDown className="size-4 shrink-0 transition-transform duration-200" />
                                 </SidebarMenuButton>
                             </CollapsibleTrigger>
                             <CollapsibleContent asChild>
