@@ -14,6 +14,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 const initialCategories = [
     { name: "Business", slug: "business", count: 5 },
@@ -27,12 +29,16 @@ export default function CategoriesPage() {
     const [categories, setCategories] = useState(initialCategories);
     const [name, setName] = useState('');
     const [slug, setSlug] = useState('');
+    const [parentCategory, setParentCategory] = useState('none');
+    const [description, setDescription] = useState('');
 
     const handleAddCategory = () => {
         if (!name || !slug) return;
         setCategories([...categories, { name, slug, count: 0 }]);
         setName('');
         setSlug('');
+        setParentCategory('none');
+        setDescription('');
     }
 
   return (
@@ -49,6 +55,26 @@ export default function CategoriesPage() {
                 <Label htmlFor="slug">Slug</Label>
                 <Input id="slug" value={slug} onChange={e => setSlug(e.target.value)} placeholder="category-slug" />
                  <p className="text-sm text-muted-foreground">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="parent-category">Parent Category</Label>
+                <Select value={parentCategory} onValueChange={setParentCategory}>
+                    <SelectTrigger id="parent-category">
+                        <SelectValue placeholder="None" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {categories.map(cat => (
+                             <SelectItem key={cat.slug} value={cat.slug}>{cat.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">Categories, unlike tags, can have a hierarchy. You might have a Jazz category, and under that have children categories for Bebop and Big Band. Totally optional.</p>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} />
+                <p className="text-sm text-muted-foreground">The description is not prominent by default; however, some themes may show it.</p>
             </div>
             <Button onClick={handleAddCategory}>Add New Category</Button>
         </div>
