@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -22,7 +21,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
-import { Calendar, Edit, Eye, Image as ImageIcon, PlusCircle, Save, Settings, Tag, Type } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { GalleryHorizontal, Heading, Image as ImageIcon, List, Pilcrow, Plus, PlusCircle, Quote, Search } from "lucide-react"
 
 export default function NewArticlePage() {
   return (
@@ -34,10 +35,65 @@ export default function NewArticlePage() {
                     placeholder="Add title"
                     className="border-none text-2xl font-bold shadow-none focus-visible:ring-0"
                 />
-                <Textarea
-                    placeholder="Type / to choose a block"
-                    className="min-h-[300px] border-none shadow-none focus-visible:ring-0"
-                />
+                <div className="relative">
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button size="icon" variant="ghost" className="absolute top-2 left-2 z-10 h-8 w-8">
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                            <Tabs defaultValue="block">
+                                <TabsList className="grid w-full grid-cols-2">
+                                    <TabsTrigger value="post">Post</TabsTrigger>
+                                    <TabsTrigger value="block">Block</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="block">
+                                    <div className="relative my-2">
+                                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input placeholder="Search" className="pl-8" />
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
+                                            <Pilcrow />
+                                            <span className="text-xs">Paragraph</span>
+                                        </Button>
+                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
+                                            <List />
+                                            <span className="text-xs">List</span>
+                                        </Button>
+                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
+                                            <ImageIcon />
+                                            <span className="text-xs">Image</span>
+                                        </Button>
+                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
+                                            <GalleryHorizontal />
+                                            <span className="text-xs">Gallery</span>
+                                        </Button>
+                                         <Button variant="outline" className="h-auto flex-col gap-2 p-4">
+                                            <Heading />
+                                            <span className="text-xs">Heading</span>
+                                        </Button>
+                                        <Button variant="outline" className="h-auto flex-col gap-2 p-4">
+                                            <Quote />
+                                            <span className="text-xs">Quote</span>
+                                        </Button>
+                                    </div>
+                                    <Button className="w-full mt-2">Browse all</Button>
+                                </TabsContent>
+                                <TabsContent value="post">
+                                     <div className="flex items-center justify-center h-32">
+                                        <p className="text-muted-foreground">Post settings placeholder</p>
+                                    </div>
+                                </TabsContent>
+                            </Tabs>
+                        </PopoverContent>
+                    </Popover>
+                    <Textarea
+                        placeholder="Type / to choose a block"
+                        className="min-h-[300px] border-none shadow-none focus-visible:ring-0 pl-12 pt-2"
+                    />
+                </div>
             </CardContent>
         </Card>
       </div>
