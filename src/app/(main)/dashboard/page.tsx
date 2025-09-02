@@ -10,7 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { SalesChart } from "@/components/analytics/sales-chart"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import { Activity, Bell, Bolt, HeartPulse } from "lucide-react"
+import { SystemHealth } from "@/components/dashboard/system-health"
+import { QuickActions } from "@/components/dashboard/quick-actions"
+import { Notifications } from "@/components/dashboard/notifications"
+import { ActivityFeed } from "@/components/dashboard/activity-feed"
 
 export default function DashboardPage() {
   return (
@@ -22,22 +32,46 @@ export default function DashboardPage() {
             <Button>Download Report</Button>
         </div>
       </div>
-      <div className="grid gap-6">
-        <Overview />
-        <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-          <Card className="lg:col-span-4">
-            <CardHeader>
-              <CardTitle>Sales Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="pl-2">
-              <SalesChart />
-            </CardContent>
-          </Card>
-          <div className="lg:col-span-3">
-            <RecentSales />
-          </div>
-        </div>
-      </div>
+      <Tabs defaultValue="overview">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview">
+            <LayoutDashboard className="mr-2" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="activity">
+            <Activity className="mr-2" />
+            Activity Feed
+          </TabsTrigger>
+          <TabsTrigger value="notifications">
+            <Bell className="mr-2" />
+            Notifications
+          </TabsTrigger>
+          <TabsTrigger value="actions">
+            <Bolt className="mr-2" />
+            Quick Actions
+          </TabsTrigger>
+          <TabsTrigger value="health">
+            <HeartPulse className="mr-2" />
+            System Health
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">
+          <Overview />
+        </TabsContent>
+        <TabsContent value="activity">
+          <ActivityFeed />
+        </TabsContent>
+        <TabsContent value="notifications">
+          <Notifications />
+        </TabsContent>
+        <TabsContent value="actions">
+          <QuickActions />
+        </TabsContent>
+        <TabsContent value="health">
+          <SystemHealth />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
+import { LayoutDashboard } from "lucide-react"
