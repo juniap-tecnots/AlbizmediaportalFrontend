@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const tabs = [
     { value: 'categories', label: 'Categories', href: '/content/categories' },
+    { value: 'tags', label: 'Tags', href: '/content/tags' },
 ];
 
 export default function CategoriesLayout({
@@ -18,7 +19,8 @@ export default function CategoriesLayout({
   const pathname = usePathname();
 
   const getCurrentTab = () => {
-    return tabs.find(tab => pathname.includes(tab.value))?.value || 'categories';
+    if (pathname.includes('tags')) return 'tags';
+    return 'categories';
   }
 
   const handleTabChange = (value: string) => {
@@ -31,8 +33,8 @@ export default function CategoriesLayout({
   return (
     <div className="p-6 md:p-8">
       <PageHeader
-        title="Categories"
-        description="Manage your categories."
+        title="Categories & Tags"
+        description="Manage your categories and tags."
       />
       <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
         <TabsList>

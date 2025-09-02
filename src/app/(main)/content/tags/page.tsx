@@ -14,25 +14,29 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label";
+import { Textarea } from '@/components/ui/textarea';
 
 const initialTags = [
-    { name: "Color", slug: "color", count: 1 },
-    { name: "Content", slug: "content", count: 1 },
-    { name: "Foods", slug: "foods", count: 1 },
-    { name: "Games", slug: "games", count: 2 },
-    { name: "Life Style", slug: "life-style", count: 4 },
+    { name: "Color", slug: "color", description: "-", count: 1 },
+    { name: "Content", slug: "content", description: "-", count: 1 },
+    { name: "Foods", slug: "foods", description: "-", count: 1 },
+    { name: "Games", slug: "games", description: "-", count: 2 },
+    { name: "Life Style", slug: "life-style", description: "-", count: 4 },
 ]
 
 export default function TagsPage() {
     const [tags, setTags] = useState(initialTags);
     const [name, setName] = useState('');
     const [slug, setSlug] = useState('');
+    const [description, setDescription] = useState('');
+
 
     const handleAddTag = () => {
         if (!name || !slug) return;
-        setTags([...tags, { name, slug, count: 0 }]);
+        setTags([...tags, { name, slug, description: description || '-', count: 0 }]);
         setName('');
         setSlug('');
+        setDescription('');
     }
 
   return (
@@ -50,6 +54,11 @@ export default function TagsPage() {
                 <Input id="slug" value={slug} onChange={e => setSlug(e.target.value)} placeholder="tag-slug" />
                  <p className="text-sm text-muted-foreground">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
             </div>
+            <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Tag description" />
+                 <p className="text-sm text-muted-foreground">The description is not prominent by default; however, some themes may show it.</p>
+            </div>
             <Button onClick={handleAddTag}>Add New Tag</Button>
         </div>
       </div>
@@ -60,6 +69,7 @@ export default function TagsPage() {
                     <TableRow>
                     <TableHead className="w-12"><Checkbox /></TableHead>
                     <TableHead>Name</TableHead>
+                    <TableHead>Description</TableHead>
                     <TableHead>Slug</TableHead>
                     <TableHead className="text-right">Count</TableHead>
                     </TableRow>
@@ -69,6 +79,7 @@ export default function TagsPage() {
                     <TableRow key={index}>
                         <TableCell><Checkbox /></TableCell>
                         <TableCell className="font-medium text-primary"><a href="#">{tag.name}</a></TableCell>
+                        <TableCell>{tag.description}</TableCell>
                         <TableCell>{tag.slug}</TableCell>
                         <TableCell className="text-right"><a href="#" className="text-primary hover:underline">{tag.count}</a></TableCell>
                     </TableRow>
