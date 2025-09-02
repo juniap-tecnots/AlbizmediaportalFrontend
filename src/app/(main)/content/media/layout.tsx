@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/page-header";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const tabs = [
+    { value: 'all', label: 'All', href: '/content/media/all' },
     { value: 'images', label: 'Images', href: '/content/media/images' },
     { value: 'videos', label: 'Videos', href: '/content/media/videos' },
     { value: 'documents', label: 'Documents', href: '/content/media/documents' },
@@ -21,7 +22,7 @@ export default function MediaLayout({
   const pathname = usePathname();
 
   const getCurrentTab = () => {
-    return tabs.find(tab => pathname.includes(tab.value))?.value || 'images';
+    return tabs.find(tab => pathname.includes(tab.value))?.value || 'all';
   }
 
   const handleTabChange = (value: string) => {
