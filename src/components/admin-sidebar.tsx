@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, Folder, CheckSquare, Tag, Library, MessageSquare, ChevronDown } from 'lucide-react'
+import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, CheckSquare, Tag, Library, MessageSquare, ChevronDown } from 'lucide-react'
 
 import {
   Sidebar,
@@ -54,12 +54,7 @@ const contentManagementItems = [
     {
         label: 'Media Library',
         icon: Library,
-        subItems: [
-            { href: '/content/media/images', label: 'Images' },
-            { href: '/content/media/videos', label: 'Videos' },
-            { href: '/content/media/documents', label: 'Documents' },
-            { href: '/content/media/audio', label: 'Audio/Podcasts' },
-        ]
+        href: '/content/media/images',
     },
     {
         label: 'Comments & Interactions',
@@ -91,7 +86,7 @@ export function AdminSidebar() {
           {menuItems.map(({ href, label, icon: Icon }) => (
             <SidebarMenuItem key={href}>
               <SidebarMenuButton asChild isActive={isActive(href)} tooltip={label}>
-                <Link href={href} className="flex items-center gap-2">
+                <Link href={href}>
                   <Icon />
                   <span>{label}</span>
                 </Link>
@@ -101,9 +96,8 @@ export function AdminSidebar() {
         </SidebarMenu>
         <Separator className="my-2" />
         <SidebarGroup>
-            <SidebarGroupLabel className="flex items-center gap-2">
-                <Folder />
-                <span>Content Management</span>
+            <SidebarGroupLabel>
+                Content Management
             </SidebarGroupLabel>
         </SidebarGroup>
         <SidebarMenu>
@@ -112,7 +106,7 @@ export function AdminSidebar() {
                     return (
                         <SidebarMenuItem key={item.label}>
                             <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={item.label}>
-                                <Link href={item.href} className="flex items-center gap-2">
+                                <Link href={item.href}>
                                     <item.icon />
                                     <span>{item.label}</span>
                                 </Link>
