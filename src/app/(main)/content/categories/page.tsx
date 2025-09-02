@@ -18,11 +18,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 
 const initialCategories = [
-    { name: "Business", slug: "business", count: 5 },
-    { name: "Life Style", slug: "life-style", count: 12 },
-    { name: "Tech", slug: "tech", count: 8 },
-    { name: "Uncategorized", slug: "uncategorized", count: 2 },
-    { name: "World", slug: "world", count: 3 },
+    { name: "Business", slug: "business", description: "Articles about the business world", count: 5 },
+    { name: "Life Style", slug: "life-style", description: "Content related to lifestyle", count: 12 },
+    { name: "Tech", slug: "tech", description: "Latest in technology", count: 8 },
+    { name: "Uncategorized", slug: "uncategorized", description: "Articles that have not been categorized", count: 2 },
+    { name: "World", slug: "world", description: "Global news and events", count: 3 },
 ]
 
 export default function CategoriesPage() {
@@ -34,7 +34,7 @@ export default function CategoriesPage() {
 
     const handleAddCategory = () => {
         if (!name || !slug) return;
-        setCategories([...categories, { name, slug, count: 0 }]);
+        setCategories([...categories, { name, slug, description: description || '-', count: 0 }]);
         setName('');
         setSlug('');
         setParentCategory('none');
@@ -86,6 +86,7 @@ export default function CategoriesPage() {
                     <TableRow>
                     <TableHead className="w-12"><Checkbox /></TableHead>
                     <TableHead>Name</TableHead>
+                    <TableHead>Description</TableHead>
                     <TableHead>Slug</TableHead>
                     <TableHead className="text-right">Count</TableHead>
                     </TableRow>
@@ -95,6 +96,7 @@ export default function CategoriesPage() {
                     <TableRow key={index}>
                         <TableCell><Checkbox /></TableCell>
                         <TableCell className="font-medium text-primary"><a href="#">{category.name}</a></TableCell>
+                        <TableCell>{category.description}</TableCell>
                         <TableCell>{category.slug}</TableCell>
                         <TableCell className="text-right"><a href="#" className="text-primary hover:underline">{category.count}</a></TableCell>
                     </TableRow>
