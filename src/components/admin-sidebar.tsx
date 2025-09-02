@@ -32,14 +32,7 @@ const contentManagementItems = [
     { 
         label: 'Articles', 
         icon: Newspaper,
-        subItems: [
-            { href: '/content/articles/all', label: 'All Articles' },
-            { href: '/content/articles/new', label: 'Create New Article' },
-            { href: '/content/articles/drafts', label: 'Drafts' },
-            { href: '/content/articles/scheduled', label: 'Scheduled' },
-            { href: '/content/articles/published', label: 'Published' },
-            { href: '/content/articles/archived', label: 'Archived' },
-        ]
+        href: '/content/articles/all'
     },
     {
         label: 'Approval Workflow',
@@ -116,34 +109,49 @@ export function AdminSidebar() {
             </SidebarGroupLabel>
         </SidebarGroup>
         <SidebarMenu>
-            {contentManagementItems.map((item) => (
-                <Collapsible key={item.label} asChild>
-                    <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                             <SidebarMenuButton
-                                className="justify-between"
-                                isActive={item.subItems.some(sub => isActive(sub.href))}
-                             >
-                                <div className="flex items-center gap-2">
+            {contentManagementItems.map((item) => {
+                if (item.href) {
+                    return (
+                        <SidebarMenuItem key={item.label}>
+                            <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={item.label}>
+                                <Link href={item.href}>
                                     <item.icon />
                                     <span>{item.label}</span>
-                                </div>
+                                </Link>
                             </SidebarMenuButton>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent asChild>
-                            <SidebarMenuSub>
-                                {item.subItems.map((subItem) => (
-                                    <SidebarMenuSubItem key={subItem.href}>
-                                        <SidebarMenuSubButton asChild isActive={isActive(subItem.href)}>
-                                            <Link href={subItem.href}>{subItem.label}</Link>
-                                        </SidebarMenuSubButton>
-                                    </SidebarMenuSubItem>
-                                ))}
-                            </SidebarMenuSub>
-                        </CollapsibleContent>
-                    </SidebarMenuItem>
-                </Collapsible>
-            ))}
+                        </SidebarMenuItem>
+                    )
+                }
+
+                return (
+                    <Collapsible key={item.label} asChild>
+                        <SidebarMenuItem>
+                            <CollapsibleTrigger asChild>
+                                <SidebarMenuButton
+                                    className="justify-between"
+                                    isActive={item.subItems.some(sub => isActive(sub.href))}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <item.icon />
+                                        <span>{item.label}</span>
+                                    </div>
+                                </SidebarMenuButton>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent asChild>
+                                <SidebarMenuSub>
+                                    {item.subItems.map((subItem) => (
+                                        <SidebarMenuSubItem key={subItem.href}>
+                                            <SidebarMenuSubButton asChild isActive={isActive(subItem.href)}>
+                                                <Link href={subItem.href}>{subItem.label}</Link>
+                                            </SidebarMenuSubButton>
+                                        </SidebarMenuSubItem>
+                                    ))}
+                                </SidebarMenuSub>
+                            </CollapsibleContent>
+                        </SidebarMenuItem>
+                    </Collapsible>
+                )
+            })}
         </SidebarMenu>
 
       </SidebarContent>
