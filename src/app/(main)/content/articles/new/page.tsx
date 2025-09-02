@@ -24,9 +24,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GalleryHorizontal, Heading, Image as ImageIcon, List, Pilcrow, Plus, PlusCircle, Quote, Search, X } from "lucide-react"
+import { ChevronDown, ChevronUp, GalleryHorizontal, Heading, Image as ImageIcon, List, Pilcrow, Plus, PlusCircle, Quote, Search, X } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 type BlockType = 'paragraph' | 'heading' | 'list' | 'quote' | 'image' | 'gallery';
 
@@ -35,6 +37,17 @@ interface Block {
   type: BlockType;
   content: string;
 }
+
+const allCategories = [
+    { id: 'business', label: 'Business' },
+    { id: 'life-style', label: 'Life Style' },
+    { id: 'tech', label: 'Tech' },
+    { id: 'uncategorized', label: 'Uncategorized' },
+    { id: 'world', label: 'World' },
+    { id: 'foods', label: 'Foods' },
+    { id: 'games', label: 'Games' },
+    { id: 'travel', label: 'Travel' },
+]
 
 const blockTypes = [
     { type: 'paragraph', icon: Pilcrow, label: 'Paragraph' },
@@ -134,6 +147,11 @@ function BlockComponent({ block, updateBlock, removeBlock }: { block: Block, upd
 export default function NewArticlePage() {
     const [blocks, setBlocks] = useState<Block[]>([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
+    const [isTagsOpen, setIsTagsOpen] = useState(true);
+    const [tagInput, setTagInput] = useState('');
+    const [tags, setTags] = useState<string[]>([]);
+    const [categorySearch, setCategorySearch] = useState('');
 
     const addBlock = (type: BlockType) => {
         const newBlock: Block = { id: Date.now().toString(), type, content: '' };
@@ -148,6 +166,22 @@ export default function NewArticlePage() {
     const removeBlock = (id: string) => {
         setBlocks(blocks.filter(b => b.id !== id));
     }
+    
+    const addTag = () => {
+        if (tagInput && !tags.includes(tagInput)) {
+            setTags([...tags, tagInput]);
+            setTagInput('');
+        }
+    }
+
+    const removeTag = (tagToRemove: string) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    }
+
+    const filteredCategories = allCategories.filter(category =>
+        category.label.toLowerCase().includes(categorySearch.toLowerCase())
+    );
+
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -299,39 +333,78 @@ export default function NewArticlePage() {
             </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Categories</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="space-y-1 max-h-32 overflow-y-auto">
-                <div className="flex items-center gap-2">
-                    <Checkbox id="cat-uncategorized" />
-                    <Label htmlFor="cat-uncategorized">Uncategorized</Label>
-                </div>
-                 <div className="flex items-center gap-2">
-                    <Checkbox id="cat-life-style" />
-                    <Label htmlFor="cat-life-style">Life Style</Label>
-                </div>
-            </div>
-            <Button variant="link" size="sm" className="p-0 h-auto mt-2">
-                <PlusCircle className="mr-2" />
-                Add new category
-            </Button>
-          </CardContent>
-        </Card>
+        <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen} asChild>
+            <Card>
+                <CollapsibleTrigger className="w-full">
+                    <CardHeader className="flex flex-row items-center justify-between p-4">
+                        <CardTitle className="text-base">Categories</CardTitle>
+                        {isCategoriesOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                    <CardContent className="p-4 pt-0 space-y-4">
+                        <div className="relative">
+                            <Input 
+                                placeholder="Search Categories" 
+                                className="pl-8" 
+                                value={categorySearch}
+                                onChange={(e) => setCategorySearch(e.target.value)}
+                            />
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        </div>
+                        <ScrollArea className="h-40">
+                            <div className="space-y-2 pr-4">
+                                {filteredCategories.map(category => (
+                                    <div key={category.id} className="flex items-center gap-2">
+                                        <Checkbox id={`cat-${category.id}`} />
+                                        <Label htmlFor={`cat-${category.id}`} className="font-normal">{category.label}</Label>
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                        <Button variant="link" size="sm" className="p-0 h-auto">
+                            Add New Category
+                        </Button>
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Tags</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2">
-                <Input placeholder="Add a tag" />
-                <Button variant="secondary">Add</Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen} asChild>
+            <Card>
+                <CollapsibleTrigger className="w-full">
+                     <CardHeader className="flex flex-row items-center justify-between p-4">
+                        <CardTitle className="text-base">Tags</CardTitle>
+                        {isTagsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                     <CardContent className="p-4 pt-0 space-y-4">
+                        <div className="flex gap-2">
+                            <Input 
+                                placeholder="Add a tag" 
+                                value={tagInput}
+                                onChange={(e) => setTagInput(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && addTag()}
+                            />
+                            <Button variant="secondary" onClick={addTag}>Add</Button>
+                        </div>
+                        {tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {tags.map(tag => (
+                                    <div key={tag} className="flex items-center gap-1 bg-secondary rounded-md px-2 py-1 text-sm">
+                                        <span>{tag}</span>
+                                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => removeTag(tag)}>
+                                            <X className="h-3 w-3" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
       </div>
     </div>
   )
