@@ -1,3 +1,4 @@
+
 'use client'
 
 import Link from 'next/link'
@@ -35,6 +36,14 @@ const contentManagementItems = [
         href: '/content/articles/all'
     },
     {
+        label: 'Categories & Tags',
+        icon: Tag,
+        subItems: [
+            { href: '/content/categories', label: 'Manage Categories' },
+            { href: '/content/tags', label: 'Manage Tags' },
+        ]
+    },
+    {
         label: 'Approval Workflow',
         icon: CheckSquare,
         subItems: [
@@ -43,14 +52,6 @@ const contentManagementItems = [
             { href: '/content/approval/expert', label: 'Expert Review' },
             { href: '/content/approval/legal', label: 'Legal Review' },
             { href: '/content/approval/final', label: 'Final Approval Queue' },
-        ]
-    },
-    {
-        label: 'Categories & Tags',
-        icon: Tag,
-        subItems: [
-            { href: '/content/categories', label: 'Manage Categories' },
-            { href: '/content/tags', label: 'Manage Tags' },
         ]
     },
     {
