@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, CheckSquare, Tag, Library, MessageSquare, ChevronDown } from 'lucide-react'
+import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, CheckSquare, Tag, FolderKanban, MessageSquare, ChevronDown } from 'lucide-react'
 
 import {
   Sidebar,
@@ -41,6 +41,11 @@ const contentManagementItems = [
         href: '/content/categories',
     },
     {
+        label: 'Media Library',
+        icon: FolderKanban,
+        href: '/content/media/images',
+    },
+    {
         label: 'Approval Workflow',
         icon: CheckSquare,
         subItems: [
@@ -50,11 +55,6 @@ const contentManagementItems = [
             { href: '/content/approval/legal', label: 'Legal Review' },
             { href: '/content/approval/final', label: 'Final Approval Queue' },
         ]
-    },
-    {
-        label: 'Media Library',
-        icon: Library,
-        href: '/content/media/images',
     },
     {
         label: 'Comments & Interactions',
