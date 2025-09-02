@@ -35,7 +35,7 @@ export function AdminSidebar() {
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <Gem className="size-6 text-primary" />
-          <h1 className="text-xl font-semibold">EcomAdmin</h1>
+          <h1 className="text-xl font-semibold">Albiz Media</h1>
         </div>
       </SidebarHeader>
       <SidebarContent>

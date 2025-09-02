@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'EcomAdmin',
+  title: 'Albiz Media',
   description: 'Admin panel for your e-commerce store.',
 };
 
