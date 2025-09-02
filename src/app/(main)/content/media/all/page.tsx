@@ -89,22 +89,6 @@ export default function AllMediaPage() {
             <Input placeholder="Search media" />
         </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-        {mediaItems.map((item, index) => (
-          <div key={index} className="relative group aspect-square">
-            <Image
-              src={item.src}
-              alt={item.alt}
-              fill
-              className="object-cover rounded-md"
-              data-ai-hint={item['data-ai-hint']}
-            />
-             <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Checkbox id={`select-${index}`} />
-            </div>
-          </div>
-        ))}
-      </div>
       {showAddMedia && (
         <Card>
             <CardHeader>
@@ -125,6 +109,22 @@ export default function AllMediaPage() {
             </CardContent>
         </Card>
       )}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+        {mediaItems.map((item, index) => (
+          <div key={index} className="relative group aspect-square">
+            <Image
+              src={item.src}
+              alt={item.alt}
+              fill
+              className="object-cover rounded-md"
+              data-ai-hint={item['data-ai-hint']}
+            />
+             <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Checkbox id={`select-${index}`} />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
