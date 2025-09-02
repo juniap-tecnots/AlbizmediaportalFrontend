@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState } from "react"
+import { useState, useRef, useEffect, KeyboardEvent } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -48,6 +48,9 @@ const initialCategories = [
     { id: 'games', label: 'Games' },
     { id: 'travel', label: 'Travel' },
 ]
+
+const mostUsedTags = ['Color', 'World', 'Team', 'Games', 'Life Style', 'Travel', 'Foods', 'Content', 'Timeline', 'Tech'];
+
 
 const blockTypes = [
     { type: 'paragraph', icon: Pilcrow, label: 'Paragraph' },
@@ -153,6 +156,7 @@ export default function NewArticlePage() {
     const [isTagsOpen, setIsTagsOpen] = useState(true);
     const [tagInput, setTagInput] = useState('');
     const [tags, setTags] = useState<string[]>([]);
+    const tagInputRef = useRef<HTMLInputElement>(null);
     
     const [allCategories, setAllCategories] = useState(initialCategories);
     const [selectedCategories, setSelectedCategories] = useState<string[]>(['uncategorized']);
@@ -180,10 +184,28 @@ export default function NewArticlePage() {
         setBlocks(blocks.filter(b => b.id !== id));
     }
     
-    const addTag = () => {
-        if (tagInput && !tags.includes(tagInput)) {
-            setTags([...tags, tagInput]);
+    const addTags = (tagsToAdd: string[]) => {
+        const newTags = tagsToAdd
+            .map(tag => tag.trim())
+            .filter(tag => tag.length > 0 && !tags.includes(tag));
+        if (newTags.length > 0) {
+            setTags([...tags, ...newTags]);
+        }
+    };
+    
+    const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            addTags(tagInput.split(','));
             setTagInput('');
+        } else if (e.key === 'Backspace' && tagInput === '' && tags.length > 0) {
+            removeTag(tags[tags.length - 1]);
+        }
+    };
+    
+    const handleAddMostUsedTag = (tag: string) => {
+        if (!tags.includes(tag)) {
+            setTags([...tags, tag]);
         }
     }
 
@@ -437,28 +459,49 @@ export default function NewArticlePage() {
                     </CardHeader>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                     <CardContent className="p-4 pt-0 space-y-4">
-                        <div className="flex gap-2">
-                            <Input 
-                                placeholder="Add a tag" 
-                                value={tagInput}
-                                onChange={(e) => setTagInput(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && addTag()}
-                            />
-                            <Button variant="secondary" onClick={addTag}>Add</Button>
-                        </div>
-                        {tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
+                    <CardContent className="p-4 pt-0 space-y-4">
+                        <div>
+                            <Label htmlFor="tags-input" className="text-sm font-medium">ADD TAG</Label>
+                            <div
+                                onClick={() => tagInputRef.current?.focus()}
+                                className="flex flex-wrap items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                            >
                                 {tags.map(tag => (
-                                    <div key={tag} className="flex items-center gap-1 bg-secondary rounded-md px-2 py-1 text-sm">
+                                    <div key={tag} className="flex items-center gap-1 bg-secondary rounded-sm px-2 py-0.5 text-xs">
                                         <span>{tag}</span>
-                                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => removeTag(tag)}>
+                                        <button onClick={() => removeTag(tag)} className="focus:outline-none">
                                             <X className="h-3 w-3" />
-                                        </Button>
+                                        </button>
                                     </div>
                                 ))}
+                                <Input
+                                    ref={tagInputRef}
+                                    id="tags-input"
+                                    placeholder={tags.length === 0 ? "Add a tag..." : ""}
+                                    value={tagInput}
+                                    onChange={(e) => setTagInput(e.target.value)}
+                                    onKeyDown={handleTagInputKeyDown}
+                                    className="h-auto flex-1 border-none bg-transparent p-0 shadow-none focus-visible:ring-0"
+                                />
                             </div>
-                        )}
+                            <p className="text-xs text-muted-foreground mt-1">Separate with commas or the Enter key.</p>
+                        </div>
+                        <div>
+                            <h4 className="text-sm font-medium mb-2">MOST USED</h4>
+                            <div className="flex flex-wrap gap-x-2 gap-y-1">
+                                {mostUsedTags.map(tag => (
+                                    <Button
+                                        key={tag}
+                                        variant="link"
+                                        size="sm"
+                                        className="h-auto p-0 text-sm text-primary"
+                                        onClick={() => handleAddMostUsedTag(tag)}
+                                    >
+                                        {tag}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
                     </CardContent>
                 </CollapsibleContent>
             </Card>
@@ -467,5 +510,3 @@ export default function NewArticlePage() {
     </div>
   )
 }
-
-    
