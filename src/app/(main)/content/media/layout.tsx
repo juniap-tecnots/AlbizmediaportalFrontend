@@ -7,7 +7,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const tabs = [
     { value: 'all', label: 'All', href: '/content/media/all' },
-    { value: 'new', label: 'Add New', href: '/content/media/new' },
     { value: 'images', label: 'Images', href: '/content/media/images' },
     { value: 'videos', label: 'Videos', href: '/content/media/videos' },
     { value: 'documents', label: 'Documents', href: '/content/media/documents' },

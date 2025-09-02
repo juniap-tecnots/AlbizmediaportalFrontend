@@ -3,6 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +14,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Grid2x2, List, PlusCircle } from "lucide-react";
+import { Grid2x2, List, PlusCircle, UploadCloud } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const mediaItems = [
   { src: "https://picsum.photos/300/200?random=1", alt: "Newspaper on a table", 'data-ai-hint': 'newspaper' },
@@ -37,14 +46,14 @@ const mediaItems = [
 ];
 
 export default function AllMediaPage() {
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+
   return (
     <div className="space-y-4">
        <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-            <Button asChild>
-                <Link href="/content/media/new">
-                    <PlusCircle className="mr-2 h-4 w-4" /> Add New
-                </Link>
+            <Button onClick={() => setIsSheetOpen(true)}>
+                <PlusCircle className="mr-2 h-4 w-4" /> Add New
             </Button>
             <div className="flex items-center gap-1">
                 <Button variant="outline" size="icon" className="h-9 w-9">
@@ -97,6 +106,28 @@ export default function AllMediaPage() {
           </div>
         ))}
       </div>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent className="w-full max-w-lg p-0">
+          <Card className="h-full border-none rounded-none">
+            <CardHeader>
+                <CardTitle>Upload New Media</CardTitle>
+                <SheetDescription>Drag and drop files here or click to select files.</SheetDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-12 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <UploadCloud className="h-12 w-12 text-muted-foreground" />
+                        <p className="text-muted-foreground">Drag 'n' drop some files here, or click to select files</p>
+                        <Button variant="outline">Select Files</Button>
+                    </div>
+                </div>
+                  <div className="mt-4">
+                    <p className="text-sm text-muted-foreground">Maximum upload file size: 128 MB.</p>
+                </div>
+            </CardContent>
+          </Card>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
