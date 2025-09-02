@@ -1,5 +1,4 @@
 import { AdminSidebar } from "@/components/admin-sidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
   children,
@@ -7,11 +6,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
+    <div className="flex">
       <AdminSidebar />
-      <SidebarInset>
+      <main className="flex-1 ml-64">
         {children}
-      </SidebarInset>
-    </SidebarProvider>
+      </main>
+    </div>
   );
 }
