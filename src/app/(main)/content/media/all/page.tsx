@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Grid2x2, List } from "lucide-react";
+import { Grid2x2, List, PlusCircle } from "lucide-react";
 
 const mediaItems = [
   { src: "https://picsum.photos/300/200?random=1", alt: "Newspaper on a table", 'data-ai-hint': 'newspaper' },
@@ -40,6 +40,9 @@ export default function AllMediaPage() {
     <div className="space-y-4">
        <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" /> Add New
+            </Button>
             <div className="flex items-center gap-1">
                 <Button variant="outline" size="icon" className="h-9 w-9">
                     <List className="h-4 w-4" />
