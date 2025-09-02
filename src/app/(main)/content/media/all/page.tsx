@@ -2,6 +2,7 @@
 'use client'
 
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,8 +41,10 @@ export default function AllMediaPage() {
     <div className="space-y-4">
        <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-            <Button>
-                <PlusCircle className="mr-2 h-4 w-4" /> Add New
+            <Button asChild>
+                <Link href="/content/media/new">
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add New
+                </Link>
             </Button>
             <div className="flex items-center gap-1">
                 <Button variant="outline" size="icon" className="h-9 w-9">
