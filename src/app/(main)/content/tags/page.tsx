@@ -1,14 +1,81 @@
-import { PageHeader } from "@/components/page-header";
+
+'use client'
+
+import { useState } from 'react';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label";
+
+const initialTags = [
+    { name: "Color", slug: "color", count: 1 },
+    { name: "Content", slug: "content", count: 1 },
+    { name: "Foods", slug: "foods", count: 1 },
+    { name: "Games", slug: "games", count: 2 },
+    { name: "Life Style", slug: "life-style", count: 4 },
+]
 
 export default function TagsPage() {
+    const [tags, setTags] = useState(initialTags);
+    const [name, setName] = useState('');
+    const [slug, setSlug] = useState('');
+
+    const handleAddTag = () => {
+        if (!name || !slug) return;
+        setTags([...tags, { name, slug, count: 0 }]);
+        setName('');
+        setSlug('');
+    }
+
   return (
-    <div className="p-6 md:p-8">
-      <PageHeader
-        title="Manage Tags"
-        description="Use tags to further classify your content."
-      />
-      <div className="flex items-center justify-center h-96 border rounded-lg">
-        <p className="text-muted-foreground">Tags Content</p>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="md:col-span-1">
+        <div className="space-y-4">
+            <h3 className="text-lg font-medium">Add New Tag</h3>
+            <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Tag Name" />
+                <p className="text-sm text-muted-foreground">The name is how it appears on your site.</p>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="slug">Slug</Label>
+                <Input id="slug" value={slug} onChange={e => setSlug(e.target.value)} placeholder="tag-slug" />
+                 <p className="text-sm text-muted-foreground">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
+            </div>
+            <Button onClick={handleAddTag}>Add New Tag</Button>
+        </div>
+      </div>
+      <div className="md:col-span-2">
+        <div className="border rounded-lg">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                    <TableHead className="w-12"><Checkbox /></TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Slug</TableHead>
+                    <TableHead className="text-right">Count</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {tags.map((tag, index) => (
+                    <TableRow key={index}>
+                        <TableCell><Checkbox /></TableCell>
+                        <TableCell className="font-medium text-primary"><a href="#">{tag.name}</a></TableCell>
+                        <TableCell>{tag.slug}</TableCell>
+                        <TableCell className="text-right"><a href="#" className="text-primary hover:underline">{tag.count}</a></TableCell>
+                    </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
       </div>
     </div>
   );

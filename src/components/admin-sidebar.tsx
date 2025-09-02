@@ -36,12 +36,9 @@ const contentManagementItems = [
         href: '/content/articles/all'
     },
     {
-        label: 'Categories & Tags',
+        label: 'Categories',
         icon: Tag,
-        subItems: [
-            { href: '/content/categories', label: 'Manage Categories' },
-            { href: '/content/tags', label: 'Manage Tags' },
-        ]
+        href: '/content/categories',
     },
     {
         label: 'Approval Workflow',
