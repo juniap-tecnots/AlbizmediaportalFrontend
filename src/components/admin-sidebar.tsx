@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart, Box, LayoutDashboard, Settings, ShoppingCart, Users, Gem } from 'lucide-react'
+import { BarChart, LayoutDashboard, Settings, Gem } from 'lucide-react'
 
 import {
   Sidebar,
@@ -18,9 +18,6 @@ import { Separator } from '@/components/ui/separator'
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/orders', label: 'Orders', icon: ShoppingCart },
-  { href: '/products', label: 'Products', icon: Box },
-  { href: '/customers', label: 'Customers', icon: Users },
   { href: '/analytics', label: 'Analytics', icon: BarChart },
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
