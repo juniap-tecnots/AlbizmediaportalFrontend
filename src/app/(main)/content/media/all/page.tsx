@@ -16,13 +16,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Grid2x2, List, PlusCircle, UploadCloud } from "lucide-react";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const mediaItems = [
   { src: "https://picsum.photos/300/200?random=1", alt: "Newspaper on a table", 'data-ai-hint': 'newspaper' },
@@ -46,13 +45,13 @@ const mediaItems = [
 ];
 
 export default function AllMediaPage() {
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [showAddMedia, setShowAddMedia] = useState(false);
 
   return (
     <div className="space-y-4">
        <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-            <Button onClick={() => setIsSheetOpen(true)}>
+            <Button onClick={() => setShowAddMedia(prev => !prev)}>
                 <PlusCircle className="mr-2 h-4 w-4" /> Add New
             </Button>
             <div className="flex items-center gap-1">
@@ -106,12 +105,11 @@ export default function AllMediaPage() {
           </div>
         ))}
       </div>
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="w-full max-w-lg p-0">
-          <Card className="h-full border-none rounded-none">
+      {showAddMedia && (
+        <Card>
             <CardHeader>
                 <CardTitle>Upload New Media</CardTitle>
-                <SheetDescription>Drag and drop files here or click to select files.</SheetDescription>
+                <CardDescription>Drag and drop files here or click to select files.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-12 text-center">
@@ -121,13 +119,12 @@ export default function AllMediaPage() {
                         <Button variant="outline">Select Files</Button>
                     </div>
                 </div>
-                  <div className="mt-4">
+                <div className="mt-4">
                     <p className="text-sm text-muted-foreground">Maximum upload file size: 128 MB.</p>
                 </div>
             </CardContent>
-          </Card>
-        </SheetContent>
-      </Sheet>
+        </Card>
+      )}
     </div>
   );
 }
