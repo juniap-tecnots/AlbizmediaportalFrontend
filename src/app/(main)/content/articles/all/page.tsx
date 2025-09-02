@@ -69,17 +69,6 @@ export default function AllArticlesPage() {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-            <Select defaultValue="bulk-actions">
-                <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Bulk actions" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="bulk-actions">Bulk actions</SelectItem>
-                    <SelectItem value="edit">Edit</SelectItem>
-                    <SelectItem value="delete">Move to Trash</SelectItem>
-                </SelectContent>
-            </Select>
-            <Button variant="secondary">Apply</Button>
             <Select defaultValue="all-dates">
                 <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="All dates" />
@@ -105,28 +94,7 @@ export default function AllArticlesPage() {
             <Button>Search Posts</Button>
         </div>
       </div>
-      <div className="flex justify-between items-center text-sm text-muted-foreground">
-        <div>
-            <span>59 items</span>
-        </div>
-        <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" disabled>
-                &laquo;
-            </Button>
-            <Button variant="outline" size="sm" disabled>
-                &lsaquo;
-            </Button>
-            <span>
-                <Input readOnly type="number" value="1" className="w-12 h-8 text-center" /> of 3
-            </span>
-             <Button variant="outline" size="sm">
-                &rsaquo;
-            </Button>
-            <Button variant="outline" size="sm">
-                &raquo;
-            </Button>
-        </div>
-      </div>
+      
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
@@ -177,6 +145,28 @@ export default function AllArticlesPage() {
             ))}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex justify-between items-center text-sm text-muted-foreground">
+        <div>
+            <span>59 items</span>
+        </div>
+        <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" disabled>
+                &laquo;
+            </Button>
+            <Button variant="outline" size="sm" disabled>
+                &lsaquo;
+            </Button>
+            <span>
+                <Input readOnly type="number" value="1" className="w-12 h-8 text-center" /> of 3
+            </span>
+             <Button variant="outline" size="sm">
+                &rsaquo;
+            </Button>
+            <Button variant="outline" size="sm">
+                &raquo;
+            </Button>
+        </div>
       </div>
     </div>
   )
