@@ -32,6 +32,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useDispatch } from "react-redux"
 import { addArticle } from "@/lib/redux/slices/articlesSlice"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
 
 type BlockType = 'paragraph' | 'heading' | 'list' | 'quote' | 'image' | 'gallery';
 
@@ -153,6 +154,7 @@ function BlockComponent({ block, updateBlock, removeBlock }: { block: Block, upd
 export default function NewArticlePage() {
     const dispatch = useDispatch();
     const router = useRouter();
+    const { toast } = useToast();
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
     const [blocks, setBlocks] = useState<Block[]>([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
@@ -263,7 +265,10 @@ export default function NewArticlePage() {
             featuredImage: '', // Add featured image logic later
         };
         dispatch(addArticle(articleData));
-        router.push('/content/articles/all');
+        toast({
+          title: "Article Published!",
+          description: "Your new article has been successfully published.",
+        });
     }
 
   return (
