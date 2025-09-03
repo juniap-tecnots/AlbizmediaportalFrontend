@@ -42,12 +42,16 @@ export default function ArticlesLayout({
   
   const isNewArticlePage = pathname === '/content/articles/new';
 
+  if (isNewArticlePage) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="p-6 md:p-8">
       <PageHeader
         title="Articles"
         description="Manage your articles and content."
-        actions={!isNewArticlePage && (
+        actions={(
             <Link href="/content/articles/new">
                 <Button>
                     <PlusCircle className="mr-2" />
@@ -56,22 +60,18 @@ export default function ArticlesLayout({
             </Link>
         )}
       />
-      {isNewArticlePage ? (
-         <div className="mt-4">{children}</div>
-      ) : (
-        <>
-            <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
-                <TabsList>
-                    {tabs.map(tab => (
-                        <TabsTrigger key={tab.value} value={tab.value}>
-                            {tab.label}
-                        </TabsTrigger>
-                    ))}
-                </TabsList>
-            </Tabs>
-            <div className="mt-4">{children}</div>
-        </>
-      )}
+      <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
+          <TabsList>
+              {tabs.map(tab => (
+                  <TabsTrigger key={tab.value} value={tab.value}>
+                      {tab.label}
+                  </TabsTrigger>
+              ))}
+          </TabsList>
+      </Tabs>
+      <div className="mt-4">{children}</div>
     </div>
   );
 }
+
+    
