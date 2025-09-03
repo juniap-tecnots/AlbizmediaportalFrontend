@@ -27,13 +27,32 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
-const ToolbarButton = ({ command, icon: Icon, tooltip }: { command: string, icon: React.ElementType, tooltip: string }) => {
+
+const ToolbarButton = ({ command, icon: Icon, tooltip, onClick }: { command: string, icon: React.ElementType, tooltip: string, onClick?: () => void }) => {
     const { handleFormat, activeCommands } = useEditorContext();
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (onClick) {
+            onClick();
+        } else {
+            handleFormat(command);
+        }
+    };
 
     return (
         <Tooltip>
@@ -42,7 +61,7 @@ const ToolbarButton = ({ command, icon: Icon, tooltip }: { command: string, icon
                     variant="ghost"
                     size="sm"
                     className={cn("px-2", { 'bg-accent text-accent-foreground': activeCommands.has(command) })}
-                    onMouseDown={(e) => { e.preventDefault(); handleFormat(command); }}
+                    onMouseDown={handleClick}
                 >
                     <Icon className="w-4 h-4"/>
                 </Button>
@@ -87,6 +106,10 @@ export default function NewArticlePage() {
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
     
     const editorRef = useRef<HTMLDivElement>(null);
+    const [showImageDialog, setShowImageDialog] = useState(false);
+    const [imageUrl, setImageUrl] = useState('');
+    const [showVideoDialog, setShowVideoDialog] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('');
 
     const handleFormat = (command: string, value?: string) => {
         if (editorRef.current) {
@@ -143,6 +166,23 @@ export default function NewArticlePage() {
           title: "Article Published!",
           description: "Your new article has been successfully published.",
         });
+    };
+
+    const handleInsertImage = () => {
+        if (imageUrl) {
+            handleFormat('insertImage', imageUrl);
+        }
+        setShowImageDialog(false);
+        setImageUrl('');
+    };
+
+    const handleInsertVideo = () => {
+        if (videoUrl) {
+            const videoElement = `<video controls src="${videoUrl}" width="100%"></video>`;
+            handleFormat('insertHTML', videoElement);
+        }
+        setShowVideoDialog(false);
+        setVideoUrl('');
     };
 
     const editorContextValue = {
@@ -238,14 +278,8 @@ export default function NewArticlePage() {
                                 <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><LinkIcon className="w-4 h-4"/></Button></TooltipTrigger>
                                 <TooltipContent><p>Insert Link</p></TooltipContent>
                             </Tooltip>
-                             <Tooltip>
-                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><ImageIcon className="w-4 h-4"/></Button></TooltipTrigger>
-                                <TooltipContent><p>Insert Image</p></TooltipContent>
-                            </Tooltip>
-                             <Tooltip>
-                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><Video className="w-4 h-4"/></Button></TooltipTrigger>
-                                <TooltipContent><p>Insert Video</p></TooltipContent>
-                            </Tooltip>
+                            <ToolbarButton command="" icon={ImageIcon} tooltip="Insert Image" onClick={() => setShowImageDialog(true)} />
+                            <ToolbarButton command="" icon={Video} tooltip="Insert Video" onClick={() => setShowVideoDialog(true)} />
                              <Tooltip>
                                 <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><Smile className="w-4 h-4"/></Button></TooltipTrigger>
                                 <TooltipContent><p>Emoji</p></TooltipContent>
@@ -388,7 +422,51 @@ export default function NewArticlePage() {
                 </div>
             </div>
         </div>
+
+        <AlertDialog open={showImageDialog} onOpenChange={setShowImageDialog}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Insert Image</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Enter the URL of the image you want to insert.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <Input
+                    placeholder="https://example.com/image.jpg"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleInsertImage()}
+                />
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setImageUrl('')}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleInsertImage}>Insert</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Insert Video</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Enter the URL of the video you want to insert.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <Input
+                    placeholder="https://example.com/video.mp4"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleInsertVideo()}
+                />
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setVideoUrl('')}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleInsertVideo}>Insert</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
       </TooltipProvider>
     </EditorContext.Provider>
   )
 }
+
+    
