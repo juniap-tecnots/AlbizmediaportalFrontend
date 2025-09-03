@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch } from "react-redux"
@@ -28,7 +28,44 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+
+const ToolbarButton = ({ command, icon: Icon, tooltip }: { command: string, icon: React.ElementType, tooltip: string }) => {
+    const { handleFormat, activeCommands } = useEditorContext();
+
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>
+                 <Button
+                    variant="ghost"
+                    size="sm"
+                    className={cn("px-2", { 'bg-accent text-accent-foreground': activeCommands.has(command) })}
+                    onMouseDown={(e) => { e.preventDefault(); handleFormat(command); }}
+                >
+                    <Icon className="w-4 h-4"/>
+                </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+                <p>{tooltip}</p>
+            </TooltipContent>
+        </Tooltip>
+    );
+};
+
+const EditorContext = React.createContext<{
+    handleFormat: (command: string, value?: string) => void;
+    activeCommands: Set<string>;
+} | null>(null);
+
+const useEditorContext = () => {
+    const context = React.useContext(EditorContext);
+    if (!context) {
+        throw new Error('useEditorContext must be used within an EditorProvider');
+    }
+    return context;
+};
 
 export default function NewArticlePage() {
     const dispatch = useDispatch();
@@ -46,6 +83,8 @@ export default function NewArticlePage() {
     const [isPermalinkOpen, setIsPermalinkOpen] = useState(true);
     const [isLocationOpen, setIsLocationOpen] = useState(true);
     const [isOptionsOpen, setIsOptionsOpen] = useState(true);
+
+    const [activeCommands, setActiveCommands] = useState(new Set<string>());
     
     const editorRef = useRef<HTMLDivElement>(null);
 
@@ -53,8 +92,38 @@ export default function NewArticlePage() {
         if (editorRef.current) {
             editorRef.current.focus();
             document.execCommand(command, false, value);
+            updateActiveCommands();
         }
     };
+    
+    const updateActiveCommands = useCallback(() => {
+        const commands = new Set<string>();
+        if (document.queryCommandState('bold')) commands.add('bold');
+        if (document.queryCommandState('italic')) commands.add('italic');
+        if (document.queryCommandState('underline')) commands.add('underline');
+        if (document.queryCommandState('strikeThrough')) commands.add('strikeThrough');
+        if (document.queryCommandState('justifyLeft')) commands.add('justifyLeft');
+        if (document.queryCommandState('justifyCenter')) commands.add('justifyCenter');
+        if (document.queryCommandState('justifyRight')) commands.add('justifyRight');
+        if (document.queryCommandState('justifyFull')) commands.add('justifyFull');
+        if (document.queryCommandState('insertUnorderedList')) commands.add('insertUnorderedList');
+        if (document.queryCommandState('insertOrderedList')) commands.add('insertOrderedList');
+        setActiveCommands(commands);
+    }, []);
+
+    useEffect(() => {
+        const editor = editorRef.current;
+        const handleSelectionChange = () => {
+            if (document.activeElement === editor) {
+                updateActiveCommands();
+            }
+        };
+
+        document.addEventListener('selectionchange', handleSelectionChange);
+        return () => {
+            document.removeEventListener('selectionchange', handleSelectionChange);
+        };
+    }, [updateActiveCommands]);
 
     const handlePublish = () => {
         const articleData = {
@@ -76,167 +145,231 @@ export default function NewArticlePage() {
         });
     };
 
-  return (
-    <div className="flex flex-col h-screen bg-gray-50">
-        <header className="flex items-center justify-between p-4 border-b bg-white">
-            <div className="flex items-center gap-2 flex-1">
-                <Rocket className="w-5 h-5 text-primary" />
-                <Input 
-                    id="title" 
-                    placeholder="Enter article title" 
-                    value={title} 
-                    onChange={(e) => setTitle(e.target.value)} 
-                    className="text-lg font-semibold border-0 focus-visible:ring-0 shadow-none p-0"
-                />
-            </div>
-            <div className="flex items-center gap-2">
-                <Button variant="outline">
-                    <Eye className="mr-2 h-4 w-4" />
-                    Preview
-                </Button>
-                <Button onClick={handlePublish}>
-                    <Send className="mr-2 h-4 w-4" />
-                    Update
-                </Button>
-            </div>
-        </header>
+    const editorContextValue = {
+        handleFormat,
+        activeCommands
+    };
 
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4 items-start">
-            <div className="lg:col-span-3 bg-white rounded-lg border">
-                <div className="p-2 border-b">
-                    <div className="flex items-center gap-x-1 text-gray-600">
-                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('undo'); }}><Undo className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('redo'); }}><Redo className="w-4 h-4" /></Button>
-                        <Separator orientation="vertical" className="h-6" />
-                        <Select defaultValue="p" onValueChange={(value) => handleFormat('formatBlock', value)}>
-                            <SelectTrigger className="w-auto border-0 text-sm focus:ring-0">
-                                <SelectValue placeholder="Normal" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="p">Normal</SelectItem>
-                                <SelectItem value="h1">Heading 1</SelectItem>
-                                <SelectItem value="h2">Heading 2</SelectItem>
-                                <SelectItem value="h3">Heading 3</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Separator orientation="vertical" className="h-6" />
-                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('bold'); }}><Bold className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('italic'); }}><Italic className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('underline'); }}><Underline className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('strikeThrough'); }}><Strikethrough className="w-4 h-4"/></Button>
-                        <Separator orientation="vertical" className="h-6" />
-                        <Button variant="ghost" size="sm" className="px-2"><LinkIcon className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><ImageIcon className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><Video className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><Smile className="w-4 h-4"/></Button>
-                        <Separator orientation="vertical" className="h-6" />
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="px-2">
-                                    <List className="w-4 h-4"/>
-                                    <ChevronDown className="w-4 h-4 ml-1" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertUnorderedList'); }}><List className="w-4 h-4 mr-2"/>Bulleted list</DropdownMenuItem>
-                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertOrderedList'); }}><ListOrdered className="w-4 h-4 mr-2"/>Numbered list</DropdownMenuItem>
-                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('formatBlock', 'blockquote'); }}><Quote className="w-4 h-4 mr-2"/>Quote</DropdownMenuItem>
-                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('outdent'); }}><Outdent className="w-4 h-4 mr-2"/>Decrease indent</DropdownMenuItem>
-                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('indent'); }}><Indent className="w-4 h-4 mr-2"/>Increase indent</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                        <Button variant="ghost" size="sm" className="px-2"><MoreHorizontal className="w-4 h-4"/></Button>
-                    </div>
-                </div>
-                <div className="p-4 min-h-[500px]">
-                    <div
-                        ref={editorRef}
-                        contentEditable
-                        className="w-full h-full border-0 focus-visible:ring-0 p-0 shadow-none resize-none focus:outline-none"
-                        onInput={(e) => setContent(e.currentTarget.innerHTML)}
+  return (
+    <EditorContext.Provider value={editorContextValue}>
+      <TooltipProvider>
+        <div className="flex flex-col h-screen bg-gray-50">
+            <header className="flex items-center justify-between p-4 border-b bg-white">
+                <div className="flex items-center gap-2 flex-1">
+                    <Rocket className="w-5 h-5 text-primary" />
+                    <Input 
+                        id="title" 
+                        placeholder="Enter article title" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                        className="text-lg font-semibold border-0 focus-visible:ring-0 shadow-none p-0"
                     />
                 </div>
-            </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline">
+                        <Eye className="mr-2 h-4 w-4" />
+                        Preview
+                    </Button>
+                    <Button onClick={handlePublish}>
+                        <Send className="mr-2 h-4 w-4" />
+                        Update
+                    </Button>
+                </div>
+            </header>
 
-            <div className="space-y-4 lg:sticky top-4">
-                <Card>
-                    <CardContent className="p-4">
-                        <h3 className="text-sm font-medium text-gray-500 mb-4">Post settings</h3>
-
-                        <Collapsible open={isLabelsOpen} onOpenChange={setIsLabelsOpen} asChild>
-                            <div className="border-b">
-                                <CollapsibleTrigger className="w-full py-3">
-                                    <div className="flex items-center justify-between">
-                                        <Label>Labels</Label>
-                                        {isLabelsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4 items-start">
+                <div className="lg:col-span-3 bg-white rounded-lg border">
+                    <div className="p-2 border-b">
+                        <div className="flex items-center gap-x-1 text-gray-600">
+                             <Tooltip>
+                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('undo'); }}><Undo className="w-4 h-4" /></Button></TooltipTrigger>
+                                <TooltipContent><p>Undo (Ctrl+Z)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('redo'); }}><Redo className="w-4 h-4" /></Button></TooltipTrigger>
+                                <TooltipContent><p>Redo (Ctrl+Y)</p></TooltipContent>
+                            </Tooltip>
+                            <Separator orientation="vertical" className="h-6" />
+                            <Select defaultValue="p" onValueChange={(value) => handleFormat('formatBlock', value)}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <SelectTrigger className="w-auto border-0 text-sm focus:ring-0">
+                                            <SelectValue placeholder="Normal" />
+                                        </SelectTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent><p>Format</p></TooltipContent>
+                                </Tooltip>
+                                <SelectContent>
+                                    <SelectItem value="p">Normal</SelectItem>
+                                    <SelectItem value="h1">Heading 1</SelectItem>
+                                    <SelectItem value="h2">Heading 2</SelectItem>
+                                    <SelectItem value="h3">Heading 3</SelectItem>
+                                    <SelectItem value="h4">Heading 4</SelectItem>
+                                    <SelectItem value="h5">Heading 5</SelectItem>
+                                    <SelectItem value="h6">Heading 6</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Separator orientation="vertical" className="h-6" />
+                            <ToolbarButton command="bold" icon={Bold} tooltip="Bold (Ctrl+B)" />
+                            <ToolbarButton command="italic" icon={Italic} tooltip="Italic (Ctrl+I)" />
+                            <ToolbarButton command="underline" icon={Underline} tooltip="Underline (Ctrl+U)" />
+                            <ToolbarButton command="strikeThrough" icon={Strikethrough} tooltip="Strikethrough" />
+                             <Separator orientation="vertical" className="h-6" />
+                             <Tooltip>
+                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><LinkIcon className="w-4 h-4"/></Button></TooltipTrigger>
+                                <TooltipContent><p>Insert Link</p></TooltipContent>
+                            </Tooltip>
+                             <Tooltip>
+                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><ImageIcon className="w-4 h-4"/></Button></TooltipTrigger>
+                                <TooltipContent><p>Insert Image</p></TooltipContent>
+                            </Tooltip>
+                             <Tooltip>
+                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><Video className="w-4 h-4"/></Button></TooltipTrigger>
+                                <TooltipContent><p>Insert Video</p></TooltipContent>
+                            </Tooltip>
+                             <Tooltip>
+                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><Smile className="w-4 h-4"/></Button></TooltipTrigger>
+                                <TooltipContent><p>Emoji</p></TooltipContent>
+                            </Tooltip>
+                            <Separator orientation="vertical" className="h-6" />
+                            <DropdownMenu>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="sm" className="px-2">
+                                                <MoreHorizontal className="w-4 h-4"/>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent><p>More options</p></TooltipContent>
+                                </Tooltip>
+                                <DropdownMenuContent>
+                                    <div className="flex">
+                                        <ToolbarButton command="justifyLeft" icon={AlignLeft} tooltip="Align Left" />
+                                        <ToolbarButton command="justifyCenter" icon={AlignCenter} tooltip="Align Center" />
+                                        <ToolbarButton command="justifyRight" icon={AlignRight} tooltip="Align Right" />
+                                        <ToolbarButton command="justifyFull" icon={AlignJustify} tooltip="Justify" />
                                     </div>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="pb-4">
-                                     <Input placeholder="Add a label..."/>
-                                </CollapsibleContent>
-                            </div>
-                        </Collapsible>
+                                    <DropdownMenuSeparator />
+                                     <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertUnorderedList'); }}>
+                                        <List className="w-4 h-4 mr-2"/>Bulleted list
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertOrderedList'); }}>
+                                        <ListOrdered className="w-4 h-4 mr-2"/>Numbered list
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('formatBlock', 'blockquote'); }}>
+                                        <Quote className="w-4 h-4 mr-2"/>Quote
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('outdent'); }}>
+                                        <Outdent className="w-4 h-4 mr-2"/>Decrease indent
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('indent'); }}>
+                                        <Indent className="w-4 h-4 mr-2"/>Increase indent
+                                    </DropdownMenuItem>
+                                     <DropdownMenuSeparator />
+                                     <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('removeFormat'); }}>
+                                        <Eraser className="w-4 h-4 mr-2"/>Clear formatting
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </div>
+                    <div className="p-4 min-h-[500px]">
+                        <div
+                            ref={editorRef}
+                            contentEditable
+                            className="w-full h-full border-0 focus-visible:ring-0 p-0 shadow-none resize-none focus:outline-none"
+                            onInput={(e) => setContent(e.currentTarget.innerHTML)}
+                            onBlur={updateActiveCommands}
+                            onFocus={updateActiveCommands}
+                            onClick={updateActiveCommands}
+                            onKeyUp={updateActiveCommands}
+                        />
+                    </div>
+                </div>
 
-                        <Collapsible open={isPublishedOpen} onOpenChange={setIsPublishedOpen} asChild>
-                             <div className="border-b">
-                                <CollapsibleTrigger className="w-full py-3">
-                                    <div className="flex items-center justify-between">
-                                        <Label>Published on</Label>
-                                        {isPublishedOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </div>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="pb-4">
-                                    <p className="text-sm text-gray-700">03/09/2025 12:11</p>
-                                </CollapsibleContent>
-                            </div>
-                        </Collapsible>
-                        
-                        <Collapsible open={isPermalinkOpen} onOpenChange={setIsPermalinkOpen} asChild>
-                             <div className="border-b">
-                                <CollapsibleTrigger className="w-full py-3">
-                                    <div className="flex items-center justify-between">
-                                        <Label>Permalink</Label>
-                                        {isPermalinkOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </div>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="pb-4">
-                                     <Input value={permalink} onChange={(e) => setPermalink(e.target.value)} />
-                                </CollapsibleContent>
-                            </div>
-                        </Collapsible>
+                <div className="space-y-4 lg:sticky top-4">
+                    <Card>
+                        <CardContent className="p-4">
+                            <h3 className="text-sm font-medium text-gray-500 mb-4">Post settings</h3>
 
-                        <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen} asChild>
-                            <div className="border-b">
-                                <CollapsibleTrigger className="w-full py-3">
-                                    <div className="flex items-center justify-between">
-                                        <Label>Location</Label>
-                                        {isLocationOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </div>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="pb-4">
-                                     <Input value={location} onChange={(e) => setLocation(e.target.value)} />
-                                </CollapsibleContent>
-                            </div>
-                        </Collapsible>
+                            <Collapsible open={isLabelsOpen} onOpenChange={setIsLabelsOpen} asChild>
+                                <div className="border-b">
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Labels</Label>
+                                            {isLabelsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4">
+                                         <Input placeholder="Add a label..."/>
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
 
-                        <Collapsible open={isOptionsOpen} onOpenChange={setIsOptionsOpen} asChild>
-                            <div>
-                                <CollapsibleTrigger className="w-full py-3">
-                                    <div className="flex items-center justify-between">
-                                        <Label>Options</Label>
-                                        {isOptionsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </div>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="pb-4">
-                                    <p className="text-sm text-gray-500">Further options here.</p>
-                                </CollapsibleContent>
-                            </div>
-                        </Collapsible>
+                            <Collapsible open={isPublishedOpen} onOpenChange={setIsPublishedOpen} asChild>
+                                 <div className="border-b">
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Published on</Label>
+                                            {isPublishedOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4">
+                                        <p className="text-sm text-gray-700">03/09/2025 12:11</p>
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
+                            
+                            <Collapsible open={isPermalinkOpen} onOpenChange={setIsPermalinkOpen} asChild>
+                                 <div className="border-b">
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Permalink</Label>
+                                            {isPermalinkOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4">
+                                         <Input value={permalink} onChange={(e) => setPermalink(e.target.value)} />
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
 
-                    </CardContent>
-                </Card>
+                            <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen} asChild>
+                                <div className="border-b">
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Location</Label>
+                                            {isLocationOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4">
+                                         <Input value={location} onChange={(e) => setLocation(e.target.value)} />
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
+
+                            <Collapsible open={isOptionsOpen} onOpenChange={setIsOptionsOpen} asChild>
+                                <div>
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Options</Label>
+                                            {isOptionsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4">
+                                        <p className="text-sm text-gray-500">Further options here.</p>
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
+
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
-    </div>
+      </TooltipProvider>
+    </EditorContext.Provider>
   )
 }
