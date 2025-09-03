@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch } from "react-redux"
@@ -221,18 +221,9 @@ export default function NewArticlePage() {
   return (
     <EditorContext.Provider value={editorContextValue}>
       <TooltipProvider>
-        <div className="flex flex-col h-screen bg-gray-50">
-            <header className="flex items-center justify-between p-4 border-b bg-white">
-                <div className="flex items-center gap-2 flex-1">
-                    <Rocket className="w-5 h-5 text-primary" />
-                    <Input 
-                        id="title" 
-                        placeholder="Enter article title" 
-                        value={title} 
-                        onChange={(e) => setTitle(e.target.value)} 
-                        className="text-lg font-semibold border-0 focus-visible:ring-0 shadow-none p-0"
-                    />
-                </div>
+        <div className="flex flex-col h-full bg-background p-4 md:p-6">
+            <header className="flex items-center justify-between pb-4 border-b">
+                 <h1 className="text-2xl font-bold">Add New Article</h1>
                 <div className="flex items-center gap-2">
                     <Button variant="outline">
                         <Eye className="mr-2 h-4 w-4" />
@@ -245,10 +236,22 @@ export default function NewArticlePage() {
                 </div>
             </header>
 
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4 items-start">
-                <div className="lg:col-span-3 bg-white rounded-lg border">
-                    <div className="p-2 border-b">
-                        <div className="flex items-center gap-x-1 text-gray-600">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 items-start">
+                <div className="lg:col-span-3 space-y-6">
+                    <Card>
+                        <CardContent className="p-6">
+                            <Input 
+                                id="title" 
+                                placeholder="Enter article title" 
+                                value={title} 
+                                onChange={(e) => setTitle(e.target.value)} 
+                                className="text-2xl font-bold border-0 focus-visible:ring-0 shadow-none p-0 h-auto"
+                            />
+                        </CardContent>
+                    </Card>
+                    <Card>
+                         <div className="p-2 border-b">
+                        <div className="flex items-center gap-x-1 text-gray-600 flex-wrap">
                              <Tooltip>
                                 <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('undo'); }}><Undo className="w-4 h-4" /></Button></TooltipTrigger>
                                 <TooltipContent><p>Undo (Ctrl+Z)</p></TooltipContent>
@@ -257,7 +260,7 @@ export default function NewArticlePage() {
                                 <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('redo'); }}><Redo className="w-4 h-4" /></Button></TooltipTrigger>
                                 <TooltipContent><p>Redo (Ctrl+Y)</p></TooltipContent>
                             </Tooltip>
-                            <Separator orientation="vertical" className="h-6" />
+                            <Separator orientation="vertical" className="h-6 mx-1" />
                             <Select defaultValue="p" onValueChange={(value) => handleFormat('formatBlock', value)}>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -277,12 +280,12 @@ export default function NewArticlePage() {
                                     <SelectItem value="h6">Heading 6</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Separator orientation="vertical" className="h-6" />
+                            <Separator orientation="vertical" className="h-6 mx-1" />
                             <ToolbarButton command="bold" icon={Bold} tooltip="Bold (Ctrl+B)" />
                             <ToolbarButton command="italic" icon={Italic} tooltip="Italic (Ctrl+I)" />
                             <ToolbarButton command="underline" icon={Underline} tooltip="Underline (Ctrl+U)" />
                             <ToolbarButton command="strikeThrough" icon={Strikethrough} tooltip="Strikethrough" />
-                             <Separator orientation="vertical" className="h-6" />
+                             <Separator orientation="vertical" className="h-6 mx-1" />
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button variant="ghost" size="sm" className="px-2 relative">
@@ -301,7 +304,7 @@ export default function NewArticlePage() {
                                 </TooltipTrigger>
                                 <TooltipContent><p>Highlight Color</p></TooltipContent>
                             </Tooltip>
-                            <Separator orientation="vertical" className="h-6" />
+                            <Separator orientation="vertical" className="h-6 mx-1" />
                              <Tooltip>
                                 <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><LinkIcon className="w-4 h-4"/></Button></TooltipTrigger>
                                 <TooltipContent><p>Insert Link</p></TooltipContent>
@@ -312,7 +315,7 @@ export default function NewArticlePage() {
                                 <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><Smile className="w-4 h-4"/></Button></TooltipTrigger>
                                 <TooltipContent><p>Emoji</p></TooltipContent>
                             </Tooltip>
-                            <Separator orientation="vertical" className="h-6" />
+                            <Separator orientation="vertical" className="h-6 mx-1" />
                             <DropdownMenu>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -356,7 +359,7 @@ export default function NewArticlePage() {
                             </DropdownMenu>
                         </div>
                     </div>
-                    <div className="p-4 min-h-[500px]">
+                    <CardContent className="p-4 min-h-[400px]">
                         <div
                             ref={editorRef}
                             contentEditable
@@ -367,10 +370,11 @@ export default function NewArticlePage() {
                             onClick={updateActiveCommands}
                             onKeyUp={updateActiveCommands}
                         />
-                    </div>
+                    </CardContent>
+                    </Card>
                 </div>
 
-                <div className="space-y-4 lg:sticky top-4">
+                <div className="space-y-6 lg:sticky top-6">
                     <Card>
                         <CardContent className="p-4">
                             <h3 className="text-sm font-medium text-gray-500 mb-4">Post settings</h3>
