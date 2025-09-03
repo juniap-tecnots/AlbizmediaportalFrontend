@@ -286,14 +286,14 @@ export default function NewArticlePage() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <div className="lg:col-span-2 space-y-6">
         <Card>
-            <CardContent className="p-4 space-y-4">
+            <CardContent className="p-4">
                  <Input
                     placeholder="Add title"
                     className="border-none text-3xl font-bold shadow-none focus-visible:ring-0 h-auto"
                     value={title}
                     onChange={handleTitleChange}
                 />
-                <div className="relative">
+                <div className="relative mt-4">
                      <Popover>
                         <PopoverTrigger asChild>
                             <Button size="icon" variant="outline" className="h-8 w-8">
@@ -316,7 +316,7 @@ export default function NewArticlePage() {
                         </PopoverContent>
                     </Popover>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 mt-4">
                     {blocks.map(block => (
                         <BlockComponent key={block.id} block={block} updateBlock={updateBlock} removeBlock={removeBlock} />
                     ))}
@@ -365,9 +365,9 @@ export default function NewArticlePage() {
             </SheetContent>
         </Sheet>
 
-      <div className="space-y-6">
+      <div className="space-y-6 lg:sticky top-8">
         <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-center justify-between p-4">
                 <div className="flex gap-2">
                     <Button variant="outline" size="sm">Save draft</Button>
                     <Button variant="outline" size="sm">Preview</Button>
