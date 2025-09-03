@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch } from "react-redux"
@@ -215,6 +215,25 @@ export default function NewArticlePage() {
                             <ToolbarButton command="underline" icon={Underline} tooltip="Underline (Ctrl+U)" />
                             <ToolbarButton command="strikeThrough" icon={Strikethrough} tooltip="Strikethrough" />
                              <Separator orientation="vertical" className="h-6" />
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="px-2 relative">
+                                        <Palette className="w-4 h-4"/>
+                                        <input type="color" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(e) => handleFormat('foreColor', e.currentTarget.value)} />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>Text Color</p></TooltipContent>
+                            </Tooltip>
+                             <Tooltip>
+                                <TooltipTrigger asChild>
+                                     <Button variant="ghost" size="sm" className="px-2 relative">
+                                        <Highlighter className="w-4 h-4"/>
+                                        <input type="color" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(e) => handleFormat('hiliteColor', e.currentTarget.value)} />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent><p>Highlight Color</p></TooltipContent>
+                            </Tooltip>
+                            <Separator orientation="vertical" className="h-6" />
                              <Tooltip>
                                 <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><LinkIcon className="w-4 h-4"/></Button></TooltipTrigger>
                                 <TooltipContent><p>Insert Link</p></TooltipContent>
