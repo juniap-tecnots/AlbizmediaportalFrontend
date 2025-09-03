@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch } from "react-redux"
@@ -41,6 +41,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 
 const ToolbarButton = ({ command, icon: Icon, tooltip, onClick }: { command: string, icon: React.ElementType, tooltip: string, onClick?: () => void }) => {
@@ -111,6 +112,7 @@ export default function NewArticlePage() {
     const [imageUrl, setImageUrl] = useState('');
     const [showVideoDialog, setShowVideoDialog] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFormat = (command: string, value?: string) => {
         if (editorRef.current) {
@@ -185,6 +187,31 @@ export default function NewArticlePage() {
         setShowVideoDialog(false);
         setVideoUrl('');
     };
+    
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const src = e.target?.result as string;
+                if (type === 'image') {
+                    handleFormat('insertImage', src);
+                    setShowImageDialog(false);
+                } else {
+                    const videoElement = `<video controls src="${src}" width="100%"></video>`;
+                    handleFormat('insertHTML', videoElement);
+                    setShowVideoDialog(false);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSelectFilesClick = () => {
+        fileInputRef.current?.click();
+    };
+
 
     const editorContextValue = {
         handleFormat,
@@ -428,20 +455,45 @@ export default function NewArticlePage() {
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Insert Image</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Enter the URL of the image you want to insert.
-                    </AlertDialogDescription>
                 </AlertDialogHeader>
-                <Input
-                    placeholder="https://example.com/image.jpg"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleInsertImage()}
-                />
-                <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setImageUrl('')}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleInsertImage}>Insert</AlertDialogAction>
-                </AlertDialogFooter>
+                <Tabs defaultValue="url">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="url">From URL</TabsTrigger>
+                        <TabsTrigger value="upload">Upload</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="url">
+                        <div className="py-4">
+                             <Input
+                                placeholder="https://example.com/image.jpg"
+                                value={imageUrl}
+                                onChange={(e) => setImageUrl(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleInsertImage()}
+                            />
+                        </div>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel onClick={() => setImageUrl('')}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleInsertImage}>Insert</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </TabsContent>
+                    <TabsContent value="upload">
+                        <div className="py-4">
+                            <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-12 text-center">
+                                <div className="flex flex-col items-center gap-4">
+                                    <UploadCloud className="h-12 w-12 text-muted-foreground" />
+                                    <p className="text-muted-foreground">Drag 'n' drop an image here, or click to select</p>
+                                    <Button variant="outline" onClick={handleSelectFilesClick}>Select File</Button>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={(e) => handleFileChange(e, 'image')}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </AlertDialogContent>
         </AlertDialog>
 
@@ -449,23 +501,50 @@ export default function NewArticlePage() {
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Insert Video</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Enter the URL of the video you want to insert.
-                    </AlertDialogDescription>
                 </AlertDialogHeader>
-                <Input
-                    placeholder="https://example.com/video.mp4"
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleInsertVideo()}
-                />
-                <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setVideoUrl('')}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleInsertVideo}>Insert</AlertDialogAction>
-                </AlertDialogFooter>
+                <Tabs defaultValue="url">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="url">From URL</TabsTrigger>
+                        <TabsTrigger value="upload">Upload</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="url">
+                        <div className="py-4">
+                            <Input
+                                placeholder="https://example.com/video.mp4"
+                                value={videoUrl}
+                                onChange={(e) => setVideoUrl(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleInsertVideo()}
+                            />
+                        </div>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel onClick={() => setVideoUrl('')}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleInsertVideo}>Insert</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </TabsContent>
+                     <TabsContent value="upload">
+                        <div className="py-4">
+                            <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-12 text-center">
+                                <div className="flex flex-col items-center gap-4">
+                                    <UploadCloud className="h-12 w-12 text-muted-foreground" />
+                                    <p className="text-muted-foreground">Drag 'n' drop a video here, or click to select</p>
+                                    <Button variant="outline" onClick={handleSelectFilesClick}>Select File</Button>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={(e) => handleFileChange(e, 'video')}
+                                        className="hidden"
+                                        accept="video/*"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </AlertDialogContent>
         </AlertDialog>
       </TooltipProvider>
     </EditorContext.Provider>
   )
 }
+
+    
