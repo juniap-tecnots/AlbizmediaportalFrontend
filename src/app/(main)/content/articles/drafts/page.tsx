@@ -23,6 +23,7 @@ import { ArrowUpDown, Pencil, Trash2 } from "lucide-react"
 import { useSelector, useDispatch } from "react-redux"
 import { selectDraftArticles, deleteArticle } from "@/lib/redux/slices/articlesSlice"
 import { useToast } from "@/hooks/use-toast"
+import Link from "next/link"
 
 
 export default function DraftsPage() {
@@ -118,9 +119,11 @@ export default function DraftsPage() {
                 </TableCell>
                 <TableCell>
                     <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon">
-                            <Pencil className="h-4 w-4" />
-                        </Button>
+                        <Link href={`/content/articles/edit/${article.id}`}>
+                            <Button variant="ghost" size="icon">
+                                <Pencil className="h-4 w-4" />
+                            </Button>
+                        </Link>
                         <Button variant="ghost" size="icon" onClick={() => handleDelete(article.id)}>
                             <Trash2 className="h-4 w-4" />
                         </Button>

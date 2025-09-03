@@ -11,10 +11,11 @@ interface Block {
   content: string;
 }
 
-interface Article {
+export interface Article {
   id: string;
   title: string;
   slug: string;
+  content: string;
   blocks: Block[];
   status: 'Draft' | 'Published' | 'Archived' | 'Scheduled';
   author: string;
@@ -41,6 +42,7 @@ const initialState: ArticlesState = {
         tags: [],
         date: "2025/09/01 at 6:07 am",
         status: "Published",
+        content: 'This is the content for Global Update.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -55,6 +57,7 @@ const initialState: ArticlesState = {
         tags: ["Games"],
         date: "2025/09/01 at 5:40 am",
         status: "Published",
+        content: 'This is the content for One swallow does not make the spring.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -69,6 +72,7 @@ const initialState: ArticlesState = {
         tags: ["Team"],
         date: "2025/09/01 at 5:40 am",
         status: "Published",
+        content: 'This is the content for Tip of the day: That man again.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -83,6 +87,7 @@ const initialState: ArticlesState = {
         tags: ["Color"],
         date: "2025/09/01 at 5:40 am",
         status: "Published",
+        content: 'This is the content for Hibs and Ross County fans on final.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -97,6 +102,7 @@ const initialState: ArticlesState = {
         tags: ["Content"],
         date: "2025/09/01 at 5:40 am",
         status: "Published",
+        content: 'This is the content for Persuasion is often more effectual than force.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -111,6 +117,7 @@ const initialState: ArticlesState = {
         tags: ["Old-News"],
         date: "2024/01/15 at 3:30 pm",
         status: "Archived",
+        content: 'This is a sample archived post.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -125,6 +132,7 @@ const initialState: ArticlesState = {
         tags: ["Drafting"],
         date: "2025/09/02 at 10:00 am",
         status: "Draft",
+        content: 'This is a sample draft.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -139,6 +147,7 @@ const initialState: ArticlesState = {
         tags: ["Planning"],
         date: "2025/10/01 at 9:00 am",
         status: "Scheduled",
+        content: 'This is a sample scheduled post.',
         blocks: [],
         visibility: 'public',
         excerpt: '',
@@ -160,15 +169,22 @@ const articlesSlice = createSlice({
       };
       state.articles.push(newArticle);
     },
+    updateArticle: (state, action: PayloadAction<Article>) => {
+        const index = state.articles.findIndex(article => article.id === action.payload.id);
+        if (index !== -1) {
+            state.articles[index] = action.payload;
+        }
+    },
     deleteArticle: (state, action: PayloadAction<string>) => {
       state.articles = state.articles.filter(article => article.id !== action.payload);
     },
   },
 });
 
-export const { addArticle, deleteArticle } = articlesSlice.actions;
+export const { addArticle, updateArticle, deleteArticle } = articlesSlice.actions;
 
 export const selectAllArticles = (state: RootState) => state.articles.articles;
+export const selectArticleById = (state: RootState, articleId: string) => state.articles.articles.find(article => article.id === articleId);
 export const selectPublishedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Published');
 export const selectDraftArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Draft');
 export const selectScheduledArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Scheduled');
