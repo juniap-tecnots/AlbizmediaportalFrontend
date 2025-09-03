@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -18,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, Search, X, Rocket, Eye, Send, Calendar, MapPin, Settings2, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, Image as ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, Pilcrow, CaseSensitive, Palette, MoreHorizontal, Undo, Redo, Minus } from "lucide-react"
+import { ChevronDown, ChevronUp, Rocket, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch } from "react-redux"
@@ -31,14 +30,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const initialCategories = [
-    { id: 'business', label: 'Business' },
-    { id: 'life-style', label: 'Life Style' },
-    { id: 'tech', label: 'Tech' },
-    { id: 'uncategorized', label: 'Uncategorized' },
-    { id: 'world', label: 'World' },
-]
-
 export default function NewArticlePage() {
     const dispatch = useDispatch();
     const { toast } = useToast();
@@ -47,7 +38,6 @@ export default function NewArticlePage() {
     const [slug, setSlug] = useState('');
     
     const [labels, setLabels] = useState<string[]>([]);
-    const [labelInput, setLabelInput] = useState('');
     const [permalink, setPermalink] = useState('');
     const [location, setLocation] = useState('');
 
@@ -57,26 +47,34 @@ export default function NewArticlePage() {
     const [isLocationOpen, setIsLocationOpen] = useState(true);
     const [isOptionsOpen, setIsOptionsOpen] = useState(true);
     
+    const editorRef = useRef<HTMLDivElement>(null);
+
+    const handleFormat = (command: string, value?: string) => {
+        if (editorRef.current) {
+            editorRef.current.focus();
+            document.execCommand(command, false, value);
+        }
+    };
 
     const handlePublish = () => {
         const articleData = {
             title,
             slug,
-            content,
+            content: editorRef.current?.innerHTML || '',
             status: 'Published',
             categories: labels,
             tags: [],
             visibility: 'public',
             excerpt: '',
             featuredImage: '',
-            blocks: [{ id: '1', type: 'paragraph', content: content }]
+            blocks: [{ id: '1', type: 'paragraph', content: editorRef.current?.innerHTML || '' }]
         };
         dispatch(addArticle(articleData as any));
         toast({
           title: "Article Published!",
           description: "Your new article has been successfully published.",
         });
-    }
+    };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -107,25 +105,25 @@ export default function NewArticlePage() {
             <div className="lg:col-span-3 bg-white rounded-lg border">
                 <div className="p-2 border-b">
                     <div className="flex items-center gap-x-1 text-gray-600">
-                        <Button variant="ghost" size="sm" className="px-2"><Undo className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><Redo className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('undo'); }}><Undo className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('redo'); }}><Redo className="w-4 h-4" /></Button>
                         <Separator orientation="vertical" className="h-6" />
-                        <Select defaultValue="normal">
+                        <Select defaultValue="p" onValueChange={(value) => handleFormat('formatBlock', value)}>
                             <SelectTrigger className="w-auto border-0 text-sm focus:ring-0">
                                 <SelectValue placeholder="Normal" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="normal">Normal</SelectItem>
-                                <SelectItem value="heading1">Heading 1</SelectItem>
-                                <SelectItem value="heading2">Heading 2</SelectItem>
-                                <SelectItem value="heading3">Heading 3</SelectItem>
+                                <SelectItem value="p">Normal</SelectItem>
+                                <SelectItem value="h1">Heading 1</SelectItem>
+                                <SelectItem value="h2">Heading 2</SelectItem>
+                                <SelectItem value="h3">Heading 3</SelectItem>
                             </SelectContent>
                         </Select>
                         <Separator orientation="vertical" className="h-6" />
-                        <Button variant="ghost" size="sm" className="px-2"><Bold className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><Italic className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><Underline className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><Strikethrough className="w-4 h-4"/></Button>
+                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('bold'); }}><Bold className="w-4 h-4"/></Button>
+                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('italic'); }}><Italic className="w-4 h-4"/></Button>
+                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('underline'); }}><Underline className="w-4 h-4"/></Button>
+                        <Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('strikeThrough'); }}><Strikethrough className="w-4 h-4"/></Button>
                         <Separator orientation="vertical" className="h-6" />
                         <Button variant="ghost" size="sm" className="px-2"><LinkIcon className="w-4 h-4"/></Button>
                         <Button variant="ghost" size="sm" className="px-2"><ImageIcon className="w-4 h-4"/></Button>
@@ -140,25 +138,22 @@ export default function NewArticlePage() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem><List className="w-4 h-4 mr-2"/>Bulleted list</DropdownMenuItem>
-                                <DropdownMenuItem><ListOrdered className="w-4 h-4 mr-2"/>Numbered list</DropdownMenuItem>
-                                <DropdownMenuItem><Quote className="w-4 h-4 mr-2"/>Quote</DropdownMenuItem>
-                                <DropdownMenuItem><Outdent className="w-4 h-4 mr-2"/>Decrease indent</DropdownMenuItem>
-                                <DropdownMenuItem><Indent className="w-4 h-4 mr-2"/>Increase indent</DropdownMenuItem>
+                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertUnorderedList'); }}><List className="w-4 h-4 mr-2"/>Bulleted list</DropdownMenuItem>
+                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertOrderedList'); }}><ListOrdered className="w-4 h-4 mr-2"/>Numbered list</DropdownMenuItem>
+                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('formatBlock', 'blockquote'); }}><Quote className="w-4 h-4 mr-2"/>Quote</DropdownMenuItem>
+                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('outdent'); }}><Outdent className="w-4 h-4 mr-2"/>Decrease indent</DropdownMenuItem>
+                                <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('indent'); }}><Indent className="w-4 h-4 mr-2"/>Increase indent</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                         <Button variant="ghost" size="sm" className="px-2"><MoreHorizontal className="w-4 h-4"/></Button>
-
                     </div>
                 </div>
-                <div className="p-4">
-                    <Textarea
-                        id="content"
-                        placeholder="Write your article content here..."
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        rows={25}
-                        className="border-0 focus-visible:ring-0 p-0 shadow-none resize-none"
+                <div className="p-4 min-h-[500px]">
+                    <div
+                        ref={editorRef}
+                        contentEditable
+                        className="w-full h-full border-0 focus-visible:ring-0 p-0 shadow-none resize-none focus:outline-none"
+                        onInput={(e) => setContent(e.currentTarget.innerHTML)}
                     />
                 </div>
             </div>
