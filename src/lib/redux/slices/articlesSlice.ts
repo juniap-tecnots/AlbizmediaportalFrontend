@@ -160,10 +160,13 @@ const articlesSlice = createSlice({
       };
       state.articles.push(newArticle);
     },
+    deleteArticle: (state, action: PayloadAction<string>) => {
+      state.articles = state.articles.filter(article => article.id !== action.payload);
+    },
   },
 });
 
-export const { addArticle } = articlesSlice.actions;
+export const { addArticle, deleteArticle } = articlesSlice.actions;
 
 export const selectAllArticles = (state: RootState) => state.articles.articles;
 export const selectPublishedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Published');

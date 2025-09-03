@@ -20,12 +20,24 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowUpDown } from "lucide-react"
-import { useSelector } from "react-redux"
-import { selectAllArticles } from "@/lib/redux/slices/articlesSlice"
+import { useSelector, useDispatch } from "react-redux"
+import { selectAllArticles, deleteArticle } from "@/lib/redux/slices/articlesSlice"
+import { useToast } from "@/hooks/use-toast"
 
 
 export default function AllArticlesPage() {
   const articles = useSelector(selectAllArticles);
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+
+  const handleDelete = (id: string) => {
+    dispatch(deleteArticle(id));
+    toast({
+        title: "Article Deleted",
+        description: "The article has been successfully deleted.",
+        variant: 'destructive'
+    })
+  }
 
   return (
     <div className="space-y-4">
@@ -77,6 +89,7 @@ export default function AllArticlesPage() {
                   Date <ArrowUpDown className="w-4 h-4 ml-2" />
                 </Button>
               </TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -102,6 +115,12 @@ export default function AllArticlesPage() {
                 <TableCell>
                     {article.status}<br/>
                     <span className="text-muted-foreground">{new Date(article.date).toLocaleString()}</span>
+                </TableCell>
+                <TableCell>
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">Edit</Button>
+                        <Button variant="destructive" size="sm" onClick={() => handleDelete(article.id)}>Delete</Button>
+                    </div>
                 </TableCell>
               </TableRow>
             ))}
