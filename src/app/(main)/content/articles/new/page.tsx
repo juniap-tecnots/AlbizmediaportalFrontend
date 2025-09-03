@@ -8,6 +8,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardFooter,
+  CardDescription
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -22,24 +24,13 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronDown, ChevronUp, GalleryHorizontal, Heading, Image as ImageIcon, List, Pilcrow, Plus, PlusCircle, Quote, Search, X } from "lucide-react"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { ChevronDown, ChevronUp, Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useDispatch } from "react-redux"
 import { addArticle } from "@/lib/redux/slices/articlesSlice"
 import { useToast } from "@/hooks/use-toast"
-
-type BlockType = 'paragraph' | 'heading' | 'list' | 'quote' | 'image' | 'gallery';
-
-interface Block {
-  id: string;
-  type: BlockType;
-  content: string;
-}
 
 const initialCategories = [
     { id: 'business', label: 'Business' },
@@ -54,109 +45,12 @@ const initialCategories = [
 
 const mostUsedTags = ['Color', 'World', 'Team', 'Games', 'Life Style', 'Travel', 'Foods', 'Content', 'Timeline', 'Tech'];
 
-
-const blockTypes = [
-    { type: 'paragraph', icon: Pilcrow, label: 'Paragraph' },
-    { type: 'heading', icon: Heading, label: 'Heading' },
-    { type: 'list', icon: List, label: 'List' },
-    { type: 'quote', icon: Quote, label: 'Quote' },
-    { type: 'image', icon: ImageIcon, label: 'Image' },
-    { type: 'gallery', icon: GalleryHorizontal, label: 'Gallery' },
-] as const;
-
-const blockCategories = [
-    { 
-        name: 'Text', 
-        blocks: blockTypes.filter(b => ['paragraph', 'heading', 'list', 'quote'].includes(b.type)) 
-    },
-    {
-        name: 'Media',
-        blocks: blockTypes.filter(b => ['image', 'gallery'].includes(b.type))
-    }
-]
-
-function BlockComponent({ block, updateBlock, removeBlock }: { block: Block, updateBlock: (id: string, content: string) => void, removeBlock: (id: string) => void }) {
-    const commonClasses = "w-full p-2 border-none focus:outline-none focus:ring-2 focus:ring-ring"
-    switch (block.type) {
-        case 'heading':
-            return (
-                <div className="relative group">
-                    <Input
-                        type="text"
-                        placeholder="Heading"
-                        value={block.content}
-                        onChange={(e) => updateBlock(block.id, e.target.value)}
-                        className={cn(commonClasses, "text-2xl font-bold")}
-                    />
-                     <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
-                </div>
-            )
-        case 'list':
-             return (
-                <div className="relative group">
-                    <Textarea
-                        placeholder="List item..."
-                        value={block.content}
-                        onChange={(e) => updateBlock(block.id, e.target.value)}
-                        className={cn(commonClasses, "leading-loose list-disc pl-8")}
-                    />
-                    <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
-                </div>
-            )
-        case 'quote':
-             return (
-                <div className="relative group">
-                     <Textarea
-                        placeholder="Quote..."
-                        value={block.content}
-                        onChange={(e) => updateBlock(block.id, e.target.value)}
-                        className={cn(commonClasses, "border-l-4 border-primary pl-4 italic")}
-                    />
-                    <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
-                </div>
-            )
-        case 'image':
-            return (
-                <div className="relative group p-2">
-                    <div className="flex items-center justify-center border-2 border-dashed rounded-lg h-48">
-                        <Button variant="outline">Upload Image</Button>
-                    </div>
-                     <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
-                </div>
-            )
-        case 'gallery':
-            return (
-                <div className="relative group p-2">
-                    <div className="flex items-center justify-center border-2 border-dashed rounded-lg h-48">
-                        <Button variant="outline">Create Gallery</Button>
-                    </div>
-                     <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
-                </div>
-            )
-        default:
-            return (
-                 <div className="relative group">
-                    <Textarea
-                        placeholder="Type / to choose a block"
-                        value={block.content}
-                        onChange={(e) => updateBlock(block.id, e.target.value)}
-                        className={commonClasses}
-                        rows={1}
-                    />
-                    <Button size="icon" variant="ghost" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100" onClick={() => removeBlock(block.id)}><X className="h-4 w-4" /></Button>
-                </div>
-            )
-    }
-}
-
-
 export default function NewArticlePage() {
     const dispatch = useDispatch();
     const { toast } = useToast();
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
-    const [blocks, setBlocks] = useState<Block[]>([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [content, setContent] = useState('');
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [isTagsOpen, setIsTagsOpen] = useState(true);
     const [tagInput, setTagInput] = useState('');
@@ -179,20 +73,6 @@ export default function NewArticlePage() {
         setSlug(newTitle.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
     };
 
-    const addBlock = (type: BlockType) => {
-        const newBlock: Block = { id: Date.now().toString(), type, content: '' };
-        setBlocks([...blocks, newBlock]);
-        setIsSheetOpen(false);
-    }
-    
-    const updateBlock = (id: string, content: string) => {
-        setBlocks(blocks.map(b => b.id === id ? { ...b, content } : b));
-    }
-
-    const removeBlock = (id: string) => {
-        setBlocks(blocks.filter(b => b.id !== id));
-    }
-    
     const addTags = (tagsToAdd: string[]) => {
         const newTags = tagsToAdd
             .map(tag => tag.trim())
@@ -237,7 +117,6 @@ export default function NewArticlePage() {
             label: newCategoryInput.trim(),
         };
         if (allCategories.some(cat => cat.id === newCategory.id)) {
-            // Optional: handle category already exists error
             return;
         }
         setAllCategories([...allCategories, newCategory]);
@@ -253,7 +132,7 @@ export default function NewArticlePage() {
     const resetForm = () => {
         setTitle('');
         setSlug('');
-        setBlocks([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
+        setContent('');
         setTags([]);
         setTagInput('');
         setSelectedCategories(['uncategorized']);
@@ -266,15 +145,16 @@ export default function NewArticlePage() {
         const articleData = {
             title,
             slug,
-            blocks,
+            content,
             status,
             categories: selectedCategories.map(cId => allCategories.find(c => c.id === cId)?.label || ''),
             tags,
             visibility,
             excerpt,
-            featuredImage: '', // Add featured image logic later
+            featuredImage: '',
+            blocks: [{ id: '1', type: 'paragraph', content: content }]
         };
-        dispatch(addArticle(articleData));
+        dispatch(addArticle(articleData as any));
         toast({
           title: "Article Published!",
           description: "Your new article has been successfully published.",
@@ -286,143 +166,75 @@ export default function NewArticlePage() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <div className="lg:col-span-2 space-y-6">
         <Card>
-            <CardContent className="p-4">
-                 <Input
-                    placeholder="Add title"
-                    className="border-none text-3xl font-bold shadow-none focus-visible:ring-0 h-auto"
-                    value={title}
-                    onChange={handleTitleChange}
-                />
-                <div className="relative mt-4">
-                     <Popover>
-                        <PopoverTrigger asChild>
-                            <Button size="icon" variant="outline" className="h-8 w-8">
-                                <Plus className="h-4 w-4" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80 p-2">
-                            <div className="p-2">
-                                <Input placeholder="Search" className="mb-2" />
-                                <div className="grid grid-cols-3 gap-2">
-                                    {blockTypes.map(block => (
-                                        <Button key={block.type} variant="outline" className="h-auto flex-col gap-2 p-4" onClick={() => addBlock(block.type)}>
-                                            <block.icon />
-                                            <span className="text-xs">{block.label}</span>
-                                        </Button>
-                                    ))}
-                                </div>
-                                <Button className="w-full mt-2" onClick={() => setIsSheetOpen(true)}>Browse all</Button>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+            <CardHeader>
+                <CardTitle>Create New Article</CardTitle>
+                <CardDescription>Fill in the details below to create a new article.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input id="title" placeholder="Enter article title" value={title} onChange={handleTitleChange} />
                 </div>
-                <div className="space-y-2 mt-4">
-                    {blocks.map(block => (
-                        <BlockComponent key={block.id} block={block} updateBlock={updateBlock} removeBlock={removeBlock} />
-                    ))}
+                <div className="space-y-2">
+                    <Label htmlFor="slug">Slug</Label>
+                    <Input id="slug" placeholder="article-slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="excerpt">Excerpt (Subtitle)</Label>
+                    <Textarea id="excerpt" placeholder="A brief summary of the article" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="content">Content</Label>
+                    <Textarea id="content" placeholder="Write your article content here..." value={content} onChange={(e) => setContent(e.target.value)} rows={15} />
                 </div>
             </CardContent>
+            <CardFooter>
+                 <Button onClick={handlePublish}>Publish Article</Button>
+            </CardFooter>
         </Card>
       </div>
-
-       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent>
-                <SheetHeader>
-                    <SheetTitle>Blocks</SheetTitle>
-                     <div className="relative my-4">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="Search" className="pl-8" />
-                    </div>
-                </SheetHeader>
-                <Tabs defaultValue="blocks">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="blocks">Blocks</TabsTrigger>
-                        <TabsTrigger value="patterns">Patterns</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="blocks">
-                        <div className="space-y-4 mt-4">
-                            {blockCategories.map(category => (
-                                <div key={category.name}>
-                                    <h3 className="font-semibold mb-2">{category.name}</h3>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {category.blocks.map(block => (
-                                            <Button key={block.type} variant="outline" className="h-auto justify-start gap-3 p-4" onClick={() => addBlock(block.type)}>
-                                                <block.icon className="text-primary" />
-                                                <span className="text-sm">{block.label}</span>
-                                            </Button>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </TabsContent>
-                     <TabsContent value="patterns">
-                        <div className="flex items-center justify-center h-48">
-                            <p className="text-muted-foreground">Patterns coming soon.</p>
-                        </div>
-                    </TabsContent>
-                </Tabs>
-            </SheetContent>
-        </Sheet>
 
       <div className="space-y-6 lg:sticky top-8">
         <Card>
             <CardHeader className="flex flex-row items-center justify-between p-4">
-                <div className="flex gap-2">
-                    <Button variant="outline" size="sm">Save draft</Button>
-                    <Button variant="outline" size="sm">Preview</Button>
-                </div>
-                <Button size="sm" onClick={handlePublish}>Publish</Button>
+                <CardTitle className="text-base">Publish</CardTitle>
+                 <Button size="sm" onClick={handlePublish}>Publish</Button>
             </CardHeader>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Post Settings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-             <div className="space-y-2">
-                <Label>Status</Label>
-                <RadioGroup value={status} onValueChange={(v) => setStatus(v as any)} className="flex gap-4">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Draft" id="draft" />
-                        <Label htmlFor="draft">Draft</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Published" id="published" />
-                        <Label htmlFor="published">Published</Label>
-                    </div>
-                </RadioGroup>
-            </div>
-            <div className="space-y-2">
-              <Label>Visibility</Label>
-              <Select value={visibility} onValueChange={(v) => setVisibility(v as any)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select visibility" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public">Public</SelectItem>
-                  <SelectItem value="private">Private</SelectItem>
-                  <SelectItem value="password">Password Protected</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-                <Label>Publish</Label>
-                <Button variant="link" className="p-0 h-auto">Immediately</Button>
-            </div>
-             <div className="space-y-2">
-                <Label>Slug</Label>
-                <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="post-slug-here" />
-            </div>
-
-            <Separator />
-
-             <div className="space-y-2">
-                <Label>Excerpt</Label>
-                <Textarea placeholder="Add an excerpt..." value={excerpt} onChange={(e) => setExcerpt(e.target.value)} />
-            </div>
-          </CardContent>
+             <CardContent className="p-4 space-y-4">
+                 <Button variant="outline" size="sm" className="w-full">Save draft</Button>
+                 <Button variant="outline" size="sm" className="w-full">Preview</Button>
+                 <Separator />
+                <div className="space-y-2">
+                    <Label>Status</Label>
+                    <RadioGroup value={status} onValueChange={(v) => setStatus(v as any)} className="flex gap-4">
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Draft" id="draft" />
+                            <Label htmlFor="draft">Draft</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Published" id="published" />
+                            <Label htmlFor="published">Published</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                <div className="space-y-2">
+                  <Label>Visibility</Label>
+                  <Select value={visibility} onValueChange={(v) => setVisibility(v as any)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select visibility" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="public">Public</SelectItem>
+                      <SelectItem value="private">Private</SelectItem>
+                      <SelectItem value="password">Password Protected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                    <Label>Publish</Label>
+                    <Button variant="link" className="p-0 h-auto">Immediately</Button>
+                </div>
+             </CardContent>
         </Card>
 
         <Card>
@@ -550,3 +362,5 @@ export default function NewArticlePage() {
     </div>
   )
 }
+
+    
