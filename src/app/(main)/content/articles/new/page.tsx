@@ -112,7 +112,8 @@ export default function NewArticlePage() {
     const [imageUrl, setImageUrl] = useState('');
     const [showVideoDialog, setShowVideoDialog] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const imageFileInputRef = useRef<HTMLInputElement>(null);
+    const videoFileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFormat = (command: string, value?: string) => {
         if (editorRef.current) {
@@ -208,8 +209,12 @@ export default function NewArticlePage() {
         }
     };
 
-    const handleSelectFilesClick = () => {
-        fileInputRef.current?.click();
+    const handleSelectFilesClick = (type: 'image' | 'video') => {
+        if (type === 'image') {
+            imageFileInputRef.current?.click();
+        } else {
+            videoFileInputRef.current?.click();
+        }
     };
 
 
@@ -485,10 +490,10 @@ export default function NewArticlePage() {
                                 <div className="flex flex-col items-center gap-4">
                                     <UploadCloud className="h-12 w-12 text-muted-foreground" />
                                     <p className="text-muted-foreground">Drag 'n' drop an image here, or click to select</p>
-                                    <Button variant="outline" onClick={handleSelectFilesClick}>Select File</Button>
+                                    <Button variant="outline" onClick={() => handleSelectFilesClick('image')}>Select File</Button>
                                     <input
                                         type="file"
-                                        ref={fileInputRef}
+                                        ref={imageFileInputRef}
                                         onChange={(e) => handleFileChange(e, 'image')}
                                         className="hidden"
                                         accept="image/*"
@@ -531,10 +536,10 @@ export default function NewArticlePage() {
                                 <div className="flex flex-col items-center gap-4">
                                     <UploadCloud className="h-12 w-12 text-muted-foreground" />
                                     <p className="text-muted-foreground">Drag 'n' drop a video here, or click to select</p>
-                                    <Button variant="outline" onClick={handleSelectFilesClick}>Select File</Button>
+                                    <Button variant="outline" onClick={() => handleSelectFilesClick('video')}>Select File</Button>
                                     <input
                                         type="file"
-                                        ref={fileInputRef}
+                                        ref={videoFileInputRef}
                                         onChange={(e) => handleFileChange(e, 'video')}
                                         className="hidden"
                                         accept="video/*"
