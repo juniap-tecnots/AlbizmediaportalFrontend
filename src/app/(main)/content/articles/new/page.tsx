@@ -25,7 +25,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, Search, X } from "lucide-react"
+import { ChevronDown, ChevronUp, Search, UploadCloud, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -33,7 +33,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { addArticle } from "@/lib/redux/slices/articlesSlice"
 import { useToast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { selectImages } from "@/lib/redux/slices/mediaSlice"
+import { addMediaItem, MediaItem, selectImages } from "@/lib/redux/slices/mediaSlice"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const initialCategories = [
     { id: 'business', label: 'Business' },
@@ -73,6 +74,7 @@ export default function NewArticlePage() {
     const [featuredImage, setFeaturedImage] = useState<string>('');
     const [isMediaDialogOpen, setIsMediaDialogOpen] = useState(false);
     const mediaImages = useSelector(selectImages);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,6 +143,33 @@ export default function NewArticlePage() {
         setFeaturedImage(src);
         setIsMediaDialogOpen(false);
     }
+
+    const handleSelectFilesClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            for (const file of Array.from(files)) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const src = e.target?.result as string;
+                    dispatch(addMediaItem({ 
+                        src, 
+                        alt: file.name, 
+                        type: 'image',
+                        'data-ai-hint': 'new image' 
+                    }));
+                };
+                reader.readAsDataURL(file);
+            }
+             toast({
+                title: "Upload Successful",
+                description: `${files.length} image(s) have been added.`,
+            });
+        }
+    };
     
     const resetForm = () => {
         setTitle('');
@@ -264,15 +293,43 @@ export default function NewArticlePage() {
                         <DialogHeader>
                             <DialogTitle>Select a Featured Image</DialogTitle>
                         </DialogHeader>
-                        <ScrollArea className="h-[500px] border rounded-md">
-                            <div className="grid grid-cols-4 gap-4 p-4">
-                                {mediaImages.map((item) => (
-                                    <div key={item.id} className="relative aspect-square cursor-pointer" onClick={() => handleSelectFeaturedImage(item.src)}>
-                                        <Image src={item.src} alt={item.alt} fill className="object-cover rounded-md" data-ai-hint={item['data-ai-hint']} />
+                        <Tabs defaultValue="library">
+                            <TabsList>
+                                <TabsTrigger value="library">Media Library</TabsTrigger>
+                                <TabsTrigger value="upload">Upload</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="library">
+                                <ScrollArea className="h-[500px] border rounded-md">
+                                    <div className="grid grid-cols-4 gap-4 p-4">
+                                        {mediaImages.map((item) => (
+                                            <div key={item.id} className="relative aspect-square cursor-pointer" onClick={() => handleSelectFeaturedImage(item.src)}>
+                                                <Image src={item.src} alt={item.alt} fill className="object-cover rounded-md" data-ai-hint={item['data-ai-hint']} />
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        </ScrollArea>
+                                </ScrollArea>
+                            </TabsContent>
+                             <TabsContent value="upload">
+                                <div className="h-[500px] flex items-center justify-center border-2 border-dashed border-muted-foreground/50 rounded-lg">
+                                    <div className="text-center space-y-4">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <UploadCloud className="h-12 w-12 text-muted-foreground" />
+                                            <p className="text-muted-foreground">Drag 'n' drop some files here, or click to select files</p>
+                                            <Button variant="outline" onClick={handleSelectFilesClick}>Select Files</Button>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileChange}
+                                                className="hidden"
+                                                multiple
+                                                accept="image/*"
+                                            />
+                                        </div>
+                                         <p className="text-xs text-muted-foreground">Maximum upload file size: 128 MB.</p>
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
                     </DialogContent>
                 </Dialog>
                 {featuredImage && (
