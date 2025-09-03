@@ -294,7 +294,7 @@ export default function NewArticlePage() {
                                 placeholder="Enter your article title..." 
                                 value={title} 
                                 onChange={(e) => setTitle(e.target.value)} 
-                                className="text-xl border-0 focus-visible:ring-0 shadow-none p-0 h-auto"
+                                className="text-xl border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
                             />
                         </CardContent>
                     </Card>
@@ -613,3 +613,5 @@ export default function NewArticlePage() {
     </EditorContext.Provider>
   )
 }
+
+    

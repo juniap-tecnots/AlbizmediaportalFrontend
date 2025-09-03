@@ -298,13 +298,13 @@ export default function EditArticlePage() {
                 <div className="lg:col-span-3 space-y-6">
                     <Card>
                         <CardContent className="p-6 space-y-2">
-                             <Label htmlFor="title">Article Title</Label>
+                            <Label htmlFor="title">Article Title</Label>
                             <Input 
                                 id="title" 
                                 placeholder="Enter your article title..." 
                                 value={title} 
                                 onChange={(e) => setTitle(e.target.value)} 
-                                className="text-xl border-0 focus-visible:ring-0 shadow-none p-0 h-auto"
+                                className="text-xl border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
                             />
                         </CardContent>
                     </Card>
@@ -623,3 +623,5 @@ export default function EditArticlePage() {
     </EditorContext.Provider>
   )
 }
+
+    
