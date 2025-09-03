@@ -2,6 +2,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import articlesReducer from './slices/articlesSlice';
 import categoriesReducer from './slices/categoriesSlice';
+import mediaReducer from './slices/mediaSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -13,6 +14,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   articles: articlesReducer,
   categories: categoriesReducer,
+  media: mediaReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

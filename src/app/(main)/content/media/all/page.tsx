@@ -22,30 +22,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSelector } from "react-redux";
+import { selectAllMedia } from "@/lib/redux/slices/mediaSlice";
 
-const mediaItems = [
-  { src: "https://picsum.photos/300/200?random=1", alt: "Newspaper on a table", 'data-ai-hint': 'newspaper' },
-  { src: "https://picsum.photos/300/200?random=2", alt: "Man reading a newspaper", 'data-ai-hint': 'man newspaper' },
-  { src: "https://picsum.photos/300/200?random=3", alt: "Business newspaper", 'data-ai-hint': 'business newspaper' },
-  { src: "https://picsum.photos/300/200?random=4", alt: "Architectural detail", 'data-ai-hint': 'architecture detail' },
-  { src: "https://picsum.photos/300/200?random=5", alt: "Mountain peak", 'data-ai-hint': 'mountain peak' },
-  { src: "https://picsum.photos/300/200?random=6", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=7", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=8", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=9", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=10", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=11", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=12", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=13", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=14", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=15", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=16", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=17", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-  { src: "https://picsum.photos/300/200?random=18", alt: "Placeholder", 'data-ai-hint': 'placeholder' },
-];
 
 export default function AllMediaPage() {
     const [showAddMedia, setShowAddMedia] = useState(false);
+    const mediaItems = useSelector(selectAllMedia);
 
   return (
     <div className="space-y-4">
