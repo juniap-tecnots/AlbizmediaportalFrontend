@@ -157,6 +157,15 @@ export default function NewArticlePage() {
     }, [updateActiveCommands]);
 
     const handlePublish = () => {
+        if (!title.trim()) {
+            toast({
+                title: "Title is required",
+                description: "Please enter a title for your article.",
+                variant: "destructive",
+            });
+            return;
+        }
+
         const articleData = {
             title,
             slug,
