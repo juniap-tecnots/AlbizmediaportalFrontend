@@ -287,13 +287,14 @@ export default function NewArticlePage() {
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 items-start">
                 <div className="lg:col-span-3 space-y-6">
                     <Card>
-                        <CardContent className="p-6">
+                        <CardContent className="p-6 space-y-2">
+                            <Label htmlFor="title">Article Title</Label>
                             <Input 
                                 id="title" 
-                                placeholder="Enter article title" 
+                                placeholder="Enter your article title..." 
                                 value={title} 
                                 onChange={(e) => setTitle(e.target.value)} 
-                                className="text-2xl border-0 focus-visible:ring-0 shadow-none p-0 h-auto"
+                                className="text-xl border-0 focus-visible:ring-0 shadow-none p-0 h-auto"
                             />
                         </CardContent>
                     </Card>
@@ -612,5 +613,3 @@ export default function NewArticlePage() {
     </EditorContext.Provider>
   )
 }
-
-    
