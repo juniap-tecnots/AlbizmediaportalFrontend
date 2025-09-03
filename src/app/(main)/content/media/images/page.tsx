@@ -2,7 +2,7 @@
 'use client'
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,12 +20,44 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useSelector } from "react-redux";
-import { selectImages } from "@/lib/redux/slices/mediaSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectImages, addMediaItem } from "@/lib/redux/slices/mediaSlice";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ImagesPage() {
     const [showAddMedia, setShowAddMedia] = useState(false);
     const mediaItems = useSelector(selectImages);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const dispatch = useDispatch();
+    const { toast } = useToast();
+
+    const handleSelectFilesClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            for (const file of Array.from(files)) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const src = e.target?.result as string;
+                    dispatch(addMediaItem({ 
+                        src, 
+                        alt: file.name, 
+                        type: 'image',
+                        'data-ai-hint': 'new image' 
+                    }));
+                };
+                reader.readAsDataURL(file);
+            }
+             toast({
+                title: "Upload Successful",
+                description: `${files.length} image(s) have been added.`,
+            });
+            setShowAddMedia(false);
+        }
+    };
 
   return (
     <div className="space-y-4">
@@ -72,7 +104,15 @@ export default function ImagesPage() {
                     <div className="flex flex-col items-center gap-4">
                         <UploadCloud className="h-12 w-12 text-muted-foreground" />
                         <p className="text-muted-foreground">Drag 'n' drop some files here, or click to select files</p>
-                        <Button variant="outline">Select Files</Button>
+                        <Button variant="outline" onClick={handleSelectFilesClick}>Select Files</Button>
+                         <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            multiple
+                            accept="image/*"
+                        />
                     </div>
                 </div>
                 <div className="mt-4">

@@ -2,8 +2,7 @@
 'use client'
 
 import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Grid2x2, List, PlusCircle, UploadCloud } from "lucide-react";
 import {
   Card,
@@ -22,13 +20,50 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useSelector } from "react-redux";
-import { selectAllMedia } from "@/lib/redux/slices/mediaSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectAllMedia, addMediaItem, MediaType } from "@/lib/redux/slices/mediaSlice";
+import { useToast } from "@/hooks/use-toast";
 
 
 export default function AllMediaPage() {
     const [showAddMedia, setShowAddMedia] = useState(false);
     const mediaItems = useSelector(selectAllMedia);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const dispatch = useDispatch();
+    const { toast } = useToast();
+
+    const handleSelectFilesClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            for (const file of Array.from(files)) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const src = e.target?.result as string;
+                    let type: MediaType = 'document';
+                    if (file.type.startsWith('image/')) type = 'image';
+                    else if (file.type.startsWith('video/')) type = 'video';
+                    else if (file.type.startsWith('audio/')) type = 'audio';
+                    
+                    dispatch(addMediaItem({ 
+                        src, 
+                        alt: file.name, 
+                        type, 
+                        'data-ai-hint': 'new media' 
+                    }));
+                };
+                reader.readAsDataURL(file);
+            }
+            toast({
+                title: "Upload Successful",
+                description: `${files.length} file(s) have been added to the media library.`,
+            });
+            setShowAddMedia(false);
+        }
+    };
 
   return (
     <div className="space-y-4">
@@ -83,7 +118,14 @@ export default function AllMediaPage() {
                     <div className="flex flex-col items-center gap-4">
                         <UploadCloud className="h-12 w-12 text-muted-foreground" />
                         <p className="text-muted-foreground">Drag 'n' drop some files here, or click to select files</p>
-                        <Button variant="outline">Select Files</Button>
+                        <Button variant="outline" onClick={handleSelectFilesClick}>Select Files</Button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            multiple
+                        />
                     </div>
                 </div>
                 <div className="mt-4">

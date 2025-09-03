@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,9 +11,43 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PlusCircle, UploadCloud } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { addMediaItem } from "@/lib/redux/slices/mediaSlice";
+import { useToast } from "@/hooks/use-toast";
 
 export default function VideosPage() {
   const [showAddMedia, setShowAddMedia] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+
+  const handleSelectFilesClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      for (const file of Array.from(files)) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const src = e.target?.result as string;
+          dispatch(addMediaItem({ 
+              src, 
+              alt: file.name, 
+              type: 'video',
+              'data-ai-hint': 'new video' 
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
+       toast({
+          title: "Upload Successful",
+          description: `${files.length} video(s) have been added.`,
+      });
+      setShowAddMedia(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -35,7 +69,15 @@ export default function VideosPage() {
                     <div className="flex flex-col items-center gap-4">
                         <UploadCloud className="h-12 w-12 text-muted-foreground" />
                         <p className="text-muted-foreground">Drag 'n' drop some files here, or click to select files</p>
-                        <Button variant="outline">Select Files</Button>
+                        <Button variant="outline" onClick={handleSelectFilesClick}>Select Files</Button>
+                         <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            multiple
+                            accept="video/*"
+                        />
                     </div>
                 </div>
                 <div className="mt-4">
