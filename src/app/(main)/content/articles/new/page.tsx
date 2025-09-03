@@ -31,7 +31,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useDispatch } from "react-redux"
 import { addArticle } from "@/lib/redux/slices/articlesSlice"
-import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 
 type BlockType = 'paragraph' | 'heading' | 'list' | 'quote' | 'image' | 'gallery';
@@ -153,7 +152,6 @@ function BlockComponent({ block, updateBlock, removeBlock }: { block: Block, upd
 
 export default function NewArticlePage() {
     const dispatch = useDispatch();
-    const router = useRouter();
     const { toast } = useToast();
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
@@ -251,6 +249,18 @@ export default function NewArticlePage() {
     const filteredCategories = allCategories.filter(category =>
         category.label.toLowerCase().includes(categorySearch.toLowerCase())
     );
+    
+    const resetForm = () => {
+        setTitle('');
+        setSlug('');
+        setBlocks([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
+        setTags([]);
+        setTagInput('');
+        setSelectedCategories(['uncategorized']);
+        setExcerpt('');
+        setStatus('Draft');
+        setVisibility('public');
+    }
 
     const handlePublish = () => {
         const articleData = {
@@ -269,6 +279,7 @@ export default function NewArticlePage() {
           title: "Article Published!",
           description: "Your new article has been successfully published.",
         });
+        resetForm();
     }
 
   return (
