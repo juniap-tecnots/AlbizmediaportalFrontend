@@ -174,6 +174,16 @@ export default function NewArticlePage() {
           title: "Article Published!",
           description: "Your new article has been successfully published.",
         });
+
+        // Reset form
+        setTitle('');
+        setContent('');
+        if (editorRef.current) {
+            editorRef.current.innerHTML = '';
+        }
+        setSlug('');
+        setCategories([]);
+        setTags([]);
     };
 
     const handleInsertImage = () => {
