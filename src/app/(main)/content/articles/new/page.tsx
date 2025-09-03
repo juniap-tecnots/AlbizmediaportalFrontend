@@ -17,10 +17,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { addArticle } from "@/lib/redux/slices/articlesSlice"
 import { useToast } from "@/hooks/use-toast"
 import {
@@ -42,6 +42,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+import { selectAllCategories, selectAllTags } from "@/lib/redux/slices/categoriesSlice"
 
 
 const ToolbarButton = ({ command, icon: Icon, tooltip, onClick }: { command: string, icon: React.ElementType, tooltip: string, onClick?: () => void }) => {
@@ -95,15 +97,17 @@ export default function NewArticlePage() {
     const [content, setContent] = useState('');
     const [slug, setSlug] = useState('');
     
-    const [labels, setLabels] = useState<string[]>([]);
-    const [permalink, setPermalink] = useState('');
-    const [location, setLocation] = useState('');
-
-    const [isLabelsOpen, setIsLabelsOpen] = useState(true);
+    const allCategories = useSelector(selectAllCategories);
+    const allTags = useSelector(selectAllTags);
+    
+    const [categories, setCategories] = useState<string[]>([]);
+    const [tags, setTags] = useState<string[]>([]);
+    const [newCategory, setNewCategory] = useState('');
+    const [newTag, setNewTag] = useState('');
+    
+    const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
+    const [isTagsOpen, setIsTagsOpen] = useState(true);
     const [isPublishedOpen, setIsPublishedOpen] = useState(true);
-    const [isPermalinkOpen, setIsPermalinkOpen] = useState(true);
-    const [isLocationOpen, setIsLocationOpen] = useState(true);
-    const [isOptionsOpen, setIsOptionsOpen] = useState(true);
 
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
     
@@ -158,8 +162,8 @@ export default function NewArticlePage() {
             slug,
             content: editorRef.current?.innerHTML || '',
             status: 'Published',
-            categories: labels,
-            tags: [],
+            categories,
+            tags,
             visibility: 'public',
             excerpt: '',
             featuredImage: '',
@@ -216,7 +220,28 @@ export default function NewArticlePage() {
             videoFileInputRef.current?.click();
         }
     };
+    
+    const handleAddCategory = () => {
+        if (newCategory && !categories.includes(newCategory)) {
+            setCategories([...categories, newCategory]);
+            setNewCategory('');
+        }
+    };
 
+    const handleRemoveCategory = (categoryToRemove: string) => {
+        setCategories(categories.filter(category => category !== categoryToRemove));
+    };
+
+    const handleAddTag = () => {
+        if (newTag && !tags.includes(newTag)) {
+            setTags([...tags, newTag]);
+            setNewTag('');
+        }
+    };
+
+    const handleRemoveTag = (tagToRemove: string) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    };
 
     const editorContextValue = {
         handleFormat,
@@ -384,22 +409,78 @@ export default function NewArticlePage() {
                         <CardContent className="p-4">
                             <h3 className="text-sm font-medium text-gray-500 mb-4">Post settings</h3>
 
-                            <Collapsible open={isLabelsOpen} onOpenChange={setIsLabelsOpen} asChild>
+                             <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen} asChild>
                                 <div className="border-b">
                                     <CollapsibleTrigger className="w-full py-3">
                                         <div className="flex items-center justify-between">
-                                            <Label>Labels</Label>
-                                            {isLabelsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                            <Label>Categories</Label>
+                                            {isCategoriesOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                                         </div>
                                     </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4">
-                                         <Input placeholder="Add a label..."/>
+                                    <CollapsibleContent className="pb-4 space-y-2">
+                                        <div className="flex flex-wrap gap-2">
+                                            {categories.map(cat => (
+                                                <Badge key={cat} variant="secondary" className="flex items-center gap-1">
+                                                    {cat}
+                                                    <button onClick={() => handleRemoveCategory(cat)}><XIcon className="h-3 w-3" /></button>
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                         <Select onValueChange={(value) => !categories.includes(value) && setCategories([...categories, value])}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {allCategories.map(cat => (
+                                                    <SelectItem key={cat.slug} value={cat.name} disabled={categories.includes(cat.name)}>{cat.name}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <div className="flex items-center gap-2">
+                                            <Input 
+                                                placeholder="Add new category" 
+                                                value={newCategory}
+                                                onChange={(e) => setNewCategory(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
+                                            />
+                                            <Button variant="secondary" onClick={handleAddCategory}>Add</Button>
+                                        </div>
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
+
+                             <Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen} asChild>
+                                <div className="border-b">
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Tags</Label>
+                                            {isTagsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4 space-y-2">
+                                        <div className="flex flex-wrap gap-2">
+                                            {tags.map(tag => (
+                                                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                                                    {tag}
+                                                    <button onClick={() => handleRemoveTag(tag)}><XIcon className="h-3 w-3" /></button>
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Input 
+                                                placeholder="Add a tag" 
+                                                value={newTag}
+                                                onChange={(e) => setNewTag(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+                                            />
+                                            <Button variant="secondary" onClick={handleAddTag}>Add</Button>
+                                        </div>
                                     </CollapsibleContent>
                                 </div>
                             </Collapsible>
 
                             <Collapsible open={isPublishedOpen} onOpenChange={setIsPublishedOpen} asChild>
-                                 <div className="border-b">
+                                 <div className="border-b-0">
                                     <CollapsibleTrigger className="w-full py-3">
                                         <div className="flex items-center justify-between">
                                             <Label>Published on</Label>
@@ -407,49 +488,7 @@ export default function NewArticlePage() {
                                         </div>
                                     </CollapsibleTrigger>
                                     <CollapsibleContent className="pb-4">
-                                        <p className="text-sm text-gray-700">03/09/2025 12:11</p>
-                                    </CollapsibleContent>
-                                </div>
-                            </Collapsible>
-                            
-                            <Collapsible open={isPermalinkOpen} onOpenChange={setIsPermalinkOpen} asChild>
-                                 <div className="border-b">
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Permalink</Label>
-                                            {isPermalinkOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4">
-                                         <Input value={permalink} onChange={(e) => setPermalink(e.target.value)} />
-                                    </CollapsibleContent>
-                                </div>
-                            </Collapsible>
-
-                            <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen} asChild>
-                                <div className="border-b">
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Location</Label>
-                                            {isLocationOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4">
-                                         <Input value={location} onChange={(e) => setLocation(e.target.value)} />
-                                    </CollapsibleContent>
-                                </div>
-                            </Collapsible>
-
-                            <Collapsible open={isOptionsOpen} onOpenChange={setIsOptionsOpen} asChild>
-                                <div>
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Options</Label>
-                                            {isOptionsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4">
-                                        <p className="text-sm text-gray-500">Further options here.</p>
+                                        <p className="text-sm text-gray-700">Publish immediately</p>
                                     </CollapsibleContent>
                                 </div>
                             </Collapsible>
