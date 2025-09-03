@@ -20,19 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowUpDown } from "lucide-react"
+import { useSelector } from "react-redux"
+import { selectArchivedArticles } from "@/lib/redux/slices/articlesSlice"
 
-const articles = [
-  {
-    title: "Archived Post Example",
-    author: "albiz",
-    categories: ["World"],
-    tags: ["Old-News"],
-    date: "2024/01/15 at 3:30 pm",
-    status: "Archived",
-  },
-]
 
 export default function ArchivedPage() {
+  const articles = useSelector(selectArchivedArticles);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -107,7 +101,7 @@ export default function ArchivedPage() {
                 </TableCell>
                 <TableCell>
                     {article.status}<br/>
-                    <span className="text-muted-foreground">{article.date}</span>
+                    <span className="text-muted-foreground">{new Date(article.date).toLocaleString()}</span>
                 </TableCell>
               </TableRow>
             ))}
@@ -116,7 +110,7 @@ export default function ArchivedPage() {
       </div>
       <div className="flex justify-between items-center text-sm text-muted-foreground">
         <div>
-            <span>1 item</span>
+            <span>{articles.length} item</span>
         </div>
         <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled>

@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useRef, useEffect, KeyboardEvent } from "react"
+import { useState, useRef, KeyboardEvent } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -29,6 +29,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useDispatch } from "react-redux"
+import { addArticle } from "@/lib/redux/slices/articlesSlice"
+import { useRouter } from "next/navigation"
 
 type BlockType = 'paragraph' | 'heading' | 'list' | 'quote' | 'image' | 'gallery';
 
@@ -148,6 +151,8 @@ function BlockComponent({ block, updateBlock, removeBlock }: { block: Block, upd
 
 
 export default function NewArticlePage() {
+    const dispatch = useDispatch();
+    const router = useRouter();
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
     const [blocks, setBlocks] = useState<Block[]>([{ id: Date.now().toString(), type: 'paragraph', content: '' }]);
@@ -163,6 +168,10 @@ export default function NewArticlePage() {
     const [categorySearch, setCategorySearch] = useState('');
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [newCategoryInput, setNewCategoryInput] = useState('');
+
+    const [status, setStatus] = useState<'Draft' | 'Published'>('Draft');
+    const [visibility, setVisibility] = useState<'public' | 'private' | 'password'>('public');
+    const [excerpt, setExcerpt] = useState('');
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
@@ -241,6 +250,21 @@ export default function NewArticlePage() {
         category.label.toLowerCase().includes(categorySearch.toLowerCase())
     );
 
+    const handlePublish = () => {
+        const articleData = {
+            title,
+            slug,
+            blocks,
+            status,
+            categories: selectedCategories.map(cId => allCategories.find(c => c.id === cId)?.label || ''),
+            tags,
+            visibility,
+            excerpt,
+            featuredImage: '', // Add featured image logic later
+        };
+        dispatch(addArticle(articleData));
+        router.push('/content/articles/all');
+    }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -332,7 +356,7 @@ export default function NewArticlePage() {
                     <Button variant="outline" size="sm">Save draft</Button>
                     <Button variant="outline" size="sm">Preview</Button>
                 </div>
-                <Button size="sm">Publish</Button>
+                <Button size="sm" onClick={handlePublish}>Publish</Button>
             </CardHeader>
         </Card>
         
@@ -343,20 +367,20 @@ export default function NewArticlePage() {
           <CardContent className="space-y-4">
              <div className="space-y-2">
                 <Label>Status</Label>
-                <RadioGroup defaultValue="draft" className="flex gap-4">
+                <RadioGroup value={status} onValueChange={(v) => setStatus(v as any)} className="flex gap-4">
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="draft" id="draft" />
+                        <RadioGroupItem value="Draft" id="draft" />
                         <Label htmlFor="draft">Draft</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="published" id="published" />
+                        <RadioGroupItem value="Published" id="published" />
                         <Label htmlFor="published">Published</Label>
                     </div>
                 </RadioGroup>
             </div>
             <div className="space-y-2">
               <Label>Visibility</Label>
-              <Select defaultValue="public">
+              <Select value={visibility} onValueChange={(v) => setVisibility(v as any)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select visibility" />
                 </SelectTrigger>
@@ -380,7 +404,7 @@ export default function NewArticlePage() {
 
              <div className="space-y-2">
                 <Label>Excerpt</Label>
-                <Textarea placeholder="Add an excerpt..." />
+                <Textarea placeholder="Add an excerpt..." value={excerpt} onChange={(e) => setExcerpt(e.target.value)} />
             </div>
           </CardContent>
         </Card>

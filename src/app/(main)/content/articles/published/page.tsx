@@ -20,51 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowUpDown } from "lucide-react"
+import { useSelector } from "react-redux"
+import { selectPublishedArticles } from "@/lib/redux/slices/articlesSlice"
 
-const articles = [
-  {
-    title: "Global Update",
-    author: "albiz",
-    categories: ["Uncategorized"],
-    tags: [],
-    date: "2025/09/01 at 6:07 am",
-    status: "Published",
-  },
-  {
-    title: "One swallow does not make the spring",
-    author: "albiz",
-    categories: ["Life Style"],
-    tags: ["Games"],
-    date: "2025/09/01 at 5:40 am",
-    status: "Published",
-  },
-  {
-    title: "Tip of the day: That man again",
-    author: "albiz",
-    categories: ["Life Style"],
-    tags: ["Team"],
-    date: "2025/09/01 at 5:40 am",
-    status: "Published",
-  },
-  {
-    title: "Hibs and Ross County fans on final",
-    author: "albiz",
-    categories: ["Life Style"],
-    tags: ["Color"],
-    date: "2025/09/01 at 5:40 am",
-    status: "Published",
-  },
-  {
-    title: "Persuasion is often more effectual than force",
-    author: "albiz",
-    categories: ["Life Style"],
-    tags: ["Content"],
-    date: "2025/09/01 at 5:40 am",
-    status: "Published",
-  },
-]
 
 export default function PublishedPage() {
+  const articles = useSelector(selectPublishedArticles);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -139,7 +101,7 @@ export default function PublishedPage() {
                 </TableCell>
                 <TableCell>
                     {article.status}<br/>
-                    <span className="text-muted-foreground">{article.date}</span>
+                    <span className="text-muted-foreground">{new Date(article.date).toLocaleString()}</span>
                 </TableCell>
               </TableRow>
             ))}
@@ -148,7 +110,7 @@ export default function PublishedPage() {
       </div>
       <div className="flex justify-between items-center text-sm text-muted-foreground">
         <div>
-            <span>5 items</span>
+            <span>{articles.length} items</span>
         </div>
         <div className="flex items-center gap-2">
             <Button variant="outline" size="sm">

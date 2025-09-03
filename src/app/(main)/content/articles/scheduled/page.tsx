@@ -20,19 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowUpDown } from "lucide-react"
+import { useSelector } from "react-redux"
+import { selectScheduledArticles } from "@/lib/redux/slices/articlesSlice"
 
-const articles = [
-  {
-    title: "Scheduled Post Example",
-    author: "albiz",
-    categories: ["Business"],
-    tags: ["Planning"],
-    date: "2025/10/01 at 9:00 am",
-    status: "Scheduled",
-  },
-]
 
 export default function ScheduledPage() {
+  const articles = useSelector(selectScheduledArticles);
+
   return (
     <div className="space-y-4">
         <div className="flex justify-between items-center">
@@ -107,7 +101,7 @@ export default function ScheduledPage() {
                     </TableCell>
                     <TableCell>
                         {article.status}<br/>
-                        <span className="text-muted-foreground">{article.date}</span>
+                        <span className="text-muted-foreground">{new Date(article.date).toLocaleString()}</span>
                     </TableCell>
                 </TableRow>
                 ))}
@@ -116,7 +110,7 @@ export default function ScheduledPage() {
         </div>
         <div className="flex justify-between items-center text-sm text-muted-foreground">
             <div>
-                <span>1 item</span>
+                <span>{articles.length} item</span>
             </div>
             <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" disabled>

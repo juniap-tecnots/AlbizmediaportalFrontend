@@ -20,19 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowUpDown } from "lucide-react"
+import { useSelector } from "react-redux"
+import { selectDraftArticles } from "@/lib/redux/slices/articlesSlice"
 
-const articles = [
-  {
-    title: "Draft Post Example",
-    author: "albiz",
-    categories: ["Tech"],
-    tags: ["Drafting"],
-    date: "2025/09/02 at 10:00 am",
-    status: "Draft",
-  },
-]
 
 export default function DraftsPage() {
+  const articles = useSelector(selectDraftArticles);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -107,7 +101,7 @@ export default function DraftsPage() {
                 </TableCell>
                 <TableCell>
                     {article.status}<br/>
-                    <span className="text-muted-foreground">{article.date}</span>
+                    <span className="text-muted-foreground">{new Date(article.date).toLocaleString()}</span>
                 </TableCell>
               </TableRow>
             ))}
@@ -116,7 +110,7 @@ export default function DraftsPage() {
       </div>
       <div className="flex justify-between items-center text-sm text-muted-foreground">
         <div>
-            <span>1 item</span>
+            <span>{articles.length} item</span>
         </div>
         <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled>
