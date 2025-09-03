@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useRef, KeyboardEvent } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -28,9 +29,11 @@ import { ChevronDown, ChevronUp, Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { addArticle } from "@/lib/redux/slices/articlesSlice"
 import { useToast } from "@/hooks/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { selectImages } from "@/lib/redux/slices/mediaSlice"
 
 const initialCategories = [
     { id: 'business', label: 'Business' },
@@ -66,6 +69,11 @@ export default function NewArticlePage() {
     const [status, setStatus] = useState<'Draft' | 'Published'>('Draft');
     const [visibility, setVisibility] = useState<'public' | 'private' | 'password'>('public');
     const [excerpt, setExcerpt] = useState('');
+    
+    const [featuredImage, setFeaturedImage] = useState<string>('');
+    const [isMediaDialogOpen, setIsMediaDialogOpen] = useState(false);
+    const mediaImages = useSelector(selectImages);
+
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
@@ -129,6 +137,11 @@ export default function NewArticlePage() {
         category.label.toLowerCase().includes(categorySearch.toLowerCase())
     );
     
+    const handleSelectFeaturedImage = (src: string) => {
+        setFeaturedImage(src);
+        setIsMediaDialogOpen(false);
+    }
+    
     const resetForm = () => {
         setTitle('');
         setSlug('');
@@ -137,6 +150,7 @@ export default function NewArticlePage() {
         setTagInput('');
         setSelectedCategories(['uncategorized']);
         setExcerpt('');
+        setFeaturedImage('');
         setStatus('Draft');
         setVisibility('public');
     }
@@ -151,7 +165,7 @@ export default function NewArticlePage() {
             tags,
             visibility,
             excerpt,
-            featuredImage: '',
+            featuredImage: featuredImage,
             blocks: [{ id: '1', type: 'paragraph', content: content }]
         };
         dispatch(addArticle(articleData as any));
@@ -242,7 +256,33 @@ export default function NewArticlePage() {
                 <CardTitle>Featured Image</CardTitle>
             </CardHeader>
             <CardContent>
-                <Button variant="outline" className="w-full">Set featured image</Button>
+                <Dialog open={isMediaDialogOpen} onOpenChange={setIsMediaDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full" onClick={() => setIsMediaDialogOpen(true)}>Set featured image</Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl">
+                        <DialogHeader>
+                            <DialogTitle>Select a Featured Image</DialogTitle>
+                        </DialogHeader>
+                        <ScrollArea className="h-[500px] border rounded-md">
+                            <div className="grid grid-cols-4 gap-4 p-4">
+                                {mediaImages.map((item) => (
+                                    <div key={item.id} className="relative aspect-square cursor-pointer" onClick={() => handleSelectFeaturedImage(item.src)}>
+                                        <Image src={item.src} alt={item.alt} fill className="object-cover rounded-md" data-ai-hint={item['data-ai-hint']} />
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                    </DialogContent>
+                </Dialog>
+                {featuredImage && (
+                    <div className="mt-4 space-y-2">
+                        <Image src={featuredImage} alt="Featured Image Preview" width={300} height={200} className="w-full h-auto rounded-md" />
+                        <Button variant="link" size="sm" className="p-0 h-auto text-destructive" onClick={() => setFeaturedImage('')}>
+                            Remove featured image
+                        </Button>
+                    </div>
+                )}
             </CardContent>
         </Card>
 
