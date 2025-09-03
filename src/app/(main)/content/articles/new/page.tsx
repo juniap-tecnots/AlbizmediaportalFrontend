@@ -231,7 +231,7 @@ export default function NewArticlePage() {
                     </Button>
                     <Button onClick={handlePublish}>
                         <Send className="mr-2 h-4 w-4" />
-                        Update
+                        Publish
                     </Button>
                 </div>
             </header>
