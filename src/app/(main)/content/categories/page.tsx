@@ -16,17 +16,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-
-const initialCategories = [
-    { name: "Business", slug: "business", description: "Articles about the business world", count: 5 },
-    { name: "Life Style", slug: "life-style", description: "Content related to lifestyle", count: 12 },
-    { name: "Tech", slug: "tech", description: "Latest in technology", count: 8 },
-    { name: "Uncategorized", slug: "uncategorized", description: "Articles that have not been categorized", count: 2 },
-    { name: "World", slug: "world", description: "Global news and events", count: 3 },
-]
+import { useDispatch, useSelector } from 'react-redux';
+import { addCategory, selectAllCategories } from '@/lib/redux/slices/categoriesSlice';
 
 export default function CategoriesPage() {
-    const [categories, setCategories] = useState(initialCategories);
+    const dispatch = useDispatch();
+    const categories = useSelector(selectAllCategories);
+    
     const [name, setName] = useState('');
     const [slug, setSlug] = useState('');
     const [parentCategory, setParentCategory] = useState('none');
@@ -34,7 +30,7 @@ export default function CategoriesPage() {
 
     const handleAddCategory = () => {
         if (!name || !slug) return;
-        setCategories([...categories, { name, slug, description: description || '-', count: 0 }]);
+        dispatch(addCategory({ name, slug, description: description || '-', count: 0 }));
         setName('');
         setSlug('');
         setParentCategory('none');

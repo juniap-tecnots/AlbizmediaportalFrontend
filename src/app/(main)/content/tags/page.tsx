@@ -15,17 +15,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label";
 import { Textarea } from '@/components/ui/textarea';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTag, selectAllTags } from '@/lib/redux/slices/categoriesSlice';
 
-const initialTags = [
-    { name: "Color", slug: "color", description: "-", count: 1 },
-    { name: "Content", slug: "content", description: "-", count: 1 },
-    { name: "Foods", slug: "foods", description: "-", count: 1 },
-    { name: "Games", slug: "games", description: "-", count: 2 },
-    { name: "Life Style", slug: "life-style", description: "-", count: 4 },
-]
 
 export default function TagsPage() {
-    const [tags, setTags] = useState(initialTags);
+    const dispatch = useDispatch();
+    const tags = useSelector(selectAllTags);
     const [name, setName] = useState('');
     const [slug, setSlug] = useState('');
     const [description, setDescription] = useState('');
@@ -33,7 +29,7 @@ export default function TagsPage() {
 
     const handleAddTag = () => {
         if (!name || !slug) return;
-        setTags([...tags, { name, slug, description: description || '-', count: 0 }]);
+        dispatch(addTag({ name, slug, description: description || '-', count: 0 }));
         setName('');
         setSlug('');
         setDescription('');
