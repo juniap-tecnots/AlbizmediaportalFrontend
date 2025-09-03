@@ -36,21 +36,14 @@ const initialCategories = [
 export default function NewArticlePage() {
     const dispatch = useDispatch();
     const { toast } = useToast();
-    const [title, setTitle] = useState('Business Growth is All About Smart Decisions');
-    const [content, setContent] = useState(
-`In today's competitive market, success isn't about working harder—it's about working smarter. 
-Here are 3 key strategies every business owner should focus on:
-
-1. Customer-Centric Approach – Listen to your customers, adapt, and deliver value that matters.
-2. Leverage Technology – Automate repetitive tasks, track performance, and use data for better decision-making.
-3. Build Strong Relationships – Networking and collaboration open doors that marketing budgets can't.`
-    );
-    const [slug, setSlug] = useState('business-growth-is-all-about-smart-decisions');
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [slug, setSlug] = useState('');
     
-    const [labels, setLabels] = useState(['Business', 'Growth']);
+    const [labels, setLabels] = useState<string[]>([]);
     const [labelInput, setLabelInput] = useState('');
-    const [permalink, setPermalink] = useState('business-growth-smart-decisions');
-    const [location, setLocation] = useState('New York, USA');
+    const [permalink, setPermalink] = useState('');
+    const [location, setLocation] = useState('');
 
     const [isLabelsOpen, setIsLabelsOpen] = useState(true);
     const [isPublishedOpen, setIsPublishedOpen] = useState(true);
@@ -109,10 +102,10 @@ Here are 3 key strategies every business owner should focus on:
                 <div className="p-2 border-b">
                     {/* Rich Text Editor Toolbar Placeholder */}
                     <div className="flex items-center gap-x-1 text-gray-600">
-                        <Button variant="ghost" size="sm" className="px-2"><svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 21.5L14 20.12l-2.47 2.47c-.19.19-.45.29-.71.29s-.52-.1-.71-.29l-3.18-3.18c-.39-.39-.39-1.02 0-1.41l3.18-3.18c.39-.39 1.02-.39 1.41 0L14 17.29l1.41-1.41c.39-.39 1.02-.39 1.41 0l4.29 4.29c.39.39.39 1.02 0 1.41l-1.41 1.41c-.2.2-.45.29-.71.29s-.51-.1-.71-.29zM2.93 11.29l3.18-3.18c.39-.39 1.02-.39 1.41 0L10 10.59l2.5-2.5c.39-.39.39-1.02 0-1.41L8.21 2.38c-.39-.39-1.02-.39-1.41 0L2.5 6.67c-.39.39-.39 1.02 0 1.41l.71.71c.2.2.45.29.71.29s.51-.1.71-.29zM19.5 2.5a.996.996 0 00-.71.29l-4.29 4.29c-.39.39-.39 1.02 0 1.41l4.29 4.29c.39.39 1.02.39 1.41 0l4.29-4.29c.39-.39.39-1.02 0-1.41L20.21 2.79a.996.996 0 00-.71-.29z"/></svg></Button>
+                        <Button variant="ghost" size="sm" className="px-2"><svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 21.5L14 20.12l-2.47 2.47c-.19.19-.45.29-.71.29s-.52-.1-.71-.29l-3.18-3.18c-.39-.39-.39-1.02 0-1.41l3.18-3.18c.39-.39 1.02-.39 1.41 0L14 17.29l1.41-1.41c.39-.39 1.02-.39 1.41 0l4.29 4.29c.39.39.39 1.02 0 1.41l-1.41 1.41c-.2.2-.45.29-.71.29s-.51-.1-.71-.29zM2.93 11.29l3.18-3.18c.39-.39 1.02-.39 1.41 0L10 10.59l2.5-2.5c.39-.39.39-1.02 0-1.41L8.21 2.38c-.39-.39-1.02-.39-1.41 0L2.5 6.67c-.39.39-.39 1.02 0 1.41l.71.71c.2.2.45.29.71.29s.51-.1.71-.29zM19.5 2.5a.996.996 0 00-.71.29l-4.29 4.29c-.39-.39-.39 1.02 0 1.41l4.29 4.29c.39.39 1.02.39 1.41 0l4.29-4.29c.39-.39.39-1.02 0-1.41L20.21 2.79a.996.996 0 00-.71-.29z"/></svg></Button>
                         <Separator orientation="vertical" className="h-6" />
                         <Button variant="ghost" size="sm" className="px-2"><svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M10.15 14.82L6.9 11.56c-.39-.39-1.02-.39-1.41 0c-.39.39-.39 1.02 0 1.41l3.96 3.96c.39.39 1.02.39 1.41 0l8.48-8.48c.39-.39.39-1.02 0-1.41c-.39-.39-1.02-.39-1.41 0z"/></svg></Button>
-                        <Button variant="ghost" size="sm" className="px-2"><svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12.5 8c-2.65 0-5.18.5-7.39 1.41c-.91.37-.82 1.63.15 1.81c1.88.36 4.23.63 6.74.63s4.86-.27 6.74-.63c.97-.18 1.06-1.44.15-1.81C17.68 8.5 15.15 8 12.5 8m0 9c-2.65 0-5.18.5-7.39 1.41c-.91.37-.82 1.63.15 1.81c1.88.36 4.23.63 6.74.63s4.86-.27 6.74-.63c.97-.18 1.06-1.44.15-1.81C17.68 17.5 15.15 17 12.5 17m0-9c2.65 0 5.18-.5 7.39-1.41c.91-.37.82-1.63-.15-1.81c-1.88-.36-4.23-.63-6.74-.63s-4.86.27-6.74.63c-.97.18-1.06 1.44-.15 1.81C7.32 7.5 9.85 8 12.5 8"/></svg></Button>
+                        <Button variant="ghost" size="sm" className="px-2"><svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12.5 8c-2.65 0-5.18.5-7.39 1.41c-.91.37-.82 1.63.15 1.81c1.88.36 4.23.63 6.74.63s4.86-.27 6.74-.63c.97-.18 1.06-1.44.15-1.81C17.68 8.5 15.15 8 12.5 8m0 9c-2.65 0-5.18.5-7.39 1.41c-.91.37-.82 1.63.15 1.81c1.88.36 4.23.63 6.74.63s4.86-.27 6.74-.63c.97-.18 1.06-1.44.15-1.81C17.68 17.5 15.15 17 12.5 17m0-9c2.65 0 5.18-.5 7.39-1.41c.91-.37.82-1.63-.15-1.81c-1.88-.36-4.23-.63-6.74-.63s-4.86.27-6.74-.63c-.97.18-1.06-1.44-.15-1.81C7.32 7.5 9.85 8 12.5 8"/></svg></Button>
                         <Select defaultValue="normal">
                             <SelectTrigger className="w-auto border-0 text-sm focus:ring-0">
                                 <SelectValue />
