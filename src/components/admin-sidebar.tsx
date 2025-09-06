@@ -148,7 +148,7 @@ export function AdminSidebar() {
 
   return (
     <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0">
-      <div className="px-6 py-5 border-b border-gray-200">
+      <div className="flex h-16 items-center px-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
             <Gem className="w-5 h-5 text-white" />
@@ -174,7 +174,7 @@ export function AdminSidebar() {
         </div>
       </nav>
 
-      <div className="px-4 py-4 border-t border-gray-200">
+      <div className="px-4 py-4">
         <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
           <Avatar className="w-8 h-8">
             <AvatarImage src="https://picsum.photos/100" alt="Admin" data-ai-hint="person" />
