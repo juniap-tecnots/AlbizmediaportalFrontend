@@ -3,7 +3,7 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import { PageHeader } from "@/components/page-header";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const tabs = [
     { value: 'categories', label: 'Categories', href: '/content/categories' },
@@ -44,8 +44,8 @@ export default function CategoriesLayout({
                  </TabsTrigger>
             ))}
         </TabsList>
+        {children}
       </Tabs>
-      <div className="mt-4">{children}</div>
     </div>
   );
 }

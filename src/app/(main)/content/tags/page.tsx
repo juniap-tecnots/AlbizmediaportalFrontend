@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from '@/components/ui/textarea';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTag, selectAllTags } from '@/lib/redux/slices/categoriesSlice';
+import { TabsContent } from '@/components/ui/tabs';
 
 
 export default function TagsPage() {
@@ -36,54 +37,56 @@ export default function TagsPage() {
     }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div className="md:col-span-1">
-        <div className="space-y-4">
-            <h3 className="text-lg font-medium">Add New Tag</h3>
-            <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Tag Name" />
-                <p className="text-sm text-muted-foreground">The name is how it appears on your site.</p>
+    <TabsContent value="tags">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
+          <div className="md:col-span-1">
+            <div className="space-y-4">
+                <h3 className="text-lg font-medium">Add New Tag</h3>
+                <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Tag Name" />
+                    <p className="text-sm text-muted-foreground">The name is how it appears on your site.</p>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="slug">Slug</Label>
+                    <Input id="slug" value={slug} onChange={e => setSlug(e.target.value)} placeholder="tag-slug" />
+                     <p className="text-sm text-muted-foreground">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Tag description" />
+                     <p className="text-sm text-muted-foreground">The description is not prominent by default; however, some themes may show it.</p>
+                </div>
+                <Button onClick={handleAddTag}>Add New Tag</Button>
             </div>
-             <div className="space-y-2">
-                <Label htmlFor="slug">Slug</Label>
-                <Input id="slug" value={slug} onChange={e => setSlug(e.target.value)} placeholder="tag-slug" />
-                 <p className="text-sm text-muted-foreground">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
+          </div>
+          <div className="md:col-span-2">
+            <div className="border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                        <TableHead className="w-12"><Checkbox /></TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Slug</TableHead>
+                        <TableHead className="text-right">Count</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {tags.map((tag, index) => (
+                        <TableRow key={index}>
+                            <TableCell><Checkbox /></TableCell>
+                            <TableCell className="font-medium text-primary"><a href="#">{tag.name}</a></TableCell>
+                            <TableCell>{tag.description}</TableCell>
+                            <TableCell>{tag.slug}</TableCell>
+                            <TableCell className="text-right"><a href="#" className="text-primary hover:underline">{tag.count}</a></TableCell>
+                        </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Tag description" />
-                 <p className="text-sm text-muted-foreground">The description is not prominent by default; however, some themes may show it.</p>
-            </div>
-            <Button onClick={handleAddTag}>Add New Tag</Button>
+          </div>
         </div>
-      </div>
-      <div className="md:col-span-2">
-        <div className="border rounded-lg">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                    <TableHead className="w-12"><Checkbox /></TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Slug</TableHead>
-                    <TableHead className="text-right">Count</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {tags.map((tag, index) => (
-                    <TableRow key={index}>
-                        <TableCell><Checkbox /></TableCell>
-                        <TableCell className="font-medium text-primary"><a href="#">{tag.name}</a></TableCell>
-                        <TableCell>{tag.description}</TableCell>
-                        <TableCell>{tag.slug}</TableCell>
-                        <TableCell className="text-right"><a href="#" className="text-primary hover:underline">{tag.count}</a></TableCell>
-                    </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
-      </div>
-    </div>
+    </TabsContent>
   );
 }
