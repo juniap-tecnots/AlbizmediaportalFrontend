@@ -87,6 +87,7 @@ export function AdminSidebar() {
   const renderMenuItem = (item: MenuItemProps) => {
     const isExpanded = expandedItems.includes(item.id);
     const hasChildren = item.children && item.children.length > 0;
+    const active = isActive(item.href) || (hasChildren && (isExpanded || isSubItemActive(item.children)));
     
     const WrapperComponent = item.href ? Link : 'div';
     const wrapperProps = item.href ? { href: item.href } : {};
@@ -97,8 +98,8 @@ export function AdminSidebar() {
                 <div
                     className={cn(
                         'flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 group',
-                        'text-gray-700 hover:text-gray-900 hover:bg-gray-100',
-                        (isActive(item.href) || (hasChildren && (isExpanded || isSubItemActive(item.children)))) && 'bg-gray-50 text-gray-900'
+                        'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                        active && 'bg-primary text-primary-foreground'
                     )}
                     onClick={(e) => {
                         if (hasChildren) {
@@ -110,8 +111,8 @@ export function AdminSidebar() {
                 >
                     <div className="flex items-center space-x-3">
                         <span className={cn(
-                            'text-gray-500 group-hover:text-gray-700',
-                             (isActive(item.href) || isSubItemActive(item.children)) && 'text-gray-700'
+                            'text-sidebar-foreground group-hover:text-sidebar-accent-foreground',
+                             active && 'text-primary-foreground'
                         )}>
                             <item.icon size={20} />
                         </span>
@@ -120,7 +121,7 @@ export function AdminSidebar() {
                         </span>
                     </div>
                     {hasChildren && (
-                        <span className="text-gray-400 group-hover:text-gray-600">
+                        <span className={cn("text-gray-400 group-hover:text-gray-600", active && 'text-primary-foreground')}>
                             {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                         </span>
                     )}
@@ -128,13 +129,13 @@ export function AdminSidebar() {
             </WrapperComponent>
 
             {hasChildren && isExpanded && (
-                <div className="mt-1 ml-4 pl-5 border-l border-gray-200 space-y-1 py-1">
+                <div className="mt-1 ml-4 pl-5 border-l border-sidebar-border space-y-1 py-1">
                     {item.children?.map(child => (
                          <Link href={child.href || '#'} key={child.id}>
                              <div className={cn(
                                 'block px-3 py-2 rounded-md text-sm font-medium',
-                                'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
-                                isActive(child.href) && 'text-gray-900 bg-gray-100'
+                                'text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent',
+                                isActive(child.href) && 'text-primary bg-primary/10'
                              )}>
                                  {child.label}
                              </div>
@@ -147,13 +148,13 @@ export function AdminSidebar() {
   };
 
   return (
-    <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0">
-      <div className="flex h-16 items-center px-6 border-b border-gray-200">
+    <div className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed top-0 left-0">
+      <div className="flex h-16 items-center px-6 border-b border-sidebar-border">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
-            <Gem className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <Gem className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold text-gray-900">Albiz Media</span>
+          <span className="text-xl font-bold text-foreground">Albiz Media</span>
         </div>
       </div>
 
@@ -164,7 +165,7 @@ export function AdminSidebar() {
         
         <div className="mt-8">
           <div className="px-3 mb-3">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Content Management
             </span>
           </div>
@@ -175,14 +176,14 @@ export function AdminSidebar() {
       </nav>
 
       <div className="px-4 py-4">
-        <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+        <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-sidebar-accent cursor-pointer transition-colors">
           <Avatar className="w-8 h-8">
             <AvatarImage src="https://picsum.photos/100" alt="Admin" data-ai-hint="person" />
             <AvatarFallback>A</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">Admin User</p>
-            <p className="text-xs text-gray-500 truncate">admin@ecom.com</p>
+            <p className="text-sm font-medium text-foreground truncate">Admin User</p>
+            <p className="text-xs text-muted-foreground truncate">admin@ecom.com</p>
           </div>
         </div>
       </div>
