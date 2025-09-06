@@ -3,6 +3,8 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import articlesReducer from './slices/articlesSlice';
 import categoriesReducer from './slices/categoriesSlice';
 import mediaReducer from './slices/mediaSlice';
+import rolesReducer from './slices/rolesSlice';
+import permissionsReducer from './slices/permissionsSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -15,6 +17,8 @@ const rootReducer = combineReducers({
   articles: articlesReducer,
   categories: categoriesReducer,
   media: mediaReducer,
+  roles: rolesReducer,
+  permissions: permissionsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
