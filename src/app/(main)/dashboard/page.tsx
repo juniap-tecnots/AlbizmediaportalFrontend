@@ -17,7 +17,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { Activity, Bell, Bolt, HeartPulse, Newspaper, PenSquare, PlusCircle } from "lucide-react"
+import { Activity, Bell, Bolt, HeartPulse, Newspaper, PenSquare, PlusCircle, Settings } from "lucide-react"
 import { SystemHealth } from "@/components/dashboard/system-health"
 import { QuickActions } from "@/components/dashboard/quick-actions"
 import { Notifications } from "@/components/dashboard/notifications"
