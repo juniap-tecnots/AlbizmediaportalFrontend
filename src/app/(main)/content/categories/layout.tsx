@@ -1,34 +1,14 @@
 
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { PageHeader } from "@/components/page-header";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import CategoriesPageContent from './categories-page-content';
+import TagsPageContent from '../tags/tags-page-content';
 
-const tabs = [
-    { value: 'categories', label: 'Categories', href: '/content/categories' },
-    { value: 'tags', label: 'Tags', href: '/content/tags' },
-];
-
-export default function CategoriesLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const getCurrentTab = () => {
-    if (pathname.includes('/content/tags')) return 'tags';
-    return 'categories';
-  }
-
-  const handleTabChange = (value: string) => {
-    const href = tabs.find(tab => tab.value === value)?.href;
-    if (href) {
-      router.push(href);
-    }
-  };
+export default function CategoriesLayout() {
+  const [activeTab, setActiveTab] = useState('categories');
 
   return (
     <div className="p-6 md:p-8">
@@ -36,16 +16,16 @@ export default function CategoriesLayout({
         title="Categories & Tags"
         description="Manage your categories and tags."
       />
-      <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-            {tabs.map(tab => (
-                 <TabsTrigger key={tab.value} value={tab.value}>
-                    {tab.label}
-                 </TabsTrigger>
-            ))}
+          <TabsTrigger value="categories">Categories</TabsTrigger>
+          <TabsTrigger value="tags">Tags</TabsTrigger>
         </TabsList>
-        <TabsContent value={getCurrentTab()}>
-            {children}
+        <TabsContent value="categories">
+          <CategoriesPageContent />
+        </TabsContent>
+        <TabsContent value="tags">
+          <TagsPageContent />
         </TabsContent>
       </Tabs>
     </div>
