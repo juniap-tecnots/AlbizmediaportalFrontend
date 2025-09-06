@@ -19,7 +19,7 @@ export default function CategoriesLayout({
   const pathname = usePathname();
 
   const getCurrentTab = () => {
-    if (pathname.includes('tags')) return 'tags';
+    if (pathname.includes('/content/tags')) return 'tags';
     return 'categories';
   }
 
@@ -44,7 +44,9 @@ export default function CategoriesLayout({
                  </TabsTrigger>
             ))}
         </TabsList>
-        {children}
+        <TabsContent value={getCurrentTab()}>
+            {children}
+        </TabsContent>
       </Tabs>
     </div>
   );
