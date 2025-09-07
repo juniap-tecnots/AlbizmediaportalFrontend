@@ -63,10 +63,10 @@ export default function RolesPage() {
                                                 View Permissions
                                             </Button>
                                         </AlertDialogTrigger>
-                                        <Button variant="outline" size="icon" className="text-green-600 hover:text-green-700 border-green-600 hover:border-green-700">
+                                        <Button variant="secondary" size="icon">
                                             <Pencil className="h-4 w-4" />
                                         </Button>
-                                        <Button variant="outline" size="icon" className="text-red-600 hover:text-red-700 border-red-600 hover:border-red-700">
+                                        <Button variant="destructive" size="icon">
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </TableCell>

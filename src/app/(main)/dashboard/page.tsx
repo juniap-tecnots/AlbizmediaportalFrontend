@@ -17,7 +17,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { Activity, Bell, Bolt, HeartPulse, Newspaper, PenSquare, PlusCircle, Settings } from "lucide-react"
+import { Activity, Bell, Bolt, HeartPulse, Newspaper, PenSquare, PlusCircle, Settings, LayoutDashboard } from "lucide-react"
 import { SystemHealth } from "@/components/dashboard/system-health"
 import { QuickActions } from "@/components/dashboard/quick-actions"
 import { Notifications } from "@/components/dashboard/notifications"
@@ -115,7 +115,7 @@ export default function DashboardPage() {
                     <CardContent>
                         <p className="text-muted-foreground mb-4">Start writing and publish a new article for your audience.</p>
                         <Link href="/content/articles/new">
-                            <Button>
+                            <Button variant="secondary">
                                 <PlusCircle className="mr-2" />
                                 Add New Article
                             </Button>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
                     <CardContent>
                         <p className="text-muted-foreground mb-4">Edit, review, and organize your existing articles and media.</p>
                         <Link href="/content/articles/all">
-                            <Button>Manage Articles</Button>
+                            <Button variant="secondary">Manage Articles</Button>
                         </Link>
                     </CardContent>
                 </Card>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
                     <CardContent>
                         <p className="text-muted-foreground mb-4">Customize your dashboard and application settings.</p>
                         <Link href="/settings">
-                            <Button>Go to Settings</Button>
+                            <Button variant="secondary">Go to Settings</Button>
                         </Link>
                     </CardContent>
                 </Card>
@@ -153,4 +153,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-import { LayoutDashboard } from "lucide-react"

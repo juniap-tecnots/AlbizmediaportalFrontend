@@ -72,7 +72,7 @@ export default function CategoriesPageContent() {
                 <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} />
                 <p className="text-sm text-muted-foreground">The description is not prominent by default; however, some themes may show it.</p>
             </div>
-            <Button onClick={handleAddCategory}>Add New Category</Button>
+            <Button onClick={handleAddCategory} variant="accent">Add New Category</Button>
         </div>
         </div>
         <div className="md:col-span-2">

@@ -66,7 +66,7 @@ export default function ArchivedPage() {
             </div>
             <div className="flex items-center gap-2">
                 <Input placeholder="Search Posts" className="w-auto" />
-                <Button>Search Posts</Button>
+                <Button variant="accent">Search Posts</Button>
             </div>
         </div>
       

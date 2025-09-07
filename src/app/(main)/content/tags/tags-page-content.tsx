@@ -54,7 +54,7 @@ export default function TagsPageContent() {
                 <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Tag description" />
                     <p className="text-sm text-muted-foreground">The description is not prominent by default; however, some themes may show it.</p>
             </div>
-            <Button onClick={handleAddTag}>Add New Tag</Button>
+            <Button onClick={handleAddTag} variant="accent">Add New Tag</Button>
         </div>
         </div>
         <div className="md:col-span-2">
