@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
 import { Check, Clock, X, Eye } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const workflowSteps = [
     { id: 1, name: 'Editorial Review' },
@@ -31,6 +32,19 @@ export default function WorkflowPage() {
     const handlePrev = () => {
         setActiveStep(prev => Math.max(prev - 1, 1));
     };
+
+    const getStatusClass = (status: string) => {
+        switch (status) {
+            case 'Approved':
+                return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200';
+            case 'Rejected':
+                return 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200';
+            case 'Pending':
+                return 'bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-200';
+            default:
+                return 'bg-secondary text-secondary-foreground hover:bg-secondary/80';
+        }
+    }
 
     return (
         <Card>
@@ -82,11 +96,10 @@ export default function WorkflowPage() {
                                     <TableCell>{article.author}</TableCell>
                                     <TableCell>{article.submitted}</TableCell>
                                     <TableCell>
-                                        <Badge variant={
-                                            article.status === 'Approved' ? 'default' :
-                                            article.status === 'Rejected' ? 'destructive' :
-                                            'secondary'
-                                        } className="flex items-center w-fit">
+                                        <Badge 
+                                            variant="outline"
+                                            className={cn("flex items-center w-fit", getStatusClass(article.status))}
+                                        >
                                             {article.status === 'Approved' && <Check className="mr-1 h-3 w-3" />}
                                             {article.status === 'Rejected' && <X className="mr-1 h-3 w-3" />}
                                             {article.status === 'Pending' && <Clock className="mr-1 h-3 w-3" />}
