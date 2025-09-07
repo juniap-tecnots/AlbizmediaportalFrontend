@@ -120,12 +120,12 @@ export default function DraftsPage() {
                 <TableCell>
                     <div className="flex items-center gap-2">
                         <Link href={`/content/articles/edit/${article.id}`}>
-                            <Button variant="outline" size="icon">
-                                <Pencil className="h-4 w-4 text-chart-2" />
+                           <Button variant="outline" size="icon" className="h-8 w-8 text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
+                                <Pencil className="h-4 w-4" />
                             </Button>
                         </Link>
-                        <Button variant="outline" size="icon" onClick={() => handleDelete(article.id)}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                        <Button variant="outline" size="icon" onClick={() => handleDelete(article.id)} className="h-8 w-8 text-red-500 border-red-500 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600">
+                            <Trash2 className="h-4 w-4" />
                         </Button>
                     </div>
                 </TableCell>
