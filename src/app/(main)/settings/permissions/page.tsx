@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PlusCircle } from "lucide-react";
+import { Pencil, PlusCircle, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { selectAllPermissions, PermissionRight } from "@/lib/redux/slices/permissionsSlice";
@@ -48,6 +48,7 @@ export default function PermissionsPage() {
                             <TableHead>Permission Name</TableHead>
                             <TableHead>Description</TableHead>
                             <TableHead>Rights</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -64,6 +65,14 @@ export default function PermissionsPage() {
                                         ))}
                                          {permission.rights.length === 0 && <span className="text-muted-foreground">-</span>}
                                     </div>
+                                </TableCell>
+                                <TableCell className="text-right space-x-2">
+                                    <Button variant="outline" size="icon" className="h-8 w-8 text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
+                                        <Pencil className="h-4 w-4" />
+                                    </Button>
+                                    <Button variant="outline" size="icon" className="h-8 w-8 text-red-500 border-red-500 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600">
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
