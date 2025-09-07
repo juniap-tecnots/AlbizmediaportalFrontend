@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { Check, Clock, X } from 'lucide-react';
+import { Check, Clock, X, Eye } from 'lucide-react';
 
 const workflowSteps = [
     { id: 1, name: 'Editorial Review' },
@@ -94,9 +94,15 @@ export default function WorkflowPage() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right space-x-2">
-                                        <Button variant="outline" size="sm">View</Button>
-                                        <Button size="sm" className="bg-green-500 hover:bg-green-600">Approve</Button>
-                                        <Button variant="destructive" size="sm">Reject</Button>
+                                        <Button variant="outline" size="icon">
+                                            <Eye className="h-4 w-4" />
+                                        </Button>
+                                        <Button size="icon" className="bg-green-500 hover:bg-green-600">
+                                            <Check className="h-4 w-4" />
+                                        </Button>
+                                        <Button variant="destructive" size="icon">
+                                            <X className="h-4 w-4" />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
