@@ -7,11 +7,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { selectAllPermissions } from "@/lib/redux/slices/permissionsSlice";
+import { selectAllPermissions, PermissionRight } from "@/lib/redux/slices/permissionsSlice";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function PermissionsPage() {
     const permissions = useSelector(selectAllPermissions);
+
+    const getRightBadgeClass = (right: PermissionRight) => {
+        switch (right) {
+            case 'read':
+                return 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200';
+            case 'write':
+                return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200';
+            case 'delete':
+                return 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200';
+            default:
+                return 'bg-secondary text-secondary-foreground hover:bg-secondary/80';
+        }
+    }
 
     return (
         <Card>
@@ -44,7 +58,9 @@ export default function PermissionsPage() {
                                 <TableCell>
                                     <div className="flex gap-2">
                                         {permission.rights.map(right => (
-                                            <Badge key={right} variant="secondary">{right.charAt(0).toUpperCase() + right.slice(1)}</Badge>
+                                            <Badge key={right} variant="outline" className={cn(getRightBadgeClass(right))}>
+                                                {right.charAt(0).toUpperCase() + right.slice(1)}
+                                            </Badge>
                                         ))}
                                          {permission.rights.length === 0 && <span className="text-muted-foreground">-</span>}
                                     </div>
