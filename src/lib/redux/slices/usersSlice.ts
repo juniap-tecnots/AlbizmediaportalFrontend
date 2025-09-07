@@ -1,0 +1,70 @@
+
+'use client';
+
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '../store';
+
+export type UserRole = 'Admin' | 'Editor' | 'Author';
+export type UserStatus = 'Active' | 'Suspended';
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  avatar: string;
+  role: UserRole;
+  status: UserStatus;
+  lastLogin: string;
+  type: 'Platform' | 'Staff';
+}
+
+interface UsersState {
+  users: User[];
+}
+
+const initialState: UsersState = {
+  users: [
+    { id: '1', firstName: 'Emma', lastName: 'Wilson', email: 'emma.wilson@example.com', avatar: 'https://picsum.photos/100?a=6', role: 'Admin', status: 'Active', lastLogin: '2024-05-10', type: 'Staff' },
+    { id: '2', firstName: 'Liam', lastName: 'Smith', email: 'liam.smith@example.com', avatar: 'https://picsum.photos/100?a=7', role: 'Editor', status: 'Active', lastLogin: '2024-05-12', type: 'Staff' },
+    { id: '3', firstName: 'Olivia', lastName: 'Jones', email: 'olivia.jones@example.com', avatar: 'https://picsum.photos/100?a=8', role: 'Author', status: 'Suspended', lastLogin: '2024-04-28', type: 'Staff' },
+    { id: '4', firstName: 'Noah', lastName: 'Brown', email: 'noah.brown@example.com', avatar: 'https://picsum.photos/100?a=9', role: 'Author', status: 'Active', lastLogin: '2024-05-13', type: 'Platform' },
+    { id: '5', firstName: 'Ava', lastName: 'Davis', email: 'ava.davis@example.com', avatar: 'https://picsum.photos/100?a=10', role: 'Editor', status: 'Active', lastLogin: '2024-05-11', type: 'Platform' },
+  ],
+};
+
+let lastId = initialState.users.length;
+
+const usersSlice = createSlice({
+  name: 'users',
+  initialState,
+  reducers: {
+    addUser: (state, action: PayloadAction<Omit<User, 'id' | 'lastLogin' | 'avatar' | 'status' | 'type'>>) => {
+      lastId++;
+      const newUser: User = {
+        ...action.payload,
+        id: lastId.toString(),
+        lastLogin: new Date().toISOString().split('T')[0],
+        avatar: `https://picsum.photos/100?a=${lastId}`,
+        status: 'Active',
+        type: 'Platform', 
+      };
+      state.users.unshift(newUser);
+    },
+    updateUser: (state, action: PayloadAction<Partial<User> & Pick<User, 'id'>>) => {
+      const index = state.users.findIndex(user => user.id === action.payload.id);
+      if (index !== -1) {
+        state.users[index] = { ...state.users[index], ...action.payload };
+      }
+    },
+    deleteUser: (state, action: PayloadAction<string>) => {
+      state.users = state.users.filter(user => user.id !== action.payload);
+    },
+  },
+});
+
+export const { addUser, updateUser, deleteUser } = usersSlice.actions;
+
+export const selectAllUsers = (state: RootState) => state.users.users;
+
+export default usersSlice.reducer;

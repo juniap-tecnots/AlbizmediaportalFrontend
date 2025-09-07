@@ -8,6 +8,7 @@ import permissionsReducer from './slices/permissionsSlice';
 import accountsReducer from './slices/accountsSlice';
 import hierarchyReducer from './slices/hierarchySlice';
 import workflowReducer from './slices/workflowSlice';
+import usersReducer from './slices/usersSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   accounts: accountsReducer,
   hierarchy: hierarchyReducer,
   workflow: workflowReducer,
+  users: usersReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
