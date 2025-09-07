@@ -4,10 +4,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Check, PlusCircle, X } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { selectAllPermissions } from "@/lib/redux/slices/permissionsSlice";
+import { Badge } from "@/components/ui/badge";
 
 export default function PermissionsPage() {
     const permissions = useSelector(selectAllPermissions);
@@ -32,9 +33,7 @@ export default function PermissionsPage() {
                         <TableRow>
                             <TableHead>Permission Name</TableHead>
                             <TableHead>Description</TableHead>
-                            <TableHead className="text-center">Read</TableHead>
-                            <TableHead className="text-center">Write</TableHead>
-                            <TableHead className="text-center">Delete</TableHead>
+                            <TableHead>Rights</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -42,14 +41,13 @@ export default function PermissionsPage() {
                             <TableRow key={permission.id}>
                                 <TableCell className="font-medium">{permission.name}</TableCell>
                                 <TableCell>{permission.description}</TableCell>
-                                <TableCell className="text-center">
-                                    {permission.rights.includes('read') ? <Check className="mx-auto text-green-500" /> : <X className="mx-auto text-red-500" />}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    {permission.rights.includes('write') ? <Check className="mx-auto text-green-500" /> : <X className="mx-auto text-red-500" />}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    {permission.rights.includes('delete') ? <Check className="mx-auto text-green-500" /> : <X className="mx-auto text-red-500" />}
+                                <TableCell>
+                                    <div className="flex gap-2">
+                                        {permission.rights.map(right => (
+                                            <Badge key={right} variant="secondary">{right.charAt(0).toUpperCase() + right.slice(1)}</Badge>
+                                        ))}
+                                         {permission.rights.length === 0 && <span className="text-muted-foreground">-</span>}
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ))}
