@@ -97,10 +97,10 @@ export default function WorkflowPage() {
                                         <Button variant="outline" size="icon">
                                             <Eye className="h-4 w-4" />
                                         </Button>
-                                        <Button size="icon" className="bg-green-500 hover:bg-green-600">
+                                        <Button variant="outline" size="icon" className="text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
                                             <Check className="h-4 w-4" />
                                         </Button>
-                                        <Button variant="destructive" size="icon">
+                                        <Button variant="outline" size="icon" className="text-red-500 border-red-500 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600">
                                             <X className="h-4 w-4" />
                                         </Button>
                                     </TableCell>
