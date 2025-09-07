@@ -120,12 +120,12 @@ export default function AllArticlesPage() {
                 <TableCell>
                     <div className="flex items-center gap-2">
                         <Link href={`/content/articles/edit/${article.id}`}>
-                            <Button variant="ghost" size="icon">
-                                <Pencil className="h-4 w-4" />
+                            <Button variant="outline" size="icon">
+                                <Pencil className="h-4 w-4 text-primary" />
                             </Button>
                         </Link>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(article.id)}>
-                            <Trash2 className="h-4 w-4" />
+                        <Button variant="outline" size="icon" onClick={() => handleDelete(article.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                     </div>
                 </TableCell>
