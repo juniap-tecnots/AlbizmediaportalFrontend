@@ -64,7 +64,7 @@ export default function RolesPage() {
                                             </Button>
                                         </AlertDialogTrigger>
                                         <Button variant="outline" size="icon">
-                                            <Pencil className="h-4 w-4 text-accent-foreground" />
+                                            <Pencil className="h-4 w-4 text-chart-2" />
                                         </Button>
                                         <Button variant="outline" size="icon">
                                             <Trash2 className="h-4 w-4 text-destructive" />
@@ -77,25 +77,27 @@ export default function RolesPage() {
                 </CardContent>
             </Card>
             
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Permissions for {selectedRole?.name}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        The following permissions are assigned to this role.
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="max-h-60 overflow-y-auto py-4">
-                    <div className="flex flex-wrap gap-2">
-                        {selectedRole?.permissions.map(permissionId => (
-                            <Badge key={permissionId} variant="secondary">{permissionId}</Badge>
-                        ))}
-                        {selectedRole?.permissions.length === 0 && <p className="text-sm text-muted-foreground">No permissions assigned.</p>}
+            {selectedRole && (
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Permissions for {selectedRole?.name}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            The following permissions are assigned to this role.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="max-h-60 overflow-y-auto py-4">
+                        <div className="flex flex-wrap gap-2">
+                            {selectedRole?.permissions.map(permissionId => (
+                                <Badge key={permissionId} variant="secondary">{permissionId}</Badge>
+                            ))}
+                            {selectedRole?.permissions.length === 0 && <p className="text-sm text-muted-foreground">No permissions assigned.</p>}
+                        </div>
                     </div>
-                </div>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Close</AlertDialogCancel>
-                </AlertDialogFooter>
-            </AlertDialogContent>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Close</AlertDialogCancel>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            )}
         </AlertDialog>
     )
 }
