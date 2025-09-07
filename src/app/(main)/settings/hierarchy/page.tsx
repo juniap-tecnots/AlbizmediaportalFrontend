@@ -2,39 +2,13 @@
 'use client'
 
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import { cn } from '@/lib/utils';
-
-interface HierarchyNode {
-  id: string;
-  name: string;
-  role: string;
-  children?: HierarchyNode[];
-}
-
-const hierarchyData: HierarchyNode = {
-  id: '1',
-  name: 'Chief Editor',
-  role: 'Chief Editor',
-  children: [
-    {
-      id: '2',
-      name: 'Senior Editor',
-      role: 'Editor',
-      children: [
-        { id: '3', name: 'Staff Writer 1', role: 'Author' },
-        { id: '4', name: 'Staff Writer 2', role: 'Author' },
-      ],
-    },
-    {
-      id: '5',
-      name: 'Legal Reviewer',
-      role: 'Legal',
-    },
-  ],
-};
+import { selectHierarchyTree, HierarchyNode } from '@/lib/redux/slices/hierarchySlice';
+import type { RootState } from '@/lib/redux/store';
 
 
 const Node = ({ node, level = 0 }: { node: HierarchyNode; level?: number }) => {
@@ -71,6 +45,7 @@ const Node = ({ node, level = 0 }: { node: HierarchyNode; level?: number }) => {
 
 
 export default function HierarchyPage() {
+    const hierarchyData = useSelector((state: RootState) => selectHierarchyTree(state));
     return (
         <Card>
             <CardHeader>

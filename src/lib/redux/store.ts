@@ -5,6 +5,9 @@ import categoriesReducer from './slices/categoriesSlice';
 import mediaReducer from './slices/mediaSlice';
 import rolesReducer from './slices/rolesSlice';
 import permissionsReducer from './slices/permissionsSlice';
+import accountsReducer from './slices/accountsSlice';
+import hierarchyReducer from './slices/hierarchySlice';
+import workflowReducer from './slices/workflowSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -19,6 +22,9 @@ const rootReducer = combineReducers({
   media: mediaReducer,
   roles: rolesReducer,
   permissions: permissionsReducer,
+  accounts: accountsReducer,
+  hierarchy: hierarchyReducer,
+  workflow: workflowReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -2,35 +2,30 @@
 'use client'
 
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
 import { Check, Clock, X, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const workflowSteps = [
-    { id: 1, name: 'Editorial Review' },
-    { id: 2, name: 'Publishing' },
-    { id: 3, name: 'Live' }
-];
-
-const articlesInQueue = [
-    { id: 1, title: 'The Future of AI in Journalism', author: 'Jane Doe', submitted: '2024-05-10', status: 'Pending' },
-    { id: 2, title: 'City Council Approves New Budget', author: 'John Smith', submitted: '2024-05-09', status: 'Approved' },
-    { id: 3, title: 'Tech Stocks Rally on Positive News', author: 'Emily White', submitted: '2024-05-08', status: 'Rejected' },
-];
+import { selectWorkflowSteps, selectArticlesInQueue, selectActiveStep, nextStep, prevStep } from '@/lib/redux/slices/workflowSlice';
+import type { RootState } from '@/lib/redux/store';
+import { useDispatch } from 'react-redux';
 
 
 export default function WorkflowPage() {
-    const [activeStep, setActiveStep] = useState(1);
+    const dispatch = useDispatch();
+    const workflowSteps = useSelector((state: RootState) => selectWorkflowSteps(state));
+    const articlesInQueue = useSelector((state: RootState) => selectArticlesInQueue(state));
+    const activeStep = useSelector((state: RootState) => selectActiveStep(state));
 
     const handleNext = () => {
-        setActiveStep(prev => Math.min(prev + 1, workflowSteps.length));
+        dispatch(nextStep());
     };
 
     const handlePrev = () => {
-        setActiveStep(prev => Math.max(prev - 1, 1));
+        dispatch(prevStep());
     };
 
     const getStatusClass = (status: string) => {
