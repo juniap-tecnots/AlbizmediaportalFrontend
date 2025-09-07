@@ -64,7 +64,7 @@ export default function RolesPage() {
                                             </Button>
                                         </AlertDialogTrigger>
                                         <Button variant="outline" size="icon">
-                                            <Pencil className="h-4 w-4 text-primary" />
+                                            <Pencil className="h-4 w-4 text-accent-foreground" />
                                         </Button>
                                         <Button variant="outline" size="icon">
                                             <Trash2 className="h-4 w-4 text-destructive" />

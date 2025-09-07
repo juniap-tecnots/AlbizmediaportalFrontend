@@ -121,7 +121,7 @@ export default function AllArticlesPage() {
                     <div className="flex items-center gap-2">
                         <Link href={`/content/articles/edit/${article.id}`}>
                             <Button variant="outline" size="icon">
-                                <Pencil className="h-4 w-4 text-primary" />
+                                <Pencil className="h-4 w-4 text-accent-foreground" />
                             </Button>
                         </Link>
                         <Button variant="outline" size="icon" onClick={() => handleDelete(article.id)}>
