@@ -99,18 +99,18 @@ export default function PublishedPage() {
                 <TableCell>
                   <Checkbox />
                 </TableCell>
-                <TableCell className="font-medium text-primary">
-                  <a href="#">{article.title}</a>
+                <TableCell className="font-medium">
+                  <a href="#" className="hover:underline">{article.title}</a>
                 </TableCell>
                 <TableCell>{article.author}</TableCell>
                 <TableCell>
                   {article.categories.map((cat, i) => (
-                    <a href="#" key={i} className="text-primary hover:underline">{cat}</a>
+                    <a href="#" key={i} className="hover:underline">{cat}</a>
                   ))}
                 </TableCell>
                 <TableCell>
                    {article.tags.length > 0 ? article.tags.map((tag, i) => (
-                    <a href="#" key={i} className="text-primary hover:underline">{tag}</a>
+                    <a href="#" key={i} className="hover:underline">{tag}</a>
                   )) : '—'}
                 </TableCell>
                 <TableCell>
