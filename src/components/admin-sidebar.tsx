@@ -12,7 +12,6 @@ const menuItems = [
   { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'analytics', href: '/analytics', label: 'Analytics', icon: BarChart },
   { id: 'users', href: '/users', label: 'Users', icon: User },
-  { id: 'settings', href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 const contentManagementItems = [
@@ -58,6 +57,9 @@ const contentManagementItems = [
         ]
     }
 ];
+
+const settingsMenuItem = { id: 'settings', href: '/settings', label: 'Settings', icon: Settings };
+
 
 interface MenuItemProps {
   id: string;
@@ -159,13 +161,11 @@ export function AdminSidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 px-4 py-6 overflow-y-auto">
-        <div className="space-y-1">
-          {menuItems.map(item => renderMenuItem(item))}
-        </div>
+      <nav className="flex-1 px-4 py-6 overflow-y-auto space-y-1">
+        {menuItems.map(item => renderMenuItem(item))}
         
-        <div className="mt-8">
-          <div className="px-3 mb-3">
+        <div className="pt-6">
+          <div className="px-3 mb-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Content Management
             </span>
@@ -174,9 +174,18 @@ export function AdminSidebar() {
             {contentManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
           </div>
         </div>
+
+        <div className="!mt-auto pt-6">
+             <div className="px-3 mb-2">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Configuration
+                </span>
+            </div>
+            {renderMenuItem(settingsMenuItem)}
+        </div>
       </nav>
 
-      <div className="px-4 py-4">
+      <div className="px-4 py-4 border-t">
         <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-sidebar-accent cursor-pointer transition-colors">
           <Avatar className="w-8 h-8">
             <AvatarImage src="https://picsum.photos/100" alt="Admin" data-ai-hint="person" />
