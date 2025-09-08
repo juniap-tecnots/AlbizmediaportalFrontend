@@ -44,6 +44,20 @@ const contentManagementItems = [
         href: '/content/media/images',
     },
     {
+        id: 'comments',
+        label: 'Comments',
+        icon: AiOutlineComment,
+        children: [
+            { id: 'all-comments', href: '/content/comments/all', label: 'All Comments' },
+            { id: 'moderation', href: '/content/comments/moderation', label: 'Pending Moderation' },
+            { id: 'flagged-content', href: '/content/comments/flagged', label: 'Flagged Content' },
+            { id: 'spam-queue', href: '/content/comments/spam', label: 'Spam Queue' },
+        ]
+    }
+];
+
+const workflowManagementItems = [
+    {
         id: 'approval-workflow',
         label: 'Approval Workflow',
         icon: AiOutlineCheckSquare,
@@ -53,17 +67,6 @@ const contentManagementItems = [
             { id: 'expert-review', href: '/content/approval/expert', label: 'Expert Review' },
             { id: 'legal-review', href: '/content/approval/legal', label: 'Legal Review' },
             { id: 'final-approval', href: '/content/approval/final', label: 'Final Approval Queue' },
-        ]
-    },
-    {
-        id: 'comments',
-        label: 'Comments',
-        icon: AiOutlineComment,
-        children: [
-            { id: 'all-comments', href: '/content/comments/all', label: 'All Comments' },
-            { id: 'moderation', href: '/content/comments/moderation', label: 'Pending Moderation' },
-            { id: 'flagged-content', href: '/content/comments/flagged', label: 'Flagged Content' },
-            { id: 'spam-queue', href: '/content/comments/spam', label: 'Spam Queue' },
         ]
     }
 ];
@@ -207,6 +210,17 @@ export function AdminSidebar() {
           </div>
           <div className="space-y-1">
             {contentManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
+          </div>
+        </div>
+
+        <div className="pt-6">
+          <div className="px-3 mb-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Workflow Management
+            </span>
+          </div>
+          <div className="space-y-1">
+            {workflowManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
           </div>
         </div>
 
