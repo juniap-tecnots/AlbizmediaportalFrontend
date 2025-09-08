@@ -315,6 +315,13 @@ export default function NewArticlePage() {
                                 onChange={(e) => setTitle(e.target.value)} 
                                 className="text-xl font-bold border-0 focus-visible:ring-0 shadow-none p-4 h-auto"
                             />
+                            <Input 
+                                id="subtitle" 
+                                placeholder="Add subtitle" 
+                                value={subtitle} 
+                                onChange={(e) => setSubtitle(e.target.value)} 
+                                className="text-lg border-0 focus-visible:ring-0 shadow-none p-4 pt-0 h-auto"
+                            />
                         </CardContent>
                     </Card>
                     <Card>
