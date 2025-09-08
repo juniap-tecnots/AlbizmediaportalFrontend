@@ -3,8 +3,8 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, Tag, FolderKanban, CheckSquare, MessageSquare, ChevronDown, ChevronRight, User } from 'lucide-react'
 import { useState } from 'react'
+import { FaTachometerAlt, FaChartBar, FaCog, FaNewspaper, FaTag, FaFolder, FaCheckSquare, FaComments, FaChevronDown, FaChevronRight, FaUsers, FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,33 +12,33 @@ import { selectCurrentUser, logoutSuccess } from '@/lib/redux/slices/authSlice'
 import { Button } from './ui/button'
 
 const menuItems = [
-  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'analytics', href: '/analytics', label: 'Analytics', icon: BarChart },
+  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
+  { id: 'analytics', href: '/analytics', label: 'Analytics', icon: FaChartBar },
 ]
 
 const contentManagementItems = [
     { 
         id: 'articles',
         label: 'Articles', 
-        icon: Newspaper,
+        icon: FaNewspaper,
         href: '/content/articles/all'
     },
     {
         id: 'categories',
         label: 'Categories',
-        icon: Tag,
+        icon: FaTag,
         href: '/content/categories',
     },
     {
         id: 'media-library',
         label: 'Media Library',
-        icon: FolderKanban,
+        icon: FaFolder,
         href: '/content/media/images',
     },
     {
         id: 'approval-workflow',
         label: 'Approval Workflow',
-        icon: CheckSquare,
+        icon: FaCheckSquare,
         children: [
             { id: 'pending-review', href: '/content/approval/pending', label: 'Pending Review' },
             { id: 'editorial-review', href: '/content/approval/editorial', label: 'Editorial Review' },
@@ -50,7 +50,7 @@ const contentManagementItems = [
     {
         id: 'comments-interactions',
         label: 'Comments & Interactions',
-        icon: MessageSquare,
+        icon: FaComments,
         children: [
             { id: 'all-comments', href: '/content/comments/all', label: 'All Comments' },
             { id: 'moderation', href: '/content/comments/moderation', label: 'Pending Moderation' },
@@ -63,7 +63,7 @@ const contentManagementItems = [
 const settingsMenuItem = {
     id: 'settings',
     label: 'Settings',
-    icon: Settings,
+    icon: FaCog,
     children: [
         { id: 'users', href: '/users', label: 'Users' },
         { id: 'accounts', href: '/settings/accounts', label: 'Accounts' },
@@ -149,13 +149,13 @@ export function AdminSidebar() {
                         )}>
                             <item.icon size={20} />
                         </span>
-                        <span className="font-medium text-sm">
+                        <span className="font-medium text-sm truncate">
                             {item.label}
                         </span>
                     </div>
                     {hasChildren && (
                         <span className={cn("text-gray-400 group-hover:text-gray-600", active && 'text-primary-foreground')}>
-                            {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                            {isExpanded ? <FaChevronDown size={16} /> : <FaChevronRight size={16} />}
                         </span>
                     )}
                 </div>
@@ -185,7 +185,7 @@ export function AdminSidebar() {
       <div className="flex h-16 items-center px-6 border-b border-sidebar-border">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 border border-primary rounded-lg flex items-center justify-center">
-            <Gem className="w-5 h-5 text-primary" />
+            <FaGem className="w-5 h-5 text-primary" />
           </div>
           <span className="text-xl font-bold text-foreground">Albiz Media</span>
         </div>
@@ -226,7 +226,7 @@ export function AdminSidebar() {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{currentUser.firstName} {currentUser.lastName}</p>
-                <p className="text-xs text-muted-foreground truncate">{currentUser.email}</p>
+                <p className="text-sm text-muted-foreground truncate">{currentUser.email}</p>
               </div>
                <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
             </div>
