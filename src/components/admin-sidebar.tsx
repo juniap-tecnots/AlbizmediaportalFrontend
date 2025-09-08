@@ -142,7 +142,7 @@ export function AdminSidebar() {
                         }
                     }}
                 >
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 flex-1">
                         <span className={cn(
                             'text-sidebar-foreground group-hover:text-sidebar-accent-foreground',
                              active && 'text-primary-foreground'
@@ -153,11 +153,13 @@ export function AdminSidebar() {
                             {item.label}
                         </span>
                     </div>
-                    {hasChildren && (
-                        <span className={cn("text-gray-400 group-hover:text-gray-600", active && 'text-primary-foreground')}>
-                            {isExpanded ? <FaChevronDown size={16} /> : <FaChevronRight size={16} />}
-                        </span>
-                    )}
+                    <div className='w-4'>
+                        {hasChildren && (
+                            <span className={cn("text-gray-400 group-hover:text-gray-600", active && 'text-primary-foreground')}>
+                                {isExpanded ? <FaChevronDown size={16} /> : <FaChevronRight size={16} />}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </WrapperComponent>
 
