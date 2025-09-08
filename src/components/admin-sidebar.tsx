@@ -219,19 +219,6 @@ export function AdminSidebar() {
         </div>
       </div>
 
-      <div className="px-4 py-4 border-t mt-auto">
-        {currentUser ? (
-             <div className="flex items-center justify-between space-x-3 px-3 py-2 rounded-lg bg-muted hover:bg-sidebar-accent cursor-pointer transition-colors">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src={currentUser.avatar} alt={currentUser.firstName} data-ai-hint="person" />
-                <AvatarFallback>{currentUser.firstName[0]}{currentUser.lastName[0]}</AvatarFallback>
-              </Avatar>
-               <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
-            </div>
-        ) : (
-             <Button className="w-full" onClick={() => router.push('/auth/signin')}>Sign In</Button>
-        )}
-      </div>
     </div>
   )
 }
