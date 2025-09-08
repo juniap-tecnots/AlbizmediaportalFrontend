@@ -48,7 +48,7 @@ const contentManagementItems = [
         ]
     },
     {
-        id: 'comments-interactions',
+        id: 'comments',
         label: 'Comments',
         icon: FaComments,
         children: [
@@ -221,7 +221,7 @@ export function AdminSidebar() {
 
       <div className="px-4 py-4 border-t mt-auto">
         {currentUser ? (
-             <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-sidebar-accent cursor-pointer transition-colors">
+             <div className="flex items-center space-x-3 px-3 py-2 rounded-lg bg-muted hover:bg-sidebar-accent cursor-pointer transition-colors">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={currentUser.avatar} alt={currentUser.firstName} data-ai-hint="person" />
                 <AvatarFallback>{currentUser.firstName[0]}{currentUser.lastName[0]}</AvatarFallback>
