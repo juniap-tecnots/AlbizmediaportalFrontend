@@ -89,7 +89,7 @@ export function AdminSidebar() {
   const router = useRouter();
   const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
-  const [expandedItems, setExpandedItems] = useState<string[]>(['settings']);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const handleLogout = () => {
     dispatch(logoutSuccess());
