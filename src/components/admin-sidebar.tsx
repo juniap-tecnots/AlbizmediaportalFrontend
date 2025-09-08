@@ -147,7 +147,7 @@ export function AdminSidebar() {
                             'text-sidebar-foreground group-hover:text-sidebar-accent-foreground',
                              active && 'text-primary-foreground'
                         )}>
-                            <item.icon size={16} />
+                            <item.icon size={20} />
                         </span>
                         <span className="font-medium text-sm truncate">
                             {item.label}
