@@ -1,3 +1,4 @@
+
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -26,6 +27,7 @@ export interface Article {
   visibility: 'public' | 'private' | 'password';
   excerpt: string;
   featuredImage: string;
+  discussion: 'Open' | 'Closed';
 }
 
 interface ArticlesState {
@@ -48,7 +50,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'A brief summary of global events and news.',
-        featuredImage: 'https://picsum.photos/600/400?random=1'
+        featuredImage: 'https://picsum.photos/600/400?random=1',
+        discussion: 'Open',
     },
     {
         id: '2',
@@ -64,7 +67,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'Delving into the wisdom of ancient sayings.',
-        featuredImage: 'https://picsum.photos/600/400?random=2'
+        featuredImage: 'https://picsum.photos/600/400?random=2',
+        discussion: 'Open',
     },
     {
         id: '3',
@@ -80,7 +84,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'A small piece of advice to make your day better.',
-        featuredImage: 'https://picsum.photos/600/400?random=3'
+        featuredImage: 'https://picsum.photos/600/400?random=3',
+        discussion: 'Open',
     },
     {
         id: '4',
@@ -96,7 +101,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'Updates, predictions, and fan reactions for the big game.',
-        featuredImage: 'https://picsum.photos/600/400?random=4'
+        featuredImage: 'https://picsum.photos/600/400?random=4',
+        discussion: 'Open',
     },
     {
         id: '5',
@@ -112,7 +118,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'Learn how to win arguments and influence people without confrontation.',
-        featuredImage: 'https://picsum.photos/600/400?random=5'
+        featuredImage: 'https://picsum.photos/600/400?random=5',
+        discussion: 'Open',
     },
      {
         id: '6',
@@ -128,7 +135,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'An example of an excerpt for an archived article.',
-        featuredImage: 'https://picsum.photos/600/400?random=6'
+        featuredImage: 'https://picsum.photos/600/400?random=6',
+        discussion: 'Closed',
       },
       {
         id: '7',
@@ -144,7 +152,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'An excerpt for the draft post goes here.',
-        featuredImage: 'https://picsum.photos/600/400?random=7'
+        featuredImage: 'https://picsum.photos/600/400?random=7',
+        discussion: 'Open',
       },
       {
         id: '8',
@@ -160,7 +169,8 @@ const initialState: ArticlesState = {
         blocks: [],
         visibility: 'public',
         excerpt: 'This excerpt is for a post that is scheduled to be published later.',
-        featuredImage: 'https://picsum.photos/600/400?random=8'
+        featuredImage: 'https://picsum.photos/600/400?random=8',
+        discussion: 'Open',
       },
   ],
 };

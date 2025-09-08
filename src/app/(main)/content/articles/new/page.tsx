@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon, FileImage } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon, FileImage, Settings, Pen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch, useSelector } from "react-redux"
@@ -110,9 +110,8 @@ export default function NewArticlePage() {
     
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [isTagsOpen, setIsTagsOpen] = useState(true);
-    const [isPublishedOpen, setIsPublishedOpen] = useState(true);
-    const [isFeaturedImageOpen, setIsFeaturedImageOpen] = useState(true);
-    const [isExcerptOpen, setIsExcerptOpen] = useState(true);
+    const [isDiscussionOpen, setIsDiscussionOpen] = useState(true);
+    const [isExcerptOpen, setIsExcerptOpen] = useState(false);
 
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
     
@@ -183,6 +182,7 @@ export default function NewArticlePage() {
             visibility: 'public',
             excerpt,
             featuredImage,
+            discussion: 'Open',
             blocks: [{ id: '1', type: 'paragraph', content: editorRef.current?.innerHTML || '' }]
         };
         dispatch(addArticle(articleData as any));
@@ -261,8 +261,12 @@ export default function NewArticlePage() {
         }
     };
 
-    const handleRemoveCategory = (categoryToRemove: string) => {
-        setCategories(categories.filter(category => category !== categoryToRemove));
+    const handleToggleCategory = (categoryName: string) => {
+        setCategories(prev => 
+            prev.includes(categoryName)
+                ? prev.filter(c => c !== categoryName)
+                : [...prev, categoryName]
+        );
     };
 
     const handleAddTag = () => {
@@ -296,43 +300,23 @@ export default function NewArticlePage() {
                         <Send className="mr-2 h-4 w-4" />
                         Publish
                     </Button>
+                     <Button variant="ghost" size="icon">
+                        <Settings className="h-5 w-5" />
+                    </Button>
                 </div>
             </header>
 
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 items-start">
                 <div className="lg:col-span-3 space-y-6">
                     <Card>
-                        <CardContent className="p-6 space-y-4">
-                            <div>
-                                <Label htmlFor="title">Article Title</Label>
-                                <Input 
-                                    id="title" 
-                                    placeholder="Enter your article title..." 
-                                    value={title} 
-                                    onChange={(e) => setTitle(e.target.value)} 
-                                    className="text-xl border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
-                                />
-                            </div>
-                             <div>
-                                <Label htmlFor="subtitle">Subtitle</Label>
-                                <Input 
-                                    id="subtitle" 
-                                    placeholder="Enter a subtitle..." 
-                                    value={subtitle} 
-                                    onChange={(e) => setSubtitle(e.target.value)} 
-                                    className="text-md border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
-                                />
-                            </div>
-                            <div>
-                               <Label htmlFor="slug">Slug</Label>
-                               <Input 
-                                   id="slug" 
-                                   placeholder="article-slug" 
-                                   value={slug} 
-                                   onChange={(e) => setSlug(e.target.value)} 
-                                   className="text-sm border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
-                               />
-                           </div>
+                        <CardContent className="p-0">
+                           <Input 
+                                id="title" 
+                                placeholder="Add title" 
+                                value={title} 
+                                onChange={(e) => setTitle(e.target.value)} 
+                                className="text-xl font-bold border-0 focus-visible:ring-0 shadow-none p-4 h-auto"
+                            />
                         </CardContent>
                     </Card>
                     <Card>
@@ -455,6 +439,7 @@ export default function NewArticlePage() {
                             onFocus={updateActiveCommands}
                             onClick={updateActiveCommands}
                             onKeyUp={updateActiveCommands}
+                            placeholder="Type '/' for commands"
                         />
                     </CardContent>
                     </Card>
@@ -462,144 +447,137 @@ export default function NewArticlePage() {
 
                 <div className="space-y-6 lg:sticky top-6">
                     <Card>
-                        <CardContent className="p-4">
-                            <h3 className="text-sm font-medium text-gray-500 mb-4">Post settings</h3>
-
-                             <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen} asChild>
-                                <div className="border-b">
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Categories</Label>
-                                            {isCategoriesOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4 space-y-2">
-                                        <div className="flex flex-wrap gap-2">
-                                            {categories.map(cat => (
-                                                <Badge key={cat} variant="secondary" className="flex items-center gap-1">
-                                                    {cat}
-                                                    <button onClick={() => handleRemoveCategory(cat)}><XIcon className="h-3 w-3" /></button>
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                         <Select onValueChange={(value) => !categories.includes(value) && setCategories([...categories, value])}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a category" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {allCategories.map(cat => (
-                                                    <SelectItem key={cat.slug} value={cat.name} disabled={categories.includes(cat.name)}>{cat.name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <div className="flex items-center gap-2">
-                                            <Input 
-                                                placeholder="Add new category" 
-                                                value={newCategory}
-                                                onChange={(e) => setNewCategory(e.target.value)}
-                                                onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
-                                            />
-                                            <Button variant="secondary" onClick={handleAddCategory}>Add</Button>
-                                        </div>
-                                    </CollapsibleContent>
+                        <Tabs defaultValue="post">
+                            <CardContent className="p-0">
+                                <div className="flex items-center justify-between border-b px-4 py-2">
+                                     <TabsList className="p-0 bg-transparent">
+                                        <TabsTrigger value="post" className="text-base font-semibold data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none border-b-2 border-transparent rounded-none">Post</TabsTrigger>
+                                        <TabsTrigger value="block" className="text-base font-semibold data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none border-b-2 border-transparent rounded-none">Block</TabsTrigger>
+                                    </TabsList>
+                                     <Button variant="ghost" size="icon" className="h-8 w-8">
+                                        <XIcon className="h-4 w-4" />
+                                    </Button>
                                 </div>
-                            </Collapsible>
+                                <TabsContent value="post" className="p-4 space-y-4 m-0 border-0">
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <Pen className="h-4 w-4" />
+                                        <span>{title || 'No title'}</span>
+                                        <MoreHorizontal className="h-4 w-4 ml-auto" />
+                                    </div>
 
-                             <Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen} asChild>
-                                <div className="border-b">
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Tags</Label>
-                                            {isTagsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                    {featuredImage ? (
+                                        <div className="relative">
+                                            <Image src={featuredImage} alt="Featured image" width={300} height={200} className="rounded-md w-full h-auto" />
+                                            <Button variant="secondary" className="w-full mt-2" onClick={() => handleSelectFilesClick('featured')}>Change image</Button>
                                         </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4 space-y-2">
-                                        <div className="flex flex-wrap gap-2">
-                                            {tags.map(tag => (
-                                                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                                                    {tag}
-                                                    <button onClick={() => handleRemoveTag(tag)}><XIcon className="h-3 w-3" /></button>
-                                                </Badge>
-                                            ))}
+                                    ) : (
+                                        <Button variant="outline" className="w-full" onClick={() => handleSelectFilesClick('featured')}>
+                                            Set featured image
+                                        </Button>
+                                    )}
+                                     <input
+                                        type="file"
+                                        ref={featuredImageInputRef}
+                                        onChange={(e) => handleFileChange(e, 'featured')}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+
+                                    <button onClick={() => setIsExcerptOpen(true)} className="text-primary text-sm hover:underline">Add an excerpt...</button>
+                                    
+                                    <Separator />
+
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between"><span>Status</span><span className="font-medium">Published</span></div>
+                                        <div className="flex justify-between"><span>Publish</span><button className="text-primary hover:underline">Immediately</button></div>
+                                        <div className="flex justify-between items-center">
+                                            <Label htmlFor="slug">Slug</Label>
+                                            <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} className="w-1/2 h-8 text-right border-0" placeholder="auto-generates" />
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Input 
-                                                placeholder="Add a tag" 
-                                                value={newTag}
-                                                onChange={(e) => setNewTag(e.target.value)}
-                                                onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-                                            />
-                                            <Button variant="secondary" onClick={handleAddTag}>Add</Button>
-                                        </div>
-                                    </CollapsibleContent>
-                                </div>
-                            </Collapsible>
-                             <Collapsible open={isFeaturedImageOpen} onOpenChange={setIsFeaturedImageOpen} asChild>
-                                <div className="border-b">
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Featured Image</Label>
-                                            {isFeaturedImageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4 space-y-2">
-                                        {featuredImage ? (
-                                            <div className="relative">
-                                                <Image src={featuredImage} alt="Featured image" width={300} height={200} className="rounded-md w-full h-auto" />
-                                                <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => setFeaturedImage('')}>
-                                                    <XIcon className="h-4 w-4" />
-                                                </Button>
+                                        <div className="flex justify-between"><span>Author</span><span className="font-medium">albiz</span></div>
+                                    </div>
+                                    
+                                    <Collapsible open={isDiscussionOpen} onOpenChange={setIsDiscussionOpen}>
+                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                            <span>Discussion</span>
+                                            {isDiscussionOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent className="mt-2 space-y-2">
+                                            <div className="flex items-center gap-2">
+                                                <input type="checkbox" id="allow-comments" />
+                                                <Label htmlFor="allow-comments">Allow comments</Label>
                                             </div>
-                                        ) : (
-                                            <Button variant="outline" className="w-full" onClick={() => handleSelectFilesClick('featured')}>
-                                                <FileImage className="mr-2 h-4 w-4" />
-                                                Set featured image
-                                            </Button>
-                                        )}
-                                        <input
-                                            type="file"
-                                            ref={featuredImageInputRef}
-                                            onChange={(e) => handleFileChange(e, 'featured')}
-                                            className="hidden"
-                                            accept="image/*"
-                                        />
-                                    </CollapsibleContent>
-                                </div>
-                            </Collapsible>
-                            
-                             <Collapsible open={isExcerptOpen} onOpenChange={setIsExcerptOpen} asChild>
-                                <div className="border-b">
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Excerpt</Label>
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                    
+                                    <Separator />
+                                    
+                                    <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
+                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                            <span>Categories</span>
+                                            {isCategoriesOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent className="mt-2 space-y-2">
+                                             <div className="space-y-2 max-h-40 overflow-y-auto">
+                                                {allCategories.map(cat => (
+                                                    <div key={cat.slug} className="flex items-center gap-2">
+                                                        <input type="checkbox" id={`cat-${cat.slug}`} checked={categories.includes(cat.name)} onChange={() => handleToggleCategory(cat.name)} />
+                                                        <Label htmlFor={`cat-${cat.slug}`}>{cat.name}</Label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <a href="#" className="text-primary text-sm hover:underline mt-2 inline-block">Add new category</a>
+                                        </CollapsibleContent>
+                                    </Collapsible>
+
+                                    <Separator />
+
+                                    <Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen}>
+                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                            <span>Tags</span>
+                                            {isTagsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent className="mt-2">
+                                            <div className="flex flex-wrap gap-2">
+                                                {tags.map(tag => (
+                                                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                                                        {tag}
+                                                        <button onClick={() => handleRemoveTag(tag)}><XIcon className="h-3 w-3" /></button>
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <Input 
+                                                    placeholder="Add new tag" 
+                                                    value={newTag}
+                                                    onChange={(e) => setNewTag(e.target.value)}
+                                                    onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+                                                />
+                                            </div>
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                    
+                                    <Separator />
+                                     <Collapsible open={isExcerptOpen} onOpenChange={setIsExcerptOpen}>
+                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                            <span>Excerpt</span>
                                             {isExcerptOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4 space-y-2">
-                                        <Textarea 
-                                            placeholder="Write an excerpt (optional)"
-                                            value={excerpt}
-                                            onChange={(e) => setExcerpt(e.target.value)}
-                                        />
-                                    </CollapsibleContent>
-                                </div>
-                            </Collapsible>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent className="mt-2">
+                                            <Textarea 
+                                                placeholder="Write an excerpt (optional)"
+                                                value={excerpt}
+                                                onChange={(e) => setExcerpt(e.target.value)}
+                                            />
+                                        </CollapsibleContent>
+                                    </Collapsible>
 
-                            <Collapsible open={isPublishedOpen} onOpenChange={setIsPublishedOpen} asChild>
-                                 <div className="border-b-0">
-                                    <CollapsibleTrigger className="w-full py-3">
-                                        <div className="flex items-center justify-between">
-                                            <Label>Published on</Label>
-                                            {isPublishedOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </div>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pb-4">
-                                        <p className="text-sm text-gray-700">Publish immediately</p>
-                                    </CollapsibleContent>
-                                </div>
-                            </Collapsible>
-
-                        </CardContent>
+                                </TabsContent>
+                                <TabsContent value="block" className="p-4 m-0 border-0">
+                                    <p className="text-center text-muted-foreground">Block settings will appear here.</p>
+                                </TabsContent>
+                            </CardContent>
+                        </Tabs>
                     </Card>
                 </div>
             </div>
