@@ -181,7 +181,6 @@ export default function NewArticlePage() {
             visibility: 'public',
             excerpt,
             featuredImage,
-            discussion: 'Open',
             blocks: [{ id: '1', type: 'paragraph', content: editorRef.current?.innerHTML || '' }]
         };
         dispatch(addArticle(articleData as any));
@@ -484,7 +483,6 @@ export default function NewArticlePage() {
 
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between"><span>Status</span><span className="font-medium">Draft</span></div>
-                                    <div className="flex justify-between"><span>Publish</span><button className="text-primary hover:underline">Immediately</button></div>
                                     <div className="flex justify-between items-center">
                                         <Label htmlFor="slug">Slug</Label>
                                         <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} className="w-1/2 h-8 text-right border-0" placeholder="auto-generates" />
