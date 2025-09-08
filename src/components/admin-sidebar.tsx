@@ -228,7 +228,6 @@ export function AdminSidebar() {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{currentUser.firstName} {currentUser.lastName}</p>
-                <p className="text-sm text-muted-foreground truncate">{currentUser.email}</p>
               </div>
                <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
             </div>
