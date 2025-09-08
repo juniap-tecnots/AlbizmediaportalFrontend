@@ -64,7 +64,6 @@ const settingsMenuItem = {
     id: 'settings',
     label: 'Settings',
     icon: Settings,
-    href: '/settings',
     children: [
         { id: 'users', href: '/users', label: 'Users' },
         { id: 'accounts', href: '/settings/accounts', label: 'Accounts' },
