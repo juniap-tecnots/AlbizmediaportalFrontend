@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 const menuItems = [
   { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'analytics', href: '/analytics', label: 'Analytics', icon: BarChart },
-  { id: 'users', href: '/users', label: 'Users', icon: User },
 ]
 
 const contentManagementItems = [
@@ -58,7 +57,20 @@ const contentManagementItems = [
     }
 ];
 
-const settingsMenuItem = { id: 'settings', href: '/settings', label: 'Settings', icon: Settings };
+const settingsMenuItem = {
+    id: 'settings',
+    label: 'Settings',
+    icon: Settings,
+    href: '/settings',
+    children: [
+        { id: 'users', href: '/users', label: 'Users' },
+        { id: 'accounts', href: '/settings/accounts', label: 'Accounts' },
+        { id: 'roles', href: '/settings/roles', label: 'Roles' },
+        { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
+        { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
+        { id: 'workflow', href: '/settings/workflow', label: 'Workflow' },
+    ]
+};
 
 
 interface MenuItemProps {
@@ -71,7 +83,7 @@ interface MenuItemProps {
 
 export function AdminSidebar() {
   const pathname = usePathname()
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['settings']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -81,7 +93,13 @@ export function AdminSidebar() {
     );
   };
 
-  const isActive = (path?: string) => path && (pathname === path || pathname.startsWith(path + '/'));
+  const isActive = (path?: string) => {
+    if (!path) return false;
+    if (path === '/settings') {
+        return pathname.startsWith('/settings') || pathname.startsWith('/users');
+    }
+    return pathname === path || pathname.startsWith(path + '/');
+  }
   
   const isSubItemActive = (items?: Omit<MenuItemProps, 'icon' | 'children'>[]) => {
       return items?.some(child => isActive(child.href));
@@ -92,8 +110,8 @@ export function AdminSidebar() {
     const hasChildren = item.children && item.children.length > 0;
     const active = isActive(item.href) || (hasChildren && (isExpanded || isSubItemActive(item.children)));
     
-    const WrapperComponent = item.href ? Link : 'div';
-    const wrapperProps = item.href ? { href: item.href } : {};
+    const WrapperComponent = item.href && !hasChildren ? Link : 'div';
+    const wrapperProps = item.href && !hasChildren ? { href: item.href } : {};
 
     return (
         <div key={item.id}>
@@ -109,6 +127,8 @@ export function AdminSidebar() {
                             e.preventDefault();
                             e.stopPropagation();
                             toggleExpanded(item.id);
+                        } else if (item.href) {
+                            // Let the Link handle it
                         }
                     }}
                 >
@@ -161,8 +181,10 @@ export function AdminSidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 px-4 py-6 overflow-y-auto space-y-1">
-        {menuItems.map(item => renderMenuItem(item))}
+      <div className="flex-1 px-4 py-6 overflow-y-auto">
+        <div className='space-y-1'>
+            {menuItems.map(item => renderMenuItem(item))}
+        </div>
         
         <div className="pt-6">
           <div className="px-3 mb-2">
@@ -175,17 +197,17 @@ export function AdminSidebar() {
           </div>
         </div>
 
-        <div className="!mt-auto pt-6">
+        <div className="pt-6">
              <div className="px-3 mb-2">
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Configuration
                 </span>
             </div>
-            {renderMenuItem(settingsMenuItem)}
+            {renderMenuItem(settingsMenuItem as MenuItemProps)}
         </div>
-      </nav>
+      </div>
 
-      <div className="px-4 py-4 border-t">
+      <div className="px-4 py-4 border-t mt-auto">
         <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-sidebar-accent cursor-pointer transition-colors">
           <Avatar className="w-8 h-8">
             <AvatarImage src="https://picsum.photos/100" alt="Admin" data-ai-hint="person" />
