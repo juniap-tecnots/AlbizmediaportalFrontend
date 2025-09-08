@@ -450,137 +450,129 @@ export default function EditArticlePage() {
 
                 <div className="space-y-6 lg:sticky top-6">
                     <Card>
-                       <Tabs defaultValue="post">
-                            <CardContent className="p-0">
-                                <div className="flex items-center justify-between border-b px-4 py-2">
-                                     <TabsList className="p-0 bg-transparent">
-                                        <TabsTrigger value="post" className="text-base font-semibold data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none border-b-2 border-transparent rounded-none">Post</TabsTrigger>
-                                        <TabsTrigger value="block" className="text-base font-semibold data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none border-b-2 border-transparent rounded-none">Block</TabsTrigger>
-                                    </TabsList>
-                                     <Button variant="ghost" size="icon" className="h-8 w-8">
-                                        <XIcon className="h-4 w-4" />
-                                    </Button>
+                        <CardContent className="p-0">
+                            <div className="flex items-center justify-between border-b px-4 py-2">
+                                <h3 className="text-base font-semibold">Post</h3>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                    <XIcon className="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <div className="p-4 space-y-4">
+                                <div className="flex items-center gap-2 text-sm">
+                                    <Pen className="h-4 w-4" />
+                                    <span>{title || 'No title'}</span>
+                                    <MoreHorizontal className="h-4 w-4 ml-auto" />
                                 </div>
-                                <TabsContent value="post" className="p-4 space-y-4 m-0 border-0">
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <Pen className="h-4 w-4" />
-                                        <span>{title || 'No title'}</span>
-                                        <MoreHorizontal className="h-4 w-4 ml-auto" />
+
+                                {featuredImage ? (
+                                    <div className="relative">
+                                        <Image src={featuredImage} alt="Featured image" width={300} height={200} className="rounded-md w-full h-auto" />
+                                        <Button variant="secondary" className="w-full mt-2" onClick={() => handleSelectFilesClick('featured')}>Change image</Button>
                                     </div>
+                                ) : (
+                                    <Button variant="outline" className="w-full" onClick={() => handleSelectFilesClick('featured')}>
+                                        Set featured image
+                                    </Button>
+                                )}
+                                 <input
+                                    type="file"
+                                    ref={featuredImageInputRef}
+                                    onChange={(e) => handleFileChange(e, 'featured')}
+                                    className="hidden"
+                                    accept="image/*"
+                                />
 
-                                    {featuredImage ? (
-                                        <div className="relative">
-                                            <Image src={featuredImage} alt="Featured image" width={300} height={200} className="rounded-md w-full h-auto" />
-                                            <Button variant="secondary" className="w-full mt-2" onClick={() => handleSelectFilesClick('featured')}>Change image</Button>
-                                        </div>
-                                    ) : (
-                                        <Button variant="outline" className="w-full" onClick={() => handleSelectFilesClick('featured')}>
-                                            Set featured image
-                                        </Button>
-                                    )}
-                                     <input
-                                        type="file"
-                                        ref={featuredImageInputRef}
-                                        onChange={(e) => handleFileChange(e, 'featured')}
-                                        className="hidden"
-                                        accept="image/*"
-                                    />
+                                <button onClick={() => setIsExcerptOpen(true)} className="text-primary text-sm hover:underline">Add an excerpt...</button>
+                                
+                                <Separator />
 
-                                    <button onClick={() => setIsExcerptOpen(true)} className="text-primary text-sm hover:underline">Add an excerpt...</button>
-                                    
-                                    <Separator />
-
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between"><span>Status</span><span className="font-medium">{article?.status || 'Draft'}</span></div>
-                                        <div className="flex justify-between"><span>Publish</span><button className="text-primary hover:underline">Immediately</button></div>
-                                        <div className="flex justify-between items-center">
-                                            <Label htmlFor="slug">Slug</Label>
-                                            <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} className="w-1/2 h-8 text-right border-0" placeholder="article-slug" />
-                                        </div>
-                                        <div className="flex justify-between"><span>Author</span><span className="font-medium">{article?.author}</span></div>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between"><span>Status</span><span className="font-medium">{article?.status || 'Draft'}</span></div>
+                                    <div className="flex justify-between"><span>Publish</span><button className="text-primary hover:underline">Immediately</button></div>
+                                    <div className="flex justify-between items-center">
+                                        <Label htmlFor="slug">Slug</Label>
+                                        <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} className="w-1/2 h-8 text-right border-0" placeholder="article-slug" />
                                     </div>
-                                    
-                                    <Collapsible open={isDiscussionOpen} onOpenChange={setIsDiscussionOpen}>
-                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                            <span>Discussion</span>
-                                            {isDiscussionOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent className="mt-2 space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <input type="checkbox" id="allow-comments" />
-                                                <Label htmlFor="allow-comments">Allow comments</Label>
-                                            </div>
-                                        </CollapsibleContent>
-                                    </Collapsible>
-                                    
-                                    <Separator />
-                                    
-                                    <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
-                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                            <span>Categories</span>
-                                            {isCategoriesOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent className="mt-2 space-y-2">
-                                             <div className="space-y-2 max-h-40 overflow-y-auto">
-                                                {allCategories.map(cat => (
-                                                    <div key={cat.slug} className="flex items-center gap-2">
-                                                        <input type="checkbox" id={`cat-${cat.slug}`} checked={categories.includes(cat.name)} onChange={() => handleToggleCategory(cat.name)} />
-                                                        <Label htmlFor={`cat-${cat.slug}`}>{cat.name}</Label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <a href="#" className="text-primary text-sm hover:underline mt-2 inline-block">Add new category</a>
-                                        </CollapsibleContent>
-                                    </Collapsible>
+                                    <div className="flex justify-between"><span>Author</span><span className="font-medium">{article?.author}</span></div>
+                                </div>
+                                
+                                <Collapsible open={isDiscussionOpen} onOpenChange={setIsDiscussionOpen}>
+                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                        <span>Discussion</span>
+                                        {isDiscussionOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="mt-2 space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <input type="checkbox" id="allow-comments" />
+                                            <Label htmlFor="allow-comments">Allow comments</Label>
+                                        </div>
+                                    </CollapsibleContent>
+                                </Collapsible>
+                                
+                                <Separator />
+                                
+                                <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
+                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                        <span>Categories</span>
+                                        {isCategoriesOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="mt-2 space-y-2">
+                                         <div className="space-y-2 max-h-40 overflow-y-auto">
+                                            {allCategories.map(cat => (
+                                                <div key={cat.slug} className="flex items-center gap-2">
+                                                    <input type="checkbox" id={`cat-${cat.slug}`} checked={categories.includes(cat.name)} onChange={() => handleToggleCategory(cat.name)} />
+                                                    <Label htmlFor={`cat-${cat.slug}`}>{cat.name}</Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <a href="#" className="text-primary text-sm hover:underline mt-2 inline-block">Add new category</a>
+                                    </CollapsibleContent>
+                                </Collapsible>
 
-                                    <Separator />
+                                <Separator />
 
-                                    <Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen}>
-                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                            <span>Tags</span>
-                                            {isTagsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent className="mt-2">
-                                            <div className="flex flex-wrap gap-2">
-                                                {tags.map(tag => (
-                                                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                                                        {tag}
-                                                        <button onClick={() => handleRemoveTag(tag)}><XIcon className="h-3 w-3" /></button>
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                            <div className="flex items-center gap-2 mt-2">
-                                                <Input 
-                                                    placeholder="Add new tag" 
-                                                    value={newTag}
-                                                    onChange={(e) => setNewTag(e.target.value)}
-                                                    onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-                                                />
-                                            </div>
-                                        </CollapsibleContent>
-                                    </Collapsible>
-                                    
-                                    <Separator />
-                                     <Collapsible open={isExcerptOpen} onOpenChange={setIsExcerptOpen}>
-                                        <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                            <span>Excerpt</span>
-                                            {isExcerptOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent className="mt-2">
-                                            <Textarea 
-                                                placeholder="Write an excerpt (optional)"
-                                                value={excerpt}
-                                                onChange={(e) => setExcerpt(e.target.value)}
+                                <Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen}>
+                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                        <span>Tags</span>
+                                        {isTagsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="mt-2">
+                                        <div className="flex flex-wrap gap-2">
+                                            {tags.map(tag => (
+                                                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                                                    {tag}
+                                                    <button onClick={() => handleRemoveTag(tag)}><XIcon className="h-3 w-3" /></button>
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <Input 
+                                                placeholder="Add new tag" 
+                                                value={newTag}
+                                                onChange={(e) => setNewTag(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
                                             />
-                                        </CollapsibleContent>
-                                    </Collapsible>
+                                        </div>
+                                    </CollapsibleContent>
+                                </Collapsible>
+                                
+                                <Separator />
+                                 <Collapsible open={isExcerptOpen} onOpenChange={setIsExcerptOpen}>
+                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
+                                        <span>Excerpt</span>
+                                        {isExcerptOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="mt-2">
+                                        <Textarea 
+                                            placeholder="Write an excerpt (optional)"
+                                            value={excerpt}
+                                            onChange={(e) => setExcerpt(e.target.value)}
+                                        />
+                                    </CollapsibleContent>
+                                </Collapsible>
 
-                                </TabsContent>
-                                <TabsContent value="block" className="p-4 m-0 border-0">
-                                    <p className="text-center text-muted-foreground">Block settings will appear here.</p>
-                                </TabsContent>
-                            </CardContent>
-                        </Tabs>
+                            </div>
+                        </CardContent>
                     </Card>
                 </div>
             </div>
