@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon, FileImage } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch, useSelector } from "react-redux"
@@ -45,7 +45,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { selectAllCategories, selectAllTags } from "@/lib/redux/slices/categoriesSlice"
 import type { RootState } from "@/lib/redux/store"
-
+import { Textarea } from "@/components/ui/textarea"
+import Image from "next/image"
 
 const ToolbarButton = ({ command, icon: Icon, tooltip, onClick }: { command: string, icon: React.ElementType, tooltip: string, onClick?: () => void }) => {
     const { handleFormat, activeCommands } = useEditorContext();
@@ -101,8 +102,11 @@ export default function EditArticlePage() {
     const article = useSelector((state: RootState) => selectArticleById(state, articleId));
 
     const [title, setTitle] = useState('');
+    const [subtitle, setSubtitle] = useState('');
     const [content, setContent] = useState('');
     const [slug, setSlug] = useState('');
+    const [excerpt, setExcerpt] = useState('');
+    const [featuredImage, setFeaturedImage] = useState('');
     
     const allCategories = useSelector(selectAllCategories);
     const allTags = useSelector(selectAllTags);
@@ -115,6 +119,8 @@ export default function EditArticlePage() {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [isTagsOpen, setIsTagsOpen] = useState(true);
     const [isPublishedOpen, setIsPublishedOpen] = useState(true);
+    const [isFeaturedImageOpen, setIsFeaturedImageOpen] = useState(true);
+    const [isExcerptOpen, setIsExcerptOpen] = useState(true);
 
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
     
@@ -125,14 +131,18 @@ export default function EditArticlePage() {
     const [videoUrl, setVideoUrl] = useState('');
     const imageFileInputRef = useRef<HTMLInputElement>(null);
     const videoFileInputRef = useRef<HTMLInputElement>(null);
+    const featuredImageInputRef = useRef<HTMLInputElement>(null);
 
      useEffect(() => {
         if (article) {
             setTitle(article.title);
+            setSubtitle(article.subtitle);
             setSlug(article.slug);
             setContent(article.content);
             setCategories(article.categories);
             setTags(article.tags);
+            setExcerpt(article.excerpt);
+            setFeaturedImage(article.featuredImage);
             if (editorRef.current) {
                 editorRef.current.innerHTML = article.content;
             }
@@ -182,10 +192,13 @@ export default function EditArticlePage() {
         const updatedArticle: Article = {
             ...article,
             title,
+            subtitle,
             slug,
             content: editorRef.current?.innerHTML || '',
             categories,
             tags,
+            excerpt,
+            featuredImage,
         };
 
         dispatch(updateArticle(updatedArticle));
@@ -213,7 +226,7 @@ export default function EditArticlePage() {
         setVideoUrl('');
     };
     
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video' | 'featured') => {
         const files = event.target.files;
         if (files && files.length > 0) {
             const file = files[0];
@@ -223,21 +236,25 @@ export default function EditArticlePage() {
                 if (type === 'image') {
                     handleFormat('insertImage', src);
                     setShowImageDialog(false);
-                } else {
+                } else if (type === 'video') {
                     const videoElement = `<video controls src="${src}" width="100%"></video>`;
                     handleFormat('insertHTML', videoElement);
                     setShowVideoDialog(false);
+                } else if (type === 'featured') {
+                    setFeaturedImage(src);
                 }
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const handleSelectFilesClick = (type: 'image' | 'video') => {
+    const handleSelectFilesClick = (type: 'image' | 'video' | 'featured') => {
         if (type === 'image') {
             imageFileInputRef.current?.click();
-        } else {
+        } else if (type === 'video') {
             videoFileInputRef.current?.click();
+        } else if (type === 'featured') {
+            featuredImageInputRef.current?.click();
         }
     };
     
@@ -297,15 +314,37 @@ export default function EditArticlePage() {
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 items-start">
                 <div className="lg:col-span-3 space-y-6">
                     <Card>
-                        <CardContent className="p-6 space-y-2">
-                            <Label htmlFor="title">Article Title</Label>
-                            <Input 
-                                id="title" 
-                                placeholder="Enter your article title..." 
-                                value={title} 
-                                onChange={(e) => setTitle(e.target.value)} 
-                                className="text-xl border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
-                            />
+                        <CardContent className="p-6 space-y-4">
+                            <div>
+                                <Label htmlFor="title">Article Title</Label>
+                                <Input 
+                                    id="title" 
+                                    placeholder="Enter your article title..." 
+                                    value={title} 
+                                    onChange={(e) => setTitle(e.target.value)} 
+                                    className="text-xl border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
+                                />
+                            </div>
+                             <div>
+                                <Label htmlFor="subtitle">Subtitle</Label>
+                                <Input 
+                                    id="subtitle" 
+                                    placeholder="Enter a subtitle..." 
+                                    value={subtitle} 
+                                    onChange={(e) => setSubtitle(e.target.value)} 
+                                    className="text-md border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
+                                />
+                            </div>
+                            <div>
+                               <Label htmlFor="slug">Slug</Label>
+                               <Input 
+                                   id="slug" 
+                                   placeholder="article-slug" 
+                                   value={slug} 
+                                   onChange={(e) => setSlug(e.target.value)} 
+                                   className="text-sm border-0 focus-visible:ring-0 shadow-none p-2 h-auto"
+                               />
+                           </div>
                         </CardContent>
                     </Card>
                     <Card>
@@ -507,6 +546,56 @@ export default function EditArticlePage() {
                                     </CollapsibleContent>
                                 </div>
                             </Collapsible>
+                             <Collapsible open={isFeaturedImageOpen} onOpenChange={setIsFeaturedImageOpen} asChild>
+                                <div className="border-b">
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Featured Image</Label>
+                                            {isFeaturedImageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4 space-y-2">
+                                        {featuredImage ? (
+                                            <div className="relative">
+                                                <Image src={featuredImage} alt="Featured image" width={300} height={200} className="rounded-md w-full h-auto" />
+                                                <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => setFeaturedImage('')}>
+                                                    <XIcon className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <Button variant="outline" className="w-full" onClick={() => handleSelectFilesClick('featured')}>
+                                                <FileImage className="mr-2 h-4 w-4" />
+                                                Set featured image
+                                            </Button>
+                                        )}
+                                        <input
+                                            type="file"
+                                            ref={featuredImageInputRef}
+                                            onChange={(e) => handleFileChange(e, 'featured')}
+                                            className="hidden"
+                                            accept="image/*"
+                                        />
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
+                            
+                             <Collapsible open={isExcerptOpen} onOpenChange={setIsExcerptOpen} asChild>
+                                <div className="border-b">
+                                    <CollapsibleTrigger className="w-full py-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label>Excerpt</Label>
+                                            {isExcerptOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </div>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="pb-4 space-y-2">
+                                        <Textarea 
+                                            placeholder="Write an excerpt (optional)"
+                                            value={excerpt}
+                                            onChange={(e) => setExcerpt(e.target.value)}
+                                        />
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
 
                             <Collapsible open={isPublishedOpen} onOpenChange={setIsPublishedOpen} asChild>
                                  <div className="border-b-0">
@@ -623,5 +712,3 @@ export default function EditArticlePage() {
     </EditorContext.Provider>
   )
 }
-
-    

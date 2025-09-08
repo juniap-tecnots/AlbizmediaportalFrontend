@@ -14,6 +14,7 @@ interface Block {
 export interface Article {
   id: string;
   title: string;
+  subtitle: string;
   slug: string;
   content: string;
   blocks: Block[];
@@ -36,6 +37,7 @@ const initialState: ArticlesState = {
     {
         id: '1',
         title: "Global Update",
+        subtitle: "A look at what's happening around the world.",
         slug: 'global-update',
         author: "albiz",
         categories: ["Uncategorized"],
@@ -45,12 +47,13 @@ const initialState: ArticlesState = {
         content: 'This is the content for Global Update.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'A brief summary of global events and news.',
+        featuredImage: 'https://picsum.photos/600/400?random=1'
     },
     {
         id: '2',
         title: "One swallow does not make the spring",
+        subtitle: "Exploring the meaning behind the famous proverb.",
         slug: 'one-swallow-does-not-make-the-spring',
         author: "albiz",
         categories: ["Life Style"],
@@ -60,12 +63,13 @@ const initialState: ArticlesState = {
         content: 'This is the content for One swallow does not make the spring.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'Delving into the wisdom of ancient sayings.',
+        featuredImage: 'https://picsum.photos/600/400?random=2'
     },
     {
         id: '3',
         title: "Tip of the day: That man again",
+        subtitle: "A daily tip to improve your productivity.",
         slug: 'tip-of-the-day-that-man-again',
         author: "albiz",
         categories: ["Life Style"],
@@ -75,12 +79,13 @@ const initialState: ArticlesState = {
         content: 'This is the content for Tip of the day: That man again.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'A small piece of advice to make your day better.',
+        featuredImage: 'https://picsum.photos/600/400?random=3'
     },
     {
         id: '4',
         title: "Hibs and Ross County fans on final",
+        subtitle: "The latest news on the upcoming final match.",
         slug: 'hibs-and-ross-county-fans-on-final',
         author: "albiz",
         categories: ["Life Style"],
@@ -90,12 +95,13 @@ const initialState: ArticlesState = {
         content: 'This is the content for Hibs and Ross County fans on final.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'Updates, predictions, and fan reactions for the big game.',
+        featuredImage: 'https://picsum.photos/600/400?random=4'
     },
     {
         id: '5',
         title: "Persuasion is often more effectual than force",
+        subtitle: "The art of influence and negotiation.",
         slug: 'persuasion-is-often-more-effectual-than-force',
         author: "albiz",
         categories: ["Life Style"],
@@ -105,12 +111,13 @@ const initialState: ArticlesState = {
         content: 'This is the content for Persuasion is often more effectual than force.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'Learn how to win arguments and influence people without confrontation.',
+        featuredImage: 'https://picsum.photos/600/400?random=5'
     },
      {
         id: '6',
         title: "Archived Post Example",
+        subtitle: "This is a subtitle for the archived post.",
         slug: 'archived-post-example',
         author: "albiz",
         categories: ["World"],
@@ -120,12 +127,13 @@ const initialState: ArticlesState = {
         content: 'This is a sample archived post.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'An example of an excerpt for an archived article.',
+        featuredImage: 'https://picsum.photos/600/400?random=6'
       },
       {
         id: '7',
         title: "Draft Post Example",
+        subtitle: "This is a subtitle for the draft.",
         slug: 'draft-post-example',
         author: "albiz",
         categories: ["Tech"],
@@ -135,12 +143,13 @@ const initialState: ArticlesState = {
         content: 'This is a sample draft.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'An excerpt for the draft post goes here.',
+        featuredImage: 'https://picsum.photos/600/400?random=7'
       },
       {
         id: '8',
         title: "Scheduled Post Example",
+        subtitle: "A subtitle for the scheduled article.",
         slug: 'scheduled-post-example',
         author: "albiz",
         categories: ["Business"],
@@ -150,8 +159,8 @@ const initialState: ArticlesState = {
         content: 'This is a sample scheduled post.',
         blocks: [],
         visibility: 'public',
-        excerpt: '',
-        featuredImage: ''
+        excerpt: 'This excerpt is for a post that is scheduled to be published later.',
+        featuredImage: 'https://picsum.photos/600/400?random=8'
       },
   ],
 };
