@@ -110,7 +110,6 @@ export default function NewArticlePage() {
     
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [isTagsOpen, setIsTagsOpen] = useState(true);
-    const [isDiscussionOpen, setIsDiscussionOpen] = useState(true);
     const [isExcerptOpen, setIsExcerptOpen] = useState(false);
 
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
@@ -492,19 +491,6 @@ export default function NewArticlePage() {
                                     </div>
                                     <div className="flex justify-between"><span>Author</span><span className="font-medium">albiz</span></div>
                                 </div>
-                                
-                                <Collapsible open={isDiscussionOpen} onOpenChange={setIsDiscussionOpen}>
-                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                        <span>Discussion</span>
-                                        {isDiscussionOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="mt-2 space-y-2">
-                                        <div className="flex items-center gap-2">
-                                            <input type="checkbox" id="allow-comments" />
-                                            <Label htmlFor="allow-comments">Allow comments</Label>
-                                        </div>
-                                    </CollapsibleContent>
-                                </Collapsible>
                                 
                                 <Separator />
                                 
