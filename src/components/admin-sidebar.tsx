@@ -2,11 +2,14 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { BarChart, LayoutDashboard, Settings, Gem, Newspaper, Tag, FolderKanban, CheckSquare, MessageSquare, ChevronDown, ChevronRight, User } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectCurrentUser, logoutSuccess } from '@/lib/redux/slices/authSlice'
+import { Button } from './ui/button'
 
 const menuItems = [
   { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -83,7 +86,15 @@ interface MenuItemProps {
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const currentUser = useSelector(selectCurrentUser);
   const [expandedItems, setExpandedItems] = useState<string[]>(['settings']);
+
+  const handleLogout = () => {
+    dispatch(logoutSuccess());
+    router.push('/auth/signin');
+  }
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -208,16 +219,21 @@ export function AdminSidebar() {
       </div>
 
       <div className="px-4 py-4 border-t mt-auto">
-        <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-sidebar-accent cursor-pointer transition-colors">
-          <Avatar className="w-8 h-8">
-            <AvatarImage src="https://picsum.photos/100" alt="Admin" data-ai-hint="person" />
-            <AvatarFallback>A</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">Admin User</p>
-            <p className="text-xs text-muted-foreground truncate">admin@ecom.com</p>
-          </div>
-        </div>
+        {currentUser ? (
+             <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-sidebar-accent cursor-pointer transition-colors">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={currentUser.avatar} alt={currentUser.firstName} data-ai-hint="person" />
+                <AvatarFallback>{currentUser.firstName[0]}{currentUser.lastName[0]}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">{currentUser.firstName} {currentUser.lastName}</p>
+                <p className="text-xs text-muted-foreground truncate">{currentUser.email}</p>
+              </div>
+               <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
+            </div>
+        ) : (
+             <Button className="w-full" onClick={() => router.push('/auth/signin')}>Sign In</Button>
+        )}
       </div>
     </div>
   )
