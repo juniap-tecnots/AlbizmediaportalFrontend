@@ -49,7 +49,7 @@ const contentManagementItems = [
     },
     {
         id: 'comments-interactions',
-        label: 'Comments & Interactions',
+        label: 'Comments',
         icon: FaComments,
         children: [
             { id: 'all-comments', href: '/content/comments/all', label: 'All Comments' },
