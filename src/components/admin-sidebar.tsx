@@ -4,41 +4,49 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { FaTachometerAlt, FaChartBar, FaCog, FaNewspaper, FaTag, FaFolder, FaCheckSquare, FaComments, FaChevronDown, FaChevronRight, FaUsers, FaGem } from 'react-icons/fa'
+import { 
+    AiOutlineDashboard, 
+    AiOutlineBarChart, 
+    AiOutlineSetting, 
+    AiOutlineFileText, 
+    AiOutlineTag, 
+    AiOutlineFolder, 
+    AiOutlineCheckSquare, 
+    AiOutlineComment,
+    AiOutlineRight,
+    AiOutlineDown
+} from 'react-icons/ai'
+import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectCurrentUser, logoutSuccess } from '@/lib/redux/slices/authSlice'
-import { Button } from './ui/button'
 
 const menuItems = [
-  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
-  { id: 'analytics', href: '/analytics', label: 'Analytics', icon: FaChartBar },
+  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: AiOutlineDashboard },
+  { id: 'analytics', href: '/analytics', label: 'Analytics', icon: AiOutlineBarChart },
 ]
 
 const contentManagementItems = [
     { 
         id: 'articles',
         label: 'Articles', 
-        icon: FaNewspaper,
+        icon: AiOutlineFileText,
         href: '/content/articles/all'
     },
     {
         id: 'categories',
         label: 'Categories',
-        icon: FaTag,
+        icon: AiOutlineTag,
         href: '/content/categories',
     },
     {
         id: 'media-library',
         label: 'Media Library',
-        icon: FaFolder,
+        icon: AiOutlineFolder,
         href: '/content/media/images',
     },
     {
         id: 'approval-workflow',
         label: 'Approval Workflow',
-        icon: FaCheckSquare,
+        icon: AiOutlineCheckSquare,
         children: [
             { id: 'pending-review', href: '/content/approval/pending', label: 'Pending Review' },
             { id: 'editorial-review', href: '/content/approval/editorial', label: 'Editorial Review' },
@@ -50,7 +58,7 @@ const contentManagementItems = [
     {
         id: 'comments',
         label: 'Comments',
-        icon: FaComments,
+        icon: AiOutlineComment,
         children: [
             { id: 'all-comments', href: '/content/comments/all', label: 'All Comments' },
             { id: 'moderation', href: '/content/comments/moderation', label: 'Pending Moderation' },
@@ -63,7 +71,7 @@ const contentManagementItems = [
 const settingsMenuItem = {
     id: 'settings',
     label: 'Settings',
-    icon: FaCog,
+    icon: AiOutlineSetting,
     children: [
         { id: 'users', href: '/users', label: 'Users' },
         { id: 'accounts', href: '/settings/accounts', label: 'Accounts' },
@@ -86,14 +94,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const dispatch = useDispatch();
-  const currentUser = useSelector(selectCurrentUser);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
-
-  const handleLogout = () => {
-    dispatch(logoutSuccess());
-    router.push('/auth/signin');
-  }
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -156,7 +157,7 @@ export function AdminSidebar() {
                     <div className='w-4'>
                         {hasChildren && (
                             <span className={cn("text-gray-400 group-hover:text-gray-600", active && 'text-primary-foreground')}>
-                                {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
+                                {isExpanded ? <AiOutlineDown size={12} /> : <AiOutlineRight size={12} />}
                             </span>
                         )}
                     </div>
@@ -195,7 +196,7 @@ export function AdminSidebar() {
 
       <div className="flex-1 px-4 py-6 overflow-y-auto">
         <div className='space-y-1'>
-            {menuItems.map(item => renderMenuItem(item))}
+            {menuItems.map(item => renderMenuItem(item as MenuItemProps))}
         </div>
         
         <div className="pt-6">
