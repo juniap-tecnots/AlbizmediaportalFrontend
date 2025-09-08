@@ -156,7 +156,7 @@ export function AdminSidebar() {
                     <div className='w-4'>
                         {hasChildren && (
                             <span className={cn("text-gray-400 group-hover:text-gray-600", active && 'text-primary-foreground')}>
-                                {isExpanded ? <FaChevronDown size={16} /> : <FaChevronRight size={16} />}
+                                {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
                             </span>
                         )}
                     </div>
