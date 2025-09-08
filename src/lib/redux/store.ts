@@ -11,7 +11,7 @@ import workflowReducer from './slices/workflowSlice';
 import usersReducer from './slices/usersSlice';
 import authReducer from './slices/authSlice';
 import { persistReducer, persistStore } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import storage from './storage';
 
 const persistConfig = {
   key: 'root',
