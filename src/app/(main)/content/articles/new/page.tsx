@@ -175,7 +175,7 @@ export default function NewArticlePage() {
             subtitle,
             slug,
             content: editorRef.current?.innerHTML || '',
-            status: 'Published',
+            status: 'Draft',
             categories,
             tags,
             visibility: 'public',
@@ -186,8 +186,8 @@ export default function NewArticlePage() {
         };
         dispatch(addArticle(articleData as any));
         toast({
-          title: "Article Published!",
-          description: "Your new article has been successfully published.",
+          title: "Article Saved!",
+          description: "Your new article has been saved as a draft.",
         });
 
         // Reset form
@@ -297,7 +297,7 @@ export default function NewArticlePage() {
                     </Button>
                     <Button onClick={handlePublish}>
                         <Send className="mr-2 h-4 w-4" />
-                        Publish
+                        Save Draft
                     </Button>
                      <Button variant="ghost" size="icon">
                         <Settings className="h-5 w-5" />
@@ -483,7 +483,7 @@ export default function NewArticlePage() {
                                 <Separator />
 
                                 <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between"><span>Status</span><span className="font-medium">Published</span></div>
+                                    <div className="flex justify-between"><span>Status</span><span className="font-medium">Draft</span></div>
                                     <div className="flex justify-between"><span>Publish</span><button className="text-primary hover:underline">Immediately</button></div>
                                     <div className="flex justify-between items-center">
                                         <Label htmlFor="slug">Slug</Label>
