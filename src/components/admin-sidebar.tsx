@@ -184,8 +184,8 @@ export function AdminSidebar() {
     <div className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed top-0 left-0">
       <div className="flex h-16 items-center px-6 border-b border-sidebar-border">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Gem className="w-5 h-5 text-primary-foreground" />
+          <div className="w-8 h-8 border border-primary rounded-lg flex items-center justify-center">
+            <Gem className="w-5 h-5 text-primary" />
           </div>
           <span className="text-xl font-bold text-foreground">Albiz Media</span>
         </div>
