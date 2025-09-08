@@ -27,7 +27,7 @@ export function RecentSales() {
               <p className="text-sm font-medium leading-none">{sale.name}</p>
               <p className="text-sm text-muted-foreground">{sale.email}</p>
             </div>
-            <div className="font-medium">{sale.amount}</div>
+            <div className="text-sm font-medium">{sale.amount}</div>
           </div>
         ))}
       </CardContent>

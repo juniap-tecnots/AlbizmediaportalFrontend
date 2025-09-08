@@ -75,22 +75,22 @@ export default function DashboardPage() {
                             <div className="space-y-6">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <p className="font-semibold text-foreground hover:text-primary cursor-pointer">The Future of AI in Journalism</p>
-                                        <p className="text-sm text-muted-foreground">Published 2 hours ago</p>
+                                        <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">The Future of AI in Journalism</p>
+                                        <p className="text-xs text-muted-foreground">Published 2 hours ago</p>
                                     </div>
                                     <Button variant="ghost" size="sm">View</Button>
                                 </div>
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <p className="font-semibold text-foreground hover:text-primary cursor-pointer">City Council Approves New Budget</p>
-                                        <p className="text-sm text-muted-foreground">Published yesterday</p>
+                                        <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">City Council Approves New Budget</p>
+                                        <p className="text-xs text-muted-foreground">Published yesterday</p>
                                     </div>
                                     <Button variant="ghost" size="sm">View</Button>
                                 </div>
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <p className="font-semibold text-foreground hover:text-primary cursor-pointer">Tech Stocks Rally on Positive News</p>
-                                        <p className="text-sm text-muted-foreground">Published 3 days ago</p>
+                                        <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">Tech Stocks Rally on Positive News</p>
+                                        <p className="text-xs text-muted-foreground">Published 3 days ago</p>
                                     </div>
                                     <Button variant="ghost" size="sm">View</Button>
                                 </div>
