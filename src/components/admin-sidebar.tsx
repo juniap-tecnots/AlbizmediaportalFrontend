@@ -48,18 +48,6 @@ const contentManagementItems = [
         href: '/content/media/images',
     },
     {
-        id: 'approval',
-        label: 'Approval (workflow queue)',
-        icon: AiOutlineCheckSquare,
-        children: [
-            { id: 'pending-review', href: '/content/approval/pending', label: 'Pending Review' },
-            { id: 'editorial-review', href: '/content/approval/editorial', label: 'Editorial Review' },
-            { id: 'expert-review', href: '/content/approval/expert', label: 'Expert Review' },
-            { id: 'legal-review', href: '/content/approval/legal', label: 'Legal Review' },
-            { id: 'final-approval', href: '/content/approval/final', label: 'Final Approval Queue' },
-        ]
-    },
-    {
         id: 'comments',
         label: 'Comments',
         icon: AiOutlineComment,
@@ -146,6 +134,7 @@ export function AdminSidebar() {
       if (path === '/content/media') return pathname.startsWith('/content/media');
        if (path === '/settings') return pathname.startsWith('/settings') || pathname === '/users';
       if (path === '/workflow') return pathname.startsWith('/workflow');
+      if (path === '/content/categories') return pathname === '/content/categories';
       return true;
     }
     return false;
@@ -170,8 +159,22 @@ export function AdminSidebar() {
     }
     
     // A parent with an active child should also be considered active
-    if (hasChildren && item.children?.some(child => pathname === child.href)) {
+    if (hasChildren && item.children?.some(child => pathname.startsWith(child.href!))) {
         active = true;
+    }
+
+    if (item.href && pathname.startsWith(item.href) && item.href !== '/') {
+        if(hasChildren) {
+             const isMoreSpecificActive = contentManagementItems
+                .concat(workflowManagementItems)
+                .concat([settingsMenuItem as any])
+                .some(i => i.href && i.href !== item.href && pathname.startsWith(i.href));
+            if (isMoreSpecificActive) {
+                active = false;
+            }
+        } else {
+            active = pathname === item.href;
+        }
     }
 
 
