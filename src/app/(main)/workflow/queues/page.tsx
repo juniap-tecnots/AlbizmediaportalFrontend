@@ -20,7 +20,7 @@ import { format, formatDistanceToNow, isPast } from 'date-fns';
 
 type FilterType = 'all' | 'my-tasks' | 'team-tasks';
 
-export default function ApprovalQueuePage() {
+export default function ReviewQueuesPage() {
     const allTasks = useSelector(selectAllWorkflowTasks);
     const [filter, setFilter] = useState<FilterType>('all');
 
@@ -52,7 +52,7 @@ export default function ApprovalQueuePage() {
     return (
         <div className="p-6 md:p-8">
             <PageHeader
-                title="Approval Workflow Queue"
+                title="Review Queues"
                 description="Tasks assigned to you or your team for content review and approval."
             />
             <div className="flex items-center gap-2 mb-4">
@@ -115,4 +115,3 @@ export default function ApprovalQueuePage() {
             </div>
         </div>
     );
-}

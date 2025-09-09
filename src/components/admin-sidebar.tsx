@@ -17,7 +17,7 @@ import {
     AiOutlineDown,
     AiOutlineClockCircle
 } from 'react-icons/ai'
-import { FaGem } from 'react-icons/fa'
+import { FaGem, FaProjectDiagram, FaTasks, FaExclamationCircle, FaHistory } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
@@ -45,12 +45,6 @@ const contentManagementItems = [
         href: '/content/media/images',
     },
     {
-        id: 'approval-queue',
-        label: 'Approval (workflow queue)',
-        icon: AiOutlineClockCircle,
-        href: '/content/approval-queue'
-    },
-    {
         id: 'comments',
         label: 'Comments',
         icon: AiOutlineComment,
@@ -65,16 +59,28 @@ const contentManagementItems = [
 
 const workflowManagementItems = [
     {
-        id: 'approval-workflow',
-        label: 'Approval Workflow',
-        icon: AiOutlineCheckSquare,
-        children: [
-            { id: 'pending-review', href: '/content/approval/pending', label: 'Pending Review' },
-            { id: 'editorial-review', href: '/content/approval/editorial', label: 'Editorial Review' },
-            { id: 'expert-review', href: '/content/approval/expert', label: 'Expert Review' },
-            { id: 'legal-review', href: '/content/approval/legal', label: 'Legal Review' },
-            { id: 'final-approval', href: '/content/approval/final', label: 'Final Approval Queue' },
-        ]
+        id: 'workflows',
+        label: 'Workflows',
+        icon: FaProjectDiagram,
+        href: '/workflow'
+    },
+    {
+        id: 'review-queues',
+        label: 'Review Queues',
+        icon: FaTasks,
+        href: '/workflow/queues'
+    },
+    {
+        id: 'sla-escalations',
+        label: 'SLA & Escalations',
+        icon: FaExclamationCircle,
+        href: '/workflow/sla'
+    },
+    {
+        id: 'audit-trail',
+        label: 'Audit Trail',
+        icon: FaHistory,
+        href: '/workflow/audit'
     }
 ];
 
@@ -104,7 +110,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['workflow-management']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -118,6 +124,9 @@ export function AdminSidebar() {
     if (!path) return false;
     if (path === '/settings') {
         return pathname.startsWith('/settings') || pathname.startsWith('/users');
+    }
+    if (path === '/workflow') {
+        return pathname.startsWith('/workflow');
     }
     return pathname === path || pathname.startsWith(path + '/');
   }
