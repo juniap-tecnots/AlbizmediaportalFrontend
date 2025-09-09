@@ -94,7 +94,6 @@ const settingsMenuItem = {
         { id: 'roles', href: '/settings/roles', label: 'Roles' },
         { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
         { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
-        { id: 'workflow', href: '/settings/workflow', label: 'Workflow' },
     ]
 };
 
