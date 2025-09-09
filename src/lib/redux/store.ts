@@ -10,6 +10,7 @@ import hierarchyReducer from './slices/hierarchySlice';
 import workflowReducer from './slices/workflowSlice';
 import usersReducer from './slices/usersSlice';
 import authReducer from './slices/authSlice';
+import workflowQueueReducer from './slices/workflowQueueSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from './storage';
 
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   workflow: workflowReducer,
   users: usersReducer,
   auth: authReducer,
+  workflowQueue: workflowQueueReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

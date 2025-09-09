@@ -14,7 +14,8 @@ import {
     AiOutlineCheckSquare, 
     AiOutlineComment,
     AiOutlineRight,
-    AiOutlineDown
+    AiOutlineDown,
+    AiOutlineClockCircle
 } from 'react-icons/ai'
 import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
@@ -42,6 +43,12 @@ const contentManagementItems = [
         label: 'Media Library',
         icon: AiOutlineFolder,
         href: '/content/media/images',
+    },
+    {
+        id: 'approval-queue',
+        label: 'Approval (workflow queue)',
+        icon: AiOutlineClockCircle,
+        href: '/content/approval-queue'
     },
     {
         id: 'comments',
