@@ -1,8 +1,7 @@
 
 'use client'
 
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useRef } from 'react';
 import { Plus, Edit3, Trash2, Copy, Play, Pause, BarChart3, Users, Clock, AlertCircle, CheckCircle, ArrowRight, Settings, Filter, Search } from 'lucide-react';
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
@@ -13,16 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSelector } from 'react-redux';
 import { selectAllWorkflowTemplates, WorkflowTemplate } from "@/lib/redux/slices/workflowTemplatesSlice";
 import { format } from "date-fns";
 import type { RootState } from '@/lib/redux/store';
 
 
-export default function WorkflowsPage() {
+const WorkflowManagementSystem = () => {
   const [currentView, setCurrentView] = useState('list');
   
   const templates = useSelector(selectAllWorkflowTemplates);
-  const [filteredTemplates, setFilteredTemplates] = useState(templates);
   
   const [workflowBuilder, setWorkflowBuilder] = useState({
     name: '',
@@ -152,61 +151,6 @@ export default function WorkflowsPage() {
             ))}
           </TableBody>
         </Table>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-            <CardContent className="p-6">
-                 <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-gray-600">Active Workflows</p>
-                        <p className="text-2xl font-bold text-gray-900">{templates.length}</p>
-                    </div>
-                    <div className="bg-green-100 p-2 rounded-full">
-                        <CheckCircle className="w-6 h-6 text-green-600" />
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardContent className="p-6">
-                 <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-gray-600">Pending Approvals</p>
-                        <p className="text-2xl font-bold text-gray-900">12</p>
-                    </div>
-                    <div className="bg-yellow-100 p-2 rounded-full">
-                        <Clock className="w-6 h-6 text-yellow-600" />
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardContent className="p-6">
-                 <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-gray-600">Avg Processing Time</p>
-                        <p className="text-2xl font-bold text-gray-900">2.1d</p>
-                    </div>
-                    <div className="bg-blue-100 p-2 rounded-full">
-                        <BarChart3 className="w-6 h-6 text-blue-600" />
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-         <Card>
-            <CardContent className="p-6">
-                 <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-gray-600">SLA Breaches</p>
-                        <p className="text-2xl font-bold text-gray-900">3</p>
-                    </div>
-                    <div className="bg-red-100 p-2 rounded-full">
-                        <AlertCircle className="w-6 h-6 text-red-600" />
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
       </div>
     </div>
   );
@@ -462,3 +406,5 @@ export default function WorkflowsPage() {
     </div>
   );
 };
+
+export default WorkflowManagementSystem;
