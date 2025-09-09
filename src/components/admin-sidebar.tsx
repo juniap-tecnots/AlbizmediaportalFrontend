@@ -15,11 +15,10 @@ import {
     AiOutlineComment,
     AiOutlineRight,
     AiOutlineDown,
-    AiOutlineClockCircle,
-    AiOutlineSitemap,
     AiOutlineCarryOut,
     AiOutlineExclamationCircle,
     AiOutlineHistory,
+    AiOutlineNodeIndex,
 } from 'react-icons/ai'
 import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
@@ -77,7 +76,7 @@ const workflowManagementItems = [
     {
         id: 'workflows',
         label: 'Workflows',
-        icon: AiOutlineSitemap,
+        icon: AiOutlineNodeIndex,
         href: '/workflow'
     },
     {
@@ -110,7 +109,6 @@ const settingsMenuItem = {
         { id: 'roles', href: '/settings/roles', label: 'Roles' },
         { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
         { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
-        { id: 'workflow-settings', href: '/settings/workflow', label: 'Workflow' },
     ]
 };
 
