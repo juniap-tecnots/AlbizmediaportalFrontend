@@ -19,9 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ArrowUpDown, Pencil, Trash2 } from "lucide-react"
+import { ArrowUpDown, Pencil, Trash2, Send } from "lucide-react"
 import { useSelector, useDispatch } from "react-redux"
-import { selectAllArticles, deleteArticle } from "@/lib/redux/slices/articlesSlice"
+import { selectAllArticles, deleteArticle, updateArticle } from "@/lib/redux/slices/articlesSlice"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 
@@ -38,6 +38,14 @@ export default function AllArticlesPage() {
         description: "The article has been successfully deleted.",
         variant: 'destructive'
     })
+  }
+
+  const handleStatusUpdate = (article: any, status: any) => {
+    dispatch(updateArticle({ ...article, status }));
+    toast({
+        title: "Article Updated",
+        description: `Article has been moved to ${status}.`
+    });
   }
 
   return (
@@ -122,6 +130,11 @@ export default function AllArticlesPage() {
                 </TableCell>
                 <TableCell>
                     <div className="flex items-center gap-2">
+                        {article.status === 'Draft' && (
+                            <Button variant="outline" size="icon" onClick={() => handleStatusUpdate(article, 'Submitted')} className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
+                                <Send className="h-4 w-4" />
+                            </Button>
+                        )}
                         <Link href={`/content/articles/edit/${article.id}`}>
                             <Button variant="outline" size="icon" className="h-8 w-8 text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
                                 <Pencil className="h-4 w-4" />
