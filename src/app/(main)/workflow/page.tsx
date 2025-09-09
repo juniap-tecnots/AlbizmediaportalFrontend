@@ -3,8 +3,22 @@
 
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MoreVertical, PlusCircle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { MoreVertical, PlusCircle, Eye, Pencil, Trash2 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +29,7 @@ import { useSelector } from "react-redux";
 import { selectAllWorkflowTemplates } from "@/lib/redux/slices/workflowTemplatesSlice";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function WorkflowsPage() {
     const templates = useSelector(selectAllWorkflowTemplates);
@@ -24,46 +39,58 @@ export default function WorkflowsPage() {
                 title="Workflows"
                 description="Manage your content workflow templates."
                 actions={
-                    <Button>
-                        <PlusCircle className="mr-2" />
-                        Create New Template
-                    </Button>
+                    <Link href="/workflow/builder">
+                        <Button>
+                            <PlusCircle className="mr-2" />
+                            Create New Template
+                        </Button>
+                    </Link>
                 }
             />
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {templates.map(template => (
-                    <Card key={template.id}>
-                        <CardHeader className="flex flex-row items-start justify-between">
-                            <div className="space-y-1.5">
-                                <CardTitle>{template.name}</CardTitle>
-                                <CardDescription>{template.stages.length} stages</CardDescription>
-                            </div>
-                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                                        <MoreVertical className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>View</DropdownMenuItem>
-                                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                                    <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </CardHeader>
-                        <CardContent>
-                           <div className="flex space-x-2">
-                                <Badge variant="secondary">{template.contentType}</Badge>
-                                <Badge variant="outline">v{template.version}</Badge>
-                           </div>
-                           <p className="text-xs text-muted-foreground mt-4">
-                                Last modified on {format(new Date(template.lastModified), 'MMM d, yyyy')}
-                           </p>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Workflow Templates</CardTitle>
+                    <CardDescription>
+                        A list of predefined workflows for different content types.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                     <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Template Name</TableHead>
+                                <TableHead>Content Type</TableHead>
+                                <TableHead>Version</TableHead>
+                                <TableHead>Last Modified</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {templates.map(template => (
+                                <TableRow key={template.id}>
+                                    <TableCell className="font-medium">{template.name}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline">{template.contentType}</Badge>
+                                    </TableCell>
+                                    <TableCell>v{template.version}</TableCell>
+                                    <TableCell>{format(new Date(template.lastModified), 'MMM d, yyyy')}</TableCell>
+                                    <TableCell className="text-right space-x-2">
+                                        <Button variant="outline" size="icon" className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
+                                            <Eye className="h-4 w-4" />
+                                        </Button>
+                                        <Button variant="outline" size="icon" className="h-8 w-8 text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
+                                            <Pencil className="h-4 w-4" />
+                                        </Button>
+                                        <Button variant="outline" size="icon" className="h-8 w-8 text-red-500 border-red-500 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600">
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
         </div>
     );
 }
