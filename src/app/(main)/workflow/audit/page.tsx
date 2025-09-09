@@ -23,16 +23,14 @@ export default function AuditTrailPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Audit Logs</CardTitle>
-                    <CardDescription>
-                        <div className="flex items-center justify-between">
-                            <p>Search and filter through all recorded actions.</p>
-                            <div className="flex items-center gap-2">
-                                <Input placeholder="Filter by content, user, stage..." className="w-64" />
-                                <CalendarDateRangePicker />
-                                <Button>Search</Button>
-                            </div>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <p>Search and filter through all recorded actions.</p>
+                        <div className="flex items-center gap-2">
+                            <Input placeholder="Filter by content, user, stage..." className="w-64" />
+                            <CalendarDateRangePicker />
+                            <Button>Search</Button>
                         </div>
-                    </CardDescription>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <Table>
