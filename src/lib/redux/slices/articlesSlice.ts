@@ -12,6 +12,9 @@ interface Block {
   content: string;
 }
 
+export type ArticleStatus = 'Draft' | 'Submitted' | 'Under Review' | 'Approved' | 'Published' | 'Rejected' | 'Archived' | 'Scheduled';
+
+
 export interface Article {
   id: string;
   title: string;
@@ -19,7 +22,7 @@ export interface Article {
   slug: string;
   content: string;
   blocks: Block[];
-  status: 'Draft' | 'Published' | 'Archived' | 'Scheduled';
+  status: ArticleStatus;
   author: string;
   categories: string[];
   tags: string[];
@@ -28,6 +31,7 @@ export interface Article {
   excerpt: string;
   featuredImage: string;
   discussion: 'Open' | 'Closed';
+  assignedEditor?: string;
 }
 
 interface ArticlesState {
@@ -52,6 +56,7 @@ const initialState: ArticlesState = {
         excerpt: 'A brief summary of global events and news.',
         featuredImage: 'https://picsum.photos/600/400?random=1',
         discussion: 'Open',
+        assignedEditor: 'Liam Smith'
     },
     {
         id: '2',
@@ -69,6 +74,7 @@ const initialState: ArticlesState = {
         excerpt: 'Delving into the wisdom of ancient sayings.',
         featuredImage: 'https://picsum.photos/600/400?random=2',
         discussion: 'Open',
+        assignedEditor: 'Ava Davis'
     },
     {
         id: '3',
@@ -86,6 +92,7 @@ const initialState: ArticlesState = {
         excerpt: 'A small piece of advice to make your day better.',
         featuredImage: 'https://picsum.photos/600/400?random=3',
         discussion: 'Open',
+        assignedEditor: 'Liam Smith'
     },
     {
         id: '4',
@@ -103,6 +110,7 @@ const initialState: ArticlesState = {
         excerpt: 'Updates, predictions, and fan reactions for the big game.',
         featuredImage: 'https://picsum.photos/600/400?random=4',
         discussion: 'Open',
+        assignedEditor: 'Ava Davis'
     },
     {
         id: '5',
@@ -120,6 +128,7 @@ const initialState: ArticlesState = {
         excerpt: 'Learn how to win arguments and influence people without confrontation.',
         featuredImage: 'https://picsum.photos/600/400?random=5',
         discussion: 'Open',
+        assignedEditor: 'Liam Smith'
     },
      {
         id: '6',
@@ -137,6 +146,7 @@ const initialState: ArticlesState = {
         excerpt: 'An example of an excerpt for an archived article.',
         featuredImage: 'https://picsum.photos/600/400?random=6',
         discussion: 'Closed',
+        assignedEditor: 'Ava Davis'
       },
       {
         id: '7',
@@ -171,6 +181,7 @@ const initialState: ArticlesState = {
         excerpt: 'This excerpt is for a post that is scheduled to be published later.',
         featuredImage: 'https://picsum.photos/600/400?random=8',
         discussion: 'Open',
+        assignedEditor: 'Liam Smith'
       },
   ],
 };

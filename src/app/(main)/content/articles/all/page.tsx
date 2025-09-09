@@ -54,7 +54,7 @@ export default function AllArticlesPage() {
             </Select>
             <Select defaultValue="all-categories">
                 <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="All Categories" />
+                    <SelectValue placeholder="All Categories" />_
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all-categories">All Categories</SelectItem>
@@ -85,6 +85,8 @@ export default function AllArticlesPage() {
               <TableHead>Author</TableHead>
               <TableHead>Categories</TableHead>
               <TableHead>Tags</TableHead>
+              <TableHead>Assigned Editor</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>
                 <Button variant="ghost" size="sm">
                   Date <ArrowUpDown className="w-4 h-4 ml-2" />
@@ -113,8 +115,9 @@ export default function AllArticlesPage() {
                     <a href="#" key={i} className="hover:underline">{tag}</a>
                   )) : '—'}
                 </TableCell>
+                 <TableCell>{article.assignedEditor || 'Unassigned'}</TableCell>
+                <TableCell>{article.status}</TableCell>
                 <TableCell>
-                    {article.status}<br/>
                     <span className="text-muted-foreground">{new Date(article.date).toLocaleString()}</span>
                 </TableCell>
                 <TableCell>
