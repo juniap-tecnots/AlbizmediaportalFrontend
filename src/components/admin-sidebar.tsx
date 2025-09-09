@@ -15,9 +15,13 @@ import {
     AiOutlineComment,
     AiOutlineRight,
     AiOutlineDown,
-    AiOutlineClockCircle
+    AiOutlineClockCircle,
+    AiOutlineSitemap,
+    AiOutlineCarryOut,
+    AiOutlineExclamationCircle,
+    AiOutlineHistory,
 } from 'react-icons/ai'
-import { FaGem, FaProjectDiagram, FaTasks, FaExclamationCircle, FaHistory } from 'react-icons/fa'
+import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
@@ -45,6 +49,18 @@ const contentManagementItems = [
         href: '/content/media/images',
     },
     {
+        id: 'approval',
+        label: 'Approval (workflow queue)',
+        icon: AiOutlineCheckSquare,
+        children: [
+            { id: 'pending-review', href: '/content/approval/pending', label: 'Pending Review' },
+            { id: 'editorial-review', href: '/content/approval/editorial', label: 'Editorial Review' },
+            { id: 'expert-review', href: '/content/approval/expert', label: 'Expert Review' },
+            { id: 'legal-review', href: '/content/approval/legal', label: 'Legal Review' },
+            { id: 'final-approval', href: '/content/approval/final', label: 'Final Approval Queue' },
+        ]
+    },
+    {
         id: 'comments',
         label: 'Comments',
         icon: AiOutlineComment,
@@ -61,25 +77,25 @@ const workflowManagementItems = [
     {
         id: 'workflows',
         label: 'Workflows',
-        icon: FaProjectDiagram,
+        icon: AiOutlineSitemap,
         href: '/workflow'
     },
     {
         id: 'review-queues',
         label: 'Review Queues',
-        icon: FaTasks,
+        icon: AiOutlineCarryOut,
         href: '/workflow/queues'
     },
     {
         id: 'sla-escalations',
         label: 'SLA & Escalations',
-        icon: FaExclamationCircle,
+        icon: AiOutlineExclamationCircle,
         href: '/workflow/sla'
     },
     {
         id: 'audit-trail',
         label: 'Audit Trail',
-        icon: FaHistory,
+        icon: AiOutlineHistory,
         href: '/workflow/audit'
     }
 ];
@@ -94,6 +110,7 @@ const settingsMenuItem = {
         { id: 'roles', href: '/settings/roles', label: 'Roles' },
         { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
         { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
+        { id: 'workflow-settings', href: '/settings/workflow', label: 'Workflow' },
     ]
 };
 
