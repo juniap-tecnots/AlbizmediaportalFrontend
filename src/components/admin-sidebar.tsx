@@ -48,18 +48,6 @@ const contentManagementItems = [
         href: '/content/media/images',
     },
     {
-        id: 'approval-queue',
-        label: 'Approval (workflow queue)',
-        icon: AiOutlineCheckSquare,
-        children: [
-            { id: 'pending-review', href: '/content/approval/pending', label: 'Pending Review' },
-            { id: 'editorial-review', href: '/content/approval/editorial', label: 'Editorial Review' },
-            { id: 'expert-review', href: '/content/approval/expert', label: 'Expert Review' },
-            { id: 'legal-review', href: '/content/approval/legal', label: 'Legal Review' },
-            { id: 'final-approval-queue', href: '/content/approval/final', label: 'Final Approval Queue' },
-        ]
-    },
-    {
         id: 'comments',
         label: 'Comments',
         icon: AiOutlineComment,
