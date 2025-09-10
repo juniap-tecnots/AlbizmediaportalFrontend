@@ -12,7 +12,30 @@ interface Block {
   content: string;
 }
 
-export type ArticleStatus = 'Draft' | 'Submitted' | 'Under Review' | 'Approved' | 'Published' | 'Rejected' | 'Archived' | 'Scheduled';
+export type ArticleStatus = 
+  | 'DRAFT' 
+  | 'IN_PROGRESS' 
+  | 'IDLE' 
+  | 'SUBMITTED_FOR_REVIEW' 
+  | 'UNDER_EDITORIAL_REVIEW' 
+  | 'REQUIRES_REVISION' 
+  | 'IN_REVISION' 
+  | 'LEGAL_REVIEW_REQUIRED' 
+  | 'APPROVED_FOR_PUBLICATION' 
+  | 'SCHEDULED_FOR_PUBLICATION' 
+  | 'PUBLISHED_LIVE' 
+  | 'LIVE_WITH_UPDATES' 
+  | 'RETRACTED' 
+  | 'ARCHIVED' 
+  | 'ABANDONED' 
+  | 'REJECTED' 
+  | 'EDITORIAL_INTERVENTION' 
+  | 'RETURNED_TO_AUTHOR' 
+  | 'LEGAL_APPROVED' 
+  | 'LEGAL_REJECTED' 
+  | 'REQUIRES_LEGAL_REVISION' 
+  | 'PUBLICATION_DELAYED' 
+  | 'PULLED_FROM_SCHEDULE';
 
 
 export interface Article {
@@ -49,7 +72,7 @@ const initialState: ArticlesState = {
         categories: ["Uncategorized"],
         tags: [],
         date: "2025-09-01T06:07:00Z",
-        status: "Published",
+        status: "PUBLISHED_LIVE",
         content: 'This is the content for Global Update.',
         blocks: [],
         visibility: 'public',
@@ -67,7 +90,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Games"],
         date: "2025-09-01T05:40:00Z",
-        status: "Published",
+        status: "PUBLISHED_LIVE",
         content: 'This is the content for One swallow does not make the spring.',
         blocks: [],
         visibility: 'public',
@@ -85,7 +108,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Team"],
         date: "2025-09-01T05:40:00Z",
-        status: "Published",
+        status: "PUBLISHED_LIVE",
         content: 'This is the content for Tip of the day: That man again.',
         blocks: [],
         visibility: 'public',
@@ -103,7 +126,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Color"],
         date: "2025-09-01T05:40:00Z",
-        status: "Published",
+        status: "PUBLISHED_LIVE",
         content: 'This is the content for Hibs and Ross County fans on final.',
         blocks: [],
         visibility: 'public',
@@ -121,7 +144,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Content"],
         date: "2025-09-01T05:40:00Z",
-        status: "Published",
+        status: "PUBLISHED_LIVE",
         content: 'This is the content for Persuasion is often more effectual than force.',
         blocks: [],
         visibility: 'public',
@@ -139,7 +162,7 @@ const initialState: ArticlesState = {
         categories: ["World"],
         tags: ["Old-News"],
         date: "2024-01-15T15:30:00Z",
-        status: "Archived",
+        status: "ARCHIVED",
         content: 'This is a sample archived post.',
         blocks: [],
         visibility: 'public',
@@ -157,7 +180,7 @@ const initialState: ArticlesState = {
         categories: ["Tech"],
         tags: ["Drafting"],
         date: "2025-09-02T10:00:00Z",
-        status: "Draft",
+        status: "DRAFT",
         content: 'This is a sample draft.',
         blocks: [],
         visibility: 'public',
@@ -174,7 +197,7 @@ const initialState: ArticlesState = {
         categories: ["Business"],
         tags: ["Planning"],
         date: "2025-10-01T09:00:00Z",
-        status: "Scheduled",
+        status: "SCHEDULED_FOR_PUBLICATION",
         content: 'This is a sample scheduled post.',
         blocks: [],
         visibility: 'public',
@@ -190,12 +213,13 @@ const articlesSlice = createSlice({
   name: 'articles',
   initialState,
   reducers: {
-    addArticle: (state, action: PayloadAction<Omit<Article, 'id' | 'date' | 'author'>>) => {
+    addArticle: (state, action: PayloadAction<Omit<Article, 'id' | 'date' | 'author' | 'status'>>) => {
       const newArticle: Article = {
         ...action.payload,
         id: (state.articles.length + 1).toString(),
         date: new Date().toISOString(),
-        author: 'albiz', 
+        author: 'albiz',
+        status: 'DRAFT',
       };
       state.articles.push(newArticle);
     },
@@ -215,10 +239,10 @@ export const { addArticle, updateArticle, deleteArticle } = articlesSlice.action
 
 export const selectAllArticles = (state: RootState) => state.articles.articles;
 export const selectArticleById = (state: RootState, articleId: string) => state.articles.articles.find(article => article.id === articleId);
-export const selectPublishedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Published');
-export const selectDraftArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Draft');
-export const selectScheduledArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Scheduled');
-export const selectArchivedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'Archived');
+export const selectPublishedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'PUBLISHED_LIVE');
+export const selectDraftArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'DRAFT');
+export const selectScheduledArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'SCHEDULED_FOR_PUBLICATION');
+export const selectArchivedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'ARCHIVED');
 
 
 export default articlesSlice.reducer;

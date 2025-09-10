@@ -130,7 +130,7 @@ export default function DraftsPage() {
                 </TableCell>
                 <TableCell>
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" onClick={() => handleStatusUpdate(article, 'Submitted')} className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
+                        <Button variant="outline" size="icon" onClick={() => handleStatusUpdate(article, 'SUBMITTED_FOR_REVIEW')} className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
                             <Send className="h-4 w-4" />
                         </Button>
                         <Link href={`/content/articles/edit/${article.id}`}>

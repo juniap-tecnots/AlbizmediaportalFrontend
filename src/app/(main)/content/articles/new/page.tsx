@@ -175,13 +175,12 @@ export default function NewArticlePage() {
             subtitle,
             slug,
             content: editorRef.current?.innerHTML || '',
-            status: 'Draft',
             categories,
             tags,
             visibility: 'public',
             excerpt,
             featuredImage,
-            blocks: [{ id: '1', type: 'paragraph', content: editorRef.current?.innerHTML || '' }]
+            discussion: 'Open'
         };
         dispatch(addArticle(articleData as any));
         toast({
