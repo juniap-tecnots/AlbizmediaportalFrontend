@@ -3,9 +3,11 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
+import { ContractStatus } from './contractsSlice';
 
 export type UserRole = 'Admin' | 'Editor' | 'Author';
 export type UserStatus = 'Active' | 'Suspended';
+export type UserContractStatus = ContractStatus | 'N/A';
 
 export interface User {
   id: string;
@@ -15,6 +17,7 @@ export interface User {
   avatar: string;
   role: UserRole;
   status: UserStatus;
+  contractStatus: UserContractStatus;
   lastLogin: string;
   type: 'Platform' | 'Staff';
 }
@@ -25,11 +28,11 @@ interface UsersState {
 
 const initialState: UsersState = {
   users: [
-    { id: '1', firstName: 'Emma', lastName: 'Wilson', email: 'emma.wilson@example.com', avatar: 'https://picsum.photos/100?a=6', role: 'Admin', status: 'Active', lastLogin: '2024-05-10T00:00:00Z', type: 'Staff' },
-    { id: '2', firstName: 'Liam', lastName: 'Smith', email: 'liam.smith@example.com', avatar: 'https://picsum.photos/100?a=7', role: 'Editor', status: 'Active', lastLogin: '2024-05-12T00:00:00Z', type: 'Staff' },
-    { id: '3', firstName: 'Olivia', lastName: 'Jones', email: 'olivia.jones@example.com', avatar: 'https://picsum.photos/100?a=8', role: 'Author', status: 'Suspended', lastLogin: '2024-04-28T00:00:00Z', type: 'Staff' },
-    { id: '4', firstName: 'Noah', lastName: 'Brown', email: 'noah.brown@example.com', avatar: 'https://picsum.photos/100?a=9', role: 'Author', status: 'Active', lastLogin: '2024-05-13T00:00:00Z', type: 'Platform' },
-    { id: '5', firstName: 'Ava', lastName: 'Davis', email: 'ava.davis@example.com', avatar: 'https://picsum.photos/100?a=10', role: 'Editor', status: 'Active', lastLogin: '2024-05-11T00:00:00Z', type: 'Platform' },
+    { id: '1', firstName: 'Emma', lastName: 'Wilson', email: 'emma.wilson@example.com', avatar: 'https://picsum.photos/100?a=6', role: 'Admin', status: 'Active', contractStatus: 'Active', lastLogin: '2024-05-10T00:00:00Z', type: 'Staff' },
+    { id: '2', firstName: 'Liam', lastName: 'Smith', email: 'liam.smith@example.com', avatar: 'https://picsum.photos/100?a=7', role: 'Editor', status: 'Active', contractStatus: 'Pending', lastLogin: '2024-05-12T00:00:00Z', type: 'Staff' },
+    { id: '3', firstName: 'Olivia', lastName: 'Jones', email: 'olivia.jones@example.com', avatar: 'https://picsum.photos/100?a=8', role: 'Author', status: 'Suspended', contractStatus: 'Expired', lastLogin: '2024-04-28T00:00:00Z', type: 'Staff' },
+    { id: '4', firstName: 'Noah', lastName: 'Brown', email: 'noah.brown@example.com', avatar: 'https://picsum.photos/100?a=9', role: 'Author', status: 'Active', contractStatus: 'Draft', lastLogin: '2024-05-13T00:00:00Z', type: 'Platform' },
+    { id: '5', firstName: 'Ava', lastName: 'Davis', email: 'ava.davis@example.com', avatar: 'https://picsum.photos/100?a=10', role: 'Editor', status: 'Active', contractStatus: 'N/A', lastLogin: '2024-05-11T00:00:00Z', type: 'Platform' },
   ],
 };
 
@@ -39,7 +42,7 @@ const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    addUser: (state, action: PayloadAction<Omit<User, 'id' | 'lastLogin' | 'avatar' | 'status' | 'type'>>) => {
+    addUser: (state, action: PayloadAction<Omit<User, 'id' | 'lastLogin' | 'avatar' | 'status' | 'type' | 'contractStatus'>>) => {
       lastId++;
       const newUser: User = {
         ...action.payload,
@@ -47,6 +50,7 @@ const usersSlice = createSlice({
         lastLogin: new Date().toISOString(),
         avatar: `https://picsum.photos/100?a=${lastId}`,
         status: 'Active',
+        contractStatus: 'N/A',
         type: 'Platform', 
       };
       state.users.unshift(newUser);
@@ -68,3 +72,5 @@ export const { addUser, updateUser, deleteUser } = usersSlice.actions;
 export const selectAllUsers = (state: RootState) => state.users.users;
 
 export default usersSlice.reducer;
+
+    

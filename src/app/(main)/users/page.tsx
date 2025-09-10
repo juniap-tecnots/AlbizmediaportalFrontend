@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 import { selectAllUsers, addUser, updateUser, User, UserRole, UserStatus } from '@/lib/redux/slices/usersSlice';
 import type { RootState } from '@/lib/redux/store';
 import { cn } from '@/lib/utils';
+import { ContractStatus } from '@/lib/redux/slices/contractsSlice';
 
 export default function UsersPage() {
     const dispatch = useDispatch();
@@ -53,10 +54,15 @@ export default function UsersPage() {
         }
     };
 
-    const getStatusBadgeClass = (status: UserStatus) => {
+    const getStatusBadgeClass = (status: UserStatus | ContractStatus) => {
         switch (status) {
             case 'Active': return 'bg-green-100 text-green-800 border-green-200';
             case 'Suspended': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            case 'Pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            case 'Draft': return 'bg-blue-100 text-blue-800 border-blue-200';
+            case 'Expired': return 'bg-gray-100 text-gray-800 border-gray-200';
+            case 'Terminated': return 'bg-red-100 text-red-800 border-red-200';
+            case 'N/A': return 'bg-gray-100 text-gray-800 border-gray-200';
             default: return 'bg-secondary';
         }
     };
@@ -169,6 +175,7 @@ export default function UsersPage() {
                                     <TableHead>User Info</TableHead>
                                     <TableHead>Role</TableHead>
                                     <TableHead>Status</TableHead>
+                                    <TableHead>Contract Status</TableHead>
                                     <TableHead>Last Login</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
@@ -193,6 +200,9 @@ export default function UsersPage() {
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant="outline" className={cn(getStatusBadgeClass(user.status))}>{user.status}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className={cn(getStatusBadgeClass(user.contractStatus))}>{user.contractStatus}</Badge>
                                         </TableCell>
                                         <TableCell>{user.lastLogin}</TableCell>
                                         <TableCell className="text-right space-x-2">
@@ -266,3 +276,5 @@ export default function UsersPage() {
         </div>
     );
 }
+
+    
