@@ -252,38 +252,6 @@ export default function NewProfileCardPage() {
                 <div className="space-y-8 lg:sticky top-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Configuration</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="space-y-2">
-                                <Label htmlFor="managementType">Management Option</Label>
-                                <Select onValueChange={(value: ManagementType) => setManagementType(value)} defaultValue={managementType}>
-                                    <SelectTrigger id="managementType">
-                                        <SelectValue placeholder="Select management type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="self_managed">Self-Managed</SelectItem>
-                                        <SelectItem value="platform_managed">Platform-Managed</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="subscriptionTier">Subscription Tier</Label>
-                                <Select onValueChange={(value: SubscriptionTier) => setSubscriptionTier(value)} defaultValue={subscriptionTier}>
-                                    <SelectTrigger id="subscriptionTier">
-                                        <SelectValue placeholder="Select a tier" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="free">Free</SelectItem>
-                                        <SelectItem value="premium">Premium</SelectItem>
-                                        <SelectItem value="managed">Managed</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader>
                             <CardTitle>Verification Documents</CardTitle>
                             <CardDescription>Optional: Upload documents for verification.</CardDescription>
                         </CardHeader>
