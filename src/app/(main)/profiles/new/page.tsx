@@ -133,7 +133,7 @@ export default function NewProfileCardPage() {
                 description="Fill in the details to create a new universal profile card."
             />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-3 space-y-8">
                     <Card>
                         <CardHeader>
                             <CardTitle>Basic Information</CardTitle>
@@ -271,49 +271,6 @@ export default function NewProfileCardPage() {
                                 <Label htmlFor="portfolio">Portfolio/Work Samples</Label>
                                 <Textarea id="portfolio" placeholder="Links to your portfolio, GitHub, or other work samples." value={portfolio} onChange={(e) => setPortfolio(e.target.value)} />
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="space-y-8 lg:sticky top-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Verification Documents</CardTitle>
-                            <CardDescription>Optional: Upload documents for verification.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div 
-                                className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer"
-                                onClick={() => verificationFileInputRef.current?.click()}
-                            >
-                                <UploadCloud className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                <p className="text-muted-foreground mb-2">Drag 'n' drop files or click to select</p>
-                                <Button variant="outline" size="sm" type="button">Select Files</Button>
-                                <input
-                                    type="file"
-                                    ref={verificationFileInputRef}
-                                    onChange={(e) => handleFileChange(e, 'verification')}
-                                    className="hidden"
-                                    multiple
-                                    accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                                />
-                            </div>
-                            {verificationDocs.length > 0 && (
-                                <div className="mt-4 space-y-2">
-                                    <h4 className="font-medium text-sm">Uploaded Files:</h4>
-                                    {verificationDocs.map((file, index) => (
-                                        <div key={index} className="flex items-center justify-between text-sm p-2 bg-muted rounded-md">
-                                            <div className="flex items-center gap-2 truncate">
-                                                <FileIcon className="h-4 w-4 shrink-0" />
-                                                <span className="truncate">{file.name}</span>
-                                            </div>
-                                            <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleRemoveFile(index)}>
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
                         </CardContent>
                     </Card>
                 </div>
