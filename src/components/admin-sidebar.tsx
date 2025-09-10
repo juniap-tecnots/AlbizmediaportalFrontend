@@ -97,6 +97,19 @@ const settingsMenuItem = {
         { id: 'roles', href: '/settings/roles', label: 'Roles' },
         { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
         { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
+        {
+            id: 'contracts',
+            label: 'Contracts',
+            href: '/contracts',
+            children: [
+                { id: 'contracts-dashboard', href: '/contracts', label: 'Dashboard' },
+                { id: 'contracts-create', href: '/contracts/create', label: 'Create New' },
+                { id: 'contracts-active', href: '/contracts/active', label: 'Active Contracts' },
+                { id: 'contracts-expired', href: '/contracts/expired', label: 'Expired Contracts' },
+                { id: 'contracts-templates', href: '/contracts/templates', label: 'Templates' },
+                { id: 'contracts-settings', href: '/contracts/settings', label: 'Settings' },
+            ]
+        }
     ]
 };
 
@@ -106,13 +119,13 @@ interface MenuItemProps {
   label: string;
   icon: React.ElementType;
   href?: string;
-  children?: Omit<MenuItemProps, 'icon' | 'children'>[];
+  children?: (Omit<MenuItemProps, 'icon'>)[];
 }
 
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -124,59 +137,76 @@ export function AdminSidebar() {
 
   const isActive = (path?: string, hasChildren?: boolean) => {
     if (!path) return false;
-    // Exact match for top-level items without children
-    if (!hasChildren) return pathname === path;
     
     // For items with children, check if the current path starts with the item's path,
     // but isn't a more specific match for another top-level item.
     if (pathname.startsWith(path)) {
       if (path === '/content/articles') return pathname.startsWith('/content/articles');
       if (path === '/content/media') return pathname.startsWith('/content/media');
-       if (path === '/settings') return pathname.startsWith('/settings') || pathname === '/users';
+      if (path === '/settings') return pathname.startsWith('/settings') || pathname === '/users';
       if (path === '/workflow') return pathname.startsWith('/workflow');
+      if (path === '/contracts') return pathname.startsWith('/contracts');
       if (path === '/content/categories') return pathname === '/content/categories';
+
+      // Special case for settings children, since /users is outside /settings
+      if(itemIsChildOf(settingsMenuItem, path)) {
+        return pathname === path;
+      }
+      
       return true;
     }
     return false;
   }
   
-  const isSubItemActive = (items?: Omit<MenuItemProps, 'icon' | 'children'>[]) => {
-      return items?.some(child => pathname.startsWith(child.href || ''));
+  const itemIsChildOf = (parent: MenuItemProps, childHref: string): boolean => {
+    if(!parent.children) return false;
+    return parent.children.some(child => child.href === childHref || (child.children && itemIsChildOf(child as MenuItemProps, childHref)));
   }
 
   const renderMenuItem = (item: MenuItemProps) => {
     const hasChildren = item.children && item.children.length > 0;
     
-    // Check if any child is active to keep the parent expanded and highlighted
     const anyChildActive = hasChildren && item.children?.some(child => isActive(child.href));
     
     const isExpanded = expandedItems.includes(item.id) || !!anyChildActive;
     
     let active = isActive(item.href, hasChildren);
 
-    if (item.id === 'settings' && isActive('/users')) {
+    if (item.id === 'settings' && (isActive('/users') || isActive('/contracts'))) {
       active = true;
     }
-    
-    // A parent with an active child should also be considered active
+
     if (hasChildren && item.children?.some(child => pathname.startsWith(child.href!))) {
         active = true;
     }
+    
+    // A more specific match for another item should not cause the parent to be active.
+    const isMoreSpecificActive = menuItems
+      .concat(contentManagementItems as any)
+      .concat(workflowManagementItems as any)
+      .concat([settingsMenuItem as any])
+      .some(i => {
+        if (i.href && item.href && i.href !== item.href && pathname.startsWith(i.href) && i.href.length > item.href.length) {
+          return true;
+        }
+        if(i.children) {
+            return i.children.some(child => child.href && item.href && child.href !== item.href && pathname.startsWith(child.href) && child.href.length > item.href.length);
+        }
+        return false;
+      });
 
-    if (item.href && pathname.startsWith(item.href) && item.href !== '/') {
-        if(hasChildren) {
-             const isMoreSpecificActive = contentManagementItems
-                .concat(workflowManagementItems)
-                .concat([settingsMenuItem as any])
-                .some(i => i.href && i.href !== item.href && pathname.startsWith(i.href));
-            if (isMoreSpecificActive) {
-                active = false;
-            }
+    if (active && isMoreSpecificActive && item.href !== '/') {
+        // Special case for settings
+        if (item.id === 'settings' && (pathname.startsWith('/users') || pathname.startsWith('/contracts'))) {
+            // keep active
         } else {
-            active = pathname === item.href;
+            active = false;
         }
     }
-
+    
+    if (pathname === item.href) {
+        active = true;
+    }
 
     const WrapperComponent = item.href && !hasChildren ? Link : 'div';
     const wrapperProps = item.href && !hasChildren ? { href: item.href } : {};
@@ -195,16 +225,18 @@ export function AdminSidebar() {
                             e.preventDefault();
                             e.stopPropagation();
                             toggleExpanded(item.id);
+                        } else if(item.href) {
+                            router.push(item.href);
                         }
                     }}
                 >
                     <div className="flex items-center space-x-3 flex-1">
-                        <span className={cn(
+                        {item.icon && <span className={cn(
                             'text-sidebar-foreground group-hover:text-sidebar-accent-foreground',
                              active && 'text-primary-foreground'
                         )}>
                             <item.icon size={20} />
-                        </span>
+                        </span>}
                         <span className="font-medium text-sm truncate">
                             {item.label}
                         </span>
@@ -221,17 +253,7 @@ export function AdminSidebar() {
 
             {hasChildren && isExpanded && (
                 <div className="mt-1 ml-4 pl-5 border-l border-sidebar-border space-y-1 py-1">
-                    {item.children?.map(child => (
-                         <Link href={child.href || '#'} key={child.id}>
-                             <div className={cn(
-                                'block px-3 py-2 rounded-md text-sm font-medium',
-                                'text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent',
-                                pathname === child.href && 'text-primary bg-primary/10'
-                             )}>
-                                 {child.label}
-                             </div>
-                         </Link>
-                    ))}
+                    {item.children?.map(child => renderMenuItem(child as MenuItemProps))}
                 </div>
             )}
         </div>
