@@ -32,7 +32,6 @@ export default function CreateContractPage() {
     const [expiryDate, setExpiryDate] = useState<Date | undefined>();
     const [terms, setTerms] = useState('');
     const [status, setStatus] = useState<ContractStatus>('Draft');
-    const [workflow, setWorkflow] = useState('Legal Review');
     const [attachments, setAttachments] = useState<File[]>([]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,19 +159,6 @@ export default function CreateContractPage() {
                                             <SelectItem value="Draft">Draft</SelectItem>
                                             <SelectItem value="Pending">Pending Signature</SelectItem>
                                             <SelectItem value="Active">Active</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="workflow">Assign Workflow</Label>
-                                    <Select onValueChange={setWorkflow} defaultValue={workflow}>
-                                        <SelectTrigger id="workflow">
-                                            <SelectValue placeholder="Select a workflow" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Legal Review">Legal Review</SelectItem>
-                                            <SelectItem value="Admin Approval">Admin Approval</SelectItem>
-                                            <SelectItem value="Auto Activate">Auto Activate</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
