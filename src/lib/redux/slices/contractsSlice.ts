@@ -5,7 +5,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
 export type ContractStatus = 'Draft' | 'Pending' | 'Pending Signature' | 'Active' | 'Expired' | 'Terminated';
-export type ContractType = 'Author Agreement' | 'Vendor' | 'Sponsorship' | 'NDA' | 'Vendor Agreement';
+export type ContractType = 'Author Agreement' | 'Vendor' | 'Sponsorship' | 'NDA' | 'Vendor Agreement' | 'Custom';
 
 export interface Contract {
   id: string;
