@@ -37,18 +37,20 @@ export default function ProfilesLayout({
 
   return (
     <div className="p-6 md:p-8">
-      <PageHeader
-        title="Profile Card Management"
-        description="Manage user profiles, approvals, and settings."
-        actions={!isNewPage && (
-            <Link href="/profiles/new">
-                <Button>
-                    <PlusCircle className="mr-2" />
-                    Create Profile
-                </Button>
-            </Link>
-        )}
-      />
+      {!isNewPage && (
+          <PageHeader
+            title="Profile Card Management"
+            description="Manage user profiles, approvals, and settings."
+            actions={(
+                <Link href="/profiles/new">
+                    <Button>
+                        <PlusCircle className="mr-2" />
+                        Create Profile
+                    </Button>
+                </Link>
+            )}
+          />
+      )}
       <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
           <TabsList className={isNewPage ? "hidden" : ""}>
               {tabs.map(tab => (
