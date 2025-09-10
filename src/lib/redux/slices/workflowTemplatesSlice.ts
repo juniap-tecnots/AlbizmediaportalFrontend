@@ -32,7 +32,7 @@ const initialState: WorkflowTemplatesState = {
       name: 'Standard Article Workflow',
       contentType: 'Article',
       version: 2,
-      lastModified: '2025-08-15T10:00:00Z',
+      lastModified: '2025-08-15',
       stages: [
         { id: 'stage_001', name: 'Draft', assignedRoles: ['Author'], slaHours: 0 },
         { id: 'stage_002', name: 'Editor Review', assignedRoles: ['Editor'], slaHours: 24 },
@@ -46,7 +46,7 @@ const initialState: WorkflowTemplatesState = {
       name: 'Video Content Workflow',
       contentType: 'Video',
       version: 1,
-      lastModified: '2025-07-20T14:30:00Z',
+      lastModified: '2025-07-20',
       stages: [
         { id: 'stage_101', name: 'Draft', assignedRoles: ['Producer'], slaHours: 0 },
         { id: 'stage_102', name: 'Compliance Check', assignedRoles: ['Compliance'], slaHours: 72 },
@@ -59,7 +59,7 @@ const initialState: WorkflowTemplatesState = {
       name: 'Sponsored Content Workflow',
       contentType: 'Article',
       version: 3,
-      lastModified: '2025-09-01T09:00:00Z',
+      lastModified: '2025-09-01',
       stages: [
         { id: 'stage_201', name: 'Draft', assignedRoles: ['Author'], slaHours: 0 },
         { id: 'stage_202', name: 'Sponsor Review', assignedRoles: ['Sponsor'], slaHours: 120 },
