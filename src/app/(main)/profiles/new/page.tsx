@@ -15,12 +15,14 @@ import { useToast } from "@/hooks/use-toast";
 import { addProfileCard, ManagementType, SubscriptionTier, VerificationLevel, ApprovalStatus } from "@/lib/redux/slices/profileCardsSlice";
 import { PageHeader } from "@/components/page-header";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function NewProfileCardPage() {
     const dispatch = useDispatch();
     const router = useRouter();
     const { toast } = useToast();
     const verificationFileInputRef = useRef<HTMLInputElement>(null);
+    const profileImageInputRef = useRef<HTMLInputElement>(null);
 
     // Form State
     const [fullName, setFullName] = useState('');
@@ -52,10 +54,19 @@ export default function NewProfileCardPage() {
     const [managementType, setManagementType] = useState<ManagementType>('self_managed');
     const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier>('free');
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, fileType: 'verification' | 'profileImage') => {
         const files = event.target.files;
-        if (files) {
-            setVerificationDocs(prev => [...prev, ...Array.from(files)]);
+        if (files && files.length > 0) {
+            const file = files[0];
+            if (fileType === 'verification') {
+                 setVerificationDocs(prev => [...prev, file]);
+            } else {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    setProfileImage(e.target?.result as string);
+                };
+                reader.readAsDataURL(file);
+            }
         }
     };
     
@@ -128,6 +139,25 @@ export default function NewProfileCardPage() {
                             <CardTitle>Basic Information</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
+                             <div className="flex items-center gap-6">
+                                <Avatar className="w-24 h-24">
+                                    <AvatarImage src={profileImage} alt={fullName} />
+                                    <AvatarFallback>{fullName ? fullName.split(' ').map(n => n[0]).join('') : 'IMG'}</AvatarFallback>
+                                </Avatar>
+                                <div className="space-y-2">
+                                     <Button variant="outline" onClick={() => profileImageInputRef.current?.click()}>
+                                        Upload Profile Image
+                                    </Button>
+                                    <p className="text-xs text-muted-foreground">For best results, upload a square image.</p>
+                                    <input
+                                        type="file"
+                                        ref={profileImageInputRef}
+                                        onChange={(e) => handleFileChange(e, 'profileImage')}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                </div>
+                            </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <Label htmlFor="fullName">Full Name</Label>
@@ -147,10 +177,6 @@ export default function NewProfileCardPage() {
                                     <Label htmlFor="contactInfo">Contact Information</Label>
                                     <Input id="contactInfo" placeholder="e.g., email or phone" value={contactInfo} onChange={(e) => setContactInfo(e.target.value)} />
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="profileImage">Profile Image URL</Label>
-                                <Input id="profileImage" placeholder="https://example.com/image.png" value={profileImage} onChange={(e) => setProfileImage(e.target.value)} />
                             </div>
                         </CardContent>
                     </Card>
@@ -266,7 +292,7 @@ export default function NewProfileCardPage() {
                                 <input
                                     type="file"
                                     ref={verificationFileInputRef}
-                                    onChange={handleFileChange}
+                                    onChange={(e) => handleFileChange(e, 'verification')}
                                     className="hidden"
                                     multiple
                                     accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
