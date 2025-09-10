@@ -86,6 +86,14 @@ const workflowManagementItems = [
     }
 ];
 
+const contractsMenuItem = {
+    id: 'contracts',
+    label: 'Contracts',
+    href: '/contracts/list',
+    icon: AiOutlineFileText, // Using the same icon as articles for now
+};
+
+
 const settingsMenuItem = {
     id: 'settings',
     label: 'Settings',
@@ -96,18 +104,6 @@ const settingsMenuItem = {
         { id: 'roles', href: '/settings/roles', label: 'Roles' },
         { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
         { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
-        {
-            id: 'contracts',
-            label: 'Contracts',
-            href: '/contracts',
-            children: [
-                { id: 'contracts-all', href: '/contracts/list', label: 'All Contracts' },
-                { id: 'contracts-create', href: '/contracts/create', label: 'Create New' },
-                { id: 'contracts-active', href: '/contracts/active', label: 'Active Contracts' },
-                { id: 'contracts-expired', href: '/contracts/expired', label: 'Expired Contracts' },
-                { id: 'contracts-templates', href: '/contracts/templates', label: 'Templates' },
-            ]
-        }
     ]
 };
 
@@ -273,6 +269,7 @@ export function AdminSidebar() {
                     Configuration
                 </span>
             </div>
+            {renderMenuItem(contractsMenuItem as MenuItemProps)}
             {renderMenuItem(settingsMenuItem as MenuItemProps)}
         </div>
       </div>
