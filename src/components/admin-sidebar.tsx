@@ -117,7 +117,7 @@ const settingsMenuItem = {
                 { id: 'contracts-create', href: '/contracts/create', label: 'Create New' },
                 { id: 'contracts-active', href: '/contracts/active', label: 'Active Contracts' },
                 { id: 'contracts-expired', href: '/contracts/expired', label: 'Expired Contracts' },
-                { id: 'contracts-templates', href: '/contracts/templates', label: 'Templates' },
+                { id: 'contracts-templates', href: '/contracts/templates', label: 'Templates' }
             ]
         }
     ]
