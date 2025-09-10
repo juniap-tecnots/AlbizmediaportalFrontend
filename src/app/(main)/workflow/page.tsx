@@ -40,10 +40,10 @@ const WorkflowManagementSystem = () => {
   const [filterStatus, setFilterStatus] = useState('All');
 
   const stageTypes = [
-    { id: 'creator', name: 'Content Creator', icon: '✍️', color: 'bg-blue-500' },
-    { id: 'editor', name: 'Editorial Review', icon: '📝', color: 'bg-green-500' },
-    { id: 'legal', name: 'Legal Review', icon: '⚖️', color: 'bg-yellow-500' },
-    { id: 'approver', name: 'Final Approver', icon: '✅', color: 'bg-purple-500' }
+    { id: 'creator', name: 'Content Creator', color: 'bg-blue-500' },
+    { id: 'editor', name: 'Editorial Review', color: 'bg-green-500' },
+    { id: 'legal', name: 'Legal Review', color: 'bg-yellow-500' },
+    { id: 'approver', name: 'Final Approver', color: 'bg-purple-500' }
   ];
 
   const handleDragStart = (e: React.DragEvent, stageType: any) => {
@@ -83,7 +83,7 @@ const WorkflowManagementSystem = () => {
       return;
     }
     
-    const newTemplate = {
+    const newTemplate: Omit<WorkflowTemplate, 'id'> = {
         name: workflowBuilder.name,
         contentType: workflowBuilder.contentType,
         version: 1,
@@ -96,7 +96,7 @@ const WorkflowManagementSystem = () => {
         })),
     };
 
-    dispatch(addTemplate(newTemplate as any));
+    dispatch(addTemplate(newTemplate));
 
     toast({
       title: "Workflow Saved",
@@ -301,7 +301,6 @@ const WorkflowManagementSystem = () => {
                     onDragStart={(e) => handleDragStart(e, stage)}
                     className="flex items-center p-3 border-2 border-dashed border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
                 >
-                    <span className="text-2xl mr-3">{stage.icon}</span>
                     <div>
                     <div className="font-medium text-gray-900">{stage.name}</div>
                     <div className="text-xs text-gray-500">Drag to canvas</div>
@@ -342,7 +341,6 @@ const WorkflowManagementSystem = () => {
                                     setShowStageModal(true);
                                 }}
                                 >
-                                <span>{stage.icon}</span>
                                 <span className="font-medium">{stage.name}</span>
                                 <Settings className="w-4 h-4" />
                                 </div>
