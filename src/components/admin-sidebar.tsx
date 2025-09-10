@@ -105,7 +105,7 @@ const settingsMenuItem = {
                 { id: 'contracts-create', href: '/contracts/create', label: 'Create New' },
                 { id: 'contracts-active', href: '/contracts/active', label: 'Active Contracts' },
                 { id: 'contracts-expired', href: '/contracts/expired', label: 'Expired Contracts' },
-                { id: 'contracts-templates', href: '/contracts/templates', label: 'Templates' }
+                { id: 'contracts-templates', href: '/contracts/templates', label: 'Templates' },
             ]
         }
     ]
@@ -172,20 +172,13 @@ export function AdminSidebar() {
     }
 
 
-    const MenuItemContent = ({isLink}: {isLink: boolean}) => (
+    const MenuItemContent = () => (
         <div
             className={cn(
                 'flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 group',
                 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                 active && 'bg-primary text-primary-foreground'
             )}
-            onClick={(e) => {
-                if (hasChildren) {
-                    toggleExpanded(item.id);
-                } else if(item.href && !isLink) {
-                    router.push(item.href);
-                }
-            }}
         >
             <div className="flex items-center space-x-3 flex-1">
                 {item.icon && <span className={cn(
@@ -212,11 +205,19 @@ export function AdminSidebar() {
     return (
         <div key={item.id}>
             {item.href && !hasChildren ? (
-                <Link href={item.href} legacyBehavior passHref>
-                    <a onClick={(e) => { e.stopPropagation(); }}><MenuItemContent isLink={true}/></a>
+                <Link href={item.href}>
+                    <MenuItemContent />
                 </Link>
             ) : (
-                <MenuItemContent isLink={false}/>
+                 <div onClick={(e) => {
+                    if (hasChildren) {
+                        toggleExpanded(item.id);
+                    } else if(item.href) {
+                        router.push(item.href);
+                    }
+                }}>
+                    <MenuItemContent/>
+                </div>
             )}
 
             {hasChildren && isExpanded && (
