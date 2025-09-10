@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils'
 import { User, CreditCard } from 'lucide-react'
 
 const menuItems = [
+  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: AiOutlineDashboard },
   { id: 'analytics', href: '/analytics', label: 'Analytics', icon: AiOutlineBarChart },
 ]
 
@@ -249,7 +250,7 @@ export function AdminSidebar() {
 
       <div className="flex-1 px-4 py-6 overflow-y-auto">
         <div className='space-y-1'>
-            {renderMenuItem(item as MenuItemProps))}
+            {menuItems.map(item => renderMenuItem(item as MenuItemProps))}
         </div>
         
         <div className="pt-6">
