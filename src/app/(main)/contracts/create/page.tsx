@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { addContract, ContractStatus, ContractType } from "@/lib/redux/slices/contractsSlice";
 import { PageHeader } from "@/components/page-header";
+import { selectAllUsers } from "@/lib/redux/slices/usersSlice";
 
 export default function CreateContractPage() {
     const dispatch = useDispatch();
@@ -25,6 +26,8 @@ export default function CreateContractPage() {
     const { toast } = useToast();
     const fileInputRef = useRef<HTMLInputElement>(null);
     
+    const allUsers = useSelector(selectAllUsers);
+
     const [title, setTitle] = useState('');
     const [type, setType] = useState<ContractType>('Author Agreement');
     const [partyName, setPartyName] = useState('');
@@ -111,7 +114,18 @@ export default function CreateContractPage() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="partyName">Party Name</Label>
-                                    <Input id="partyName" placeholder="e.g., John Doe or ABC Corp" value={partyName} onChange={(e) => setPartyName(e.target.value)} />
+                                    <Select onValueChange={setPartyName} value={partyName}>
+                                        <SelectTrigger id="partyName">
+                                            <SelectValue placeholder="Select a user" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {allUsers.map(user => (
+                                                <SelectItem key={user.id} value={`${user.firstName} ${user.lastName}`}>
+                                                    {user.firstName} {user.lastName}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
