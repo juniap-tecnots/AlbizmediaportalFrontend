@@ -24,7 +24,6 @@ import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
-  { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: AiOutlineDashboard },
   { id: 'analytics', href: '/analytics', label: 'Analytics', icon: AiOutlineBarChart },
 ]
 
@@ -102,6 +101,7 @@ const settingsMenuItem = {
             label: 'Contracts',
             href: '/contracts',
             children: [
+                { id: 'contracts-all', href: '/contracts/list', label: 'All Contracts' },
                 { id: 'contracts-create', href: '/contracts/create', label: 'Create New' },
                 { id: 'contracts-active', href: '/contracts/active', label: 'Active Contracts' },
                 { id: 'contracts-expired', href: '/contracts/expired', label: 'Expired Contracts' },
@@ -172,7 +172,7 @@ export function AdminSidebar() {
     }
 
 
-    const MenuItemContent = (
+    const MenuItemContent = ({isLink}: {isLink: boolean}) => (
         <div
             className={cn(
                 'flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 group',
@@ -182,7 +182,7 @@ export function AdminSidebar() {
             onClick={(e) => {
                 if (hasChildren) {
                     toggleExpanded(item.id);
-                } else if(item.href) {
+                } else if(item.href && !isLink) {
                     router.push(item.href);
                 }
             }}
@@ -211,12 +211,12 @@ export function AdminSidebar() {
 
     return (
         <div key={item.id}>
-             { hasChildren || !item.href ? (
-                MenuItemContent
-            ) : (
-                <Link href={item.href} onClick={(e) => e.stopPropagation()}>
-                   {MenuItemContent}
+            {item.href && !hasChildren ? (
+                <Link href={item.href} legacyBehavior passHref>
+                    <a onClick={(e) => { e.stopPropagation(); }}><MenuItemContent isLink={true}/></a>
                 </Link>
+            ) : (
+                <MenuItemContent isLink={false}/>
             )}
 
             {hasChildren && isExpanded && (

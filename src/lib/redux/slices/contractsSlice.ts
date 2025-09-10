@@ -4,21 +4,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
-export type ContractStatus = 'Draft' | 'Pending Signature' | 'Active' | 'Expired' | 'Terminated';
-export type ContractType = 'Author Agreement' | 'Vendor' | 'Sponsorship' | 'NDA';
+export type ContractStatus = 'Draft' | 'Pending' | 'Pending Signature' | 'Active' | 'Expired' | 'Terminated';
+export type ContractType = 'Author Agreement' | 'Vendor' | 'Sponsorship' | 'NDA' | 'Vendor Agreement';
 
 export interface Contract {
   id: string;
   title: string;
+  partyName: string;
   type: ContractType;
-  terms: string;
-  validityStartDate: string;
-  validityEndDate: string;
-  signatories: string[];
   status: ContractStatus;
+  startDate: string;
+  endDate: string;
+  lastModified: string;
+  terms?: string;
+  signatories?: string[];
   linkedUserId?: string;
   fileUrl?: string;
 }
+
 
 export interface ContractTemplate {
     id: string;
@@ -35,35 +38,44 @@ interface ContractsState {
 const initialState: ContractsState = {
   contracts: [
     {
-      id: 'contract_001',
-      title: 'Contributor Agreement - John Doe',
+      id: 'C-1001',
+      title: 'Contributor Agreement',
+      partyName: 'John Reporter',
       type: 'Author Agreement',
-      terms: 'Standard contributor terms apply. All content submitted is original and exclusive to Albiz Media for 90 days.',
-      validityStartDate: '2024-01-01',
-      validityEndDate: '2025-01-01',
-      signatories: ['John Doe', 'Admin User'],
       status: 'Active',
-      linkedUserId: '2',
+      startDate: '2025-06-01',
+      endDate: '2026-06-01',
+      lastModified: '2025-09-05',
     },
     {
-      id: 'contract_002',
-      title: 'Sponsorship Deal - TechCorp',
+      id: 'C-1002',
+      title: 'Sponsorship Deal',
+      partyName: 'ABC Media Co.',
       type: 'Sponsorship',
-      terms: 'TechCorp will be the exclusive sponsor for the "Future of Tech" series.',
-      validityStartDate: '2024-06-01',
-      validityEndDate: '2024-12-31',
-      signatories: ['TechCorp CEO', 'Admin User'],
-      status: 'Active',
+      status: 'Pending',
+      startDate: '2025-09-10',
+      endDate: '2026-09-10',
+      lastModified: '2025-09-08',
     },
     {
-      id: 'contract_003',
-      title: 'Old Vendor Agreement - StockPhotos Inc.',
-      type: 'Vendor',
-      terms: 'Agreement for monthly subscription to stock photo service.',
-      validityStartDate: '2023-01-01',
-      validityEndDate: '2023-12-31',
-      signatories: ['StockPhotos Inc.', 'Admin User'],
+      id: 'C-1003',
+      title: 'NDA - Freelance Team',
+      partyName: 'Jane Writer',
+      type: 'NDA',
       status: 'Expired',
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+      lastModified: '2024-12-31',
+    },
+    {
+      id: 'C-1004',
+      title: 'Vendor Contract',
+      partyName: 'PhotoPress',
+      type: 'Vendor Agreement',
+      status: 'Draft',
+      startDate: '2025-09-12',
+      endDate: '2026-09-12',
+      lastModified: '2025-09-10',
     },
   ],
   templates: [
@@ -80,7 +92,7 @@ const contractsSlice = createSlice({
     addContract: (state, action: PayloadAction<Omit<Contract, 'id'>>) => {
         const newContract: Contract = {
             ...action.payload,
-            id: `contract_${state.contracts.length + 1}`
+            id: `C-${state.contracts.length + 1001}`
         };
         state.contracts.push(newContract);
     },
