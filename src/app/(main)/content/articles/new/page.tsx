@@ -2,6 +2,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon, FileImage, Settings, Pen } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon, FileImage, Settings, Pen, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch, useSelector } from "react-redux"
@@ -92,6 +93,7 @@ const useEditorContext = () => {
 
 export default function NewArticlePage() {
     const dispatch = useDispatch();
+    const router = useRouter();
     const { toast } = useToast();
     const [title, setTitle] = useState('');
     const [subtitle, setSubtitle] = useState('');
@@ -287,7 +289,12 @@ export default function NewArticlePage() {
       <TooltipProvider>
         <div className="flex flex-col h-full bg-background p-4 md:p-6">
             <header className="flex items-center justify-between pb-4 border-b">
-                 <h1 className="text-2xl font-bold">Add New Article</h1>
+                 <div className="flex items-center gap-4">
+                    <Button variant="outline" size="icon" onClick={() => router.back()}>
+                        <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <h1 className="text-2xl font-bold">Add New Article</h1>
+                </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline">
                         <Eye className="mr-2 h-4 w-4" />
