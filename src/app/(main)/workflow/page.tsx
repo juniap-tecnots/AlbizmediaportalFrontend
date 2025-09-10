@@ -12,14 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useSelector } from 'react-redux';
-import { selectAllWorkflowTemplates, WorkflowTemplate } from "@/lib/redux/slices/workflowTemplatesSlice";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllWorkflowTemplates, WorkflowTemplate, addTemplate } from "@/lib/redux/slices/workflowTemplatesSlice";
 import { format } from "date-fns";
 import type { RootState } from '@/lib/redux/store';
+import { useToast } from '@/hooks/use-toast';
 
 
 const WorkflowManagementSystem = () => {
   const [currentView, setCurrentView] = useState('list');
+  const dispatch = useDispatch();
+  const { toast } = useToast();
   
   const templates = useSelector(selectAllWorkflowTemplates);
   
@@ -68,6 +71,49 @@ const WorkflowManagementSystem = () => {
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+  };
+
+  const handleSaveWorkflow = () => {
+    if (!workflowBuilder.name) {
+      toast({
+        title: "Workflow Name Required",
+        description: "Please provide a name for the workflow.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const newTemplate = {
+        name: workflowBuilder.name,
+        contentType: workflowBuilder.contentType,
+        version: 1,
+        lastModified: new Date().toISOString(),
+        stages: workflowBuilder.stages.map(s => ({
+            id: s.id.toString(),
+            name: s.name,
+            assignedRoles: s.config.reviewers,
+            slaHours: s.config.sla
+        })),
+    };
+
+    dispatch(addTemplate(newTemplate as any));
+
+    toast({
+      title: "Workflow Saved",
+      description: `The "${workflowBuilder.name}" workflow has been created.`,
+    });
+    
+    // Reset builder state
+    setWorkflowBuilder({
+        name: '',
+        description: '',
+        contentType: [],
+        priority: 'Medium',
+        autoActivate: false,
+        stages: []
+    });
+
+    setCurrentView('list');
   };
 
 
@@ -123,7 +169,7 @@ const WorkflowManagementSystem = () => {
             {templates.map((template) => (
               <TableRow key={template.id}>
                 <TableCell className="font-medium">{template.name}</TableCell>
-                <TableCell>{template.contentType}</TableCell>
+                <TableCell>{Array.isArray(template.contentType) ? template.contentType.join(', ') : template.contentType}</TableCell>
                 <TableCell>
                   <Badge variant={'outline'} className="bg-green-100 text-green-800 border-green-200">
                       Active
@@ -166,7 +212,7 @@ const WorkflowManagementSystem = () => {
           <Button variant="outline" onClick={() => setCurrentView('list')}>
             Back to List
           </Button>
-          <Button>
+          <Button onClick={handleSaveWorkflow}>
             Save Workflow
           </Button>
         </div>

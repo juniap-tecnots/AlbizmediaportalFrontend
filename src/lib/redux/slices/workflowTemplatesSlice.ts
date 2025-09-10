@@ -5,7 +5,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
 
-interface WorkflowStage {
+export interface WorkflowStage {
     id: string;
     name: string;
     assignedRoles: string[];
@@ -15,7 +15,7 @@ interface WorkflowStage {
 export interface WorkflowTemplate {
     id: string;
     name: string;
-    contentType: 'Article' | 'Video' | 'Infographic';
+    contentType: 'Article' | 'Video' | 'Infographic' | string[];
     version: number;
     lastModified: string;
     stages: WorkflowStage[];
@@ -32,7 +32,7 @@ const initialState: WorkflowTemplatesState = {
       name: 'Standard Article Workflow',
       contentType: 'Article',
       version: 2,
-      lastModified: '2025-08-15',
+      lastModified: '2025-08-15T00:00:00Z',
       stages: [
         { id: 'stage_001', name: 'Draft', assignedRoles: ['Author'], slaHours: 0 },
         { id: 'stage_002', name: 'Editor Review', assignedRoles: ['Editor'], slaHours: 24 },
@@ -46,7 +46,7 @@ const initialState: WorkflowTemplatesState = {
       name: 'Video Content Workflow',
       contentType: 'Video',
       version: 1,
-      lastModified: '2025-07-20',
+      lastModified: '2025-07-20T00:00:00Z',
       stages: [
         { id: 'stage_101', name: 'Draft', assignedRoles: ['Producer'], slaHours: 0 },
         { id: 'stage_102', name: 'Compliance Check', assignedRoles: ['Compliance'], slaHours: 72 },
@@ -59,7 +59,7 @@ const initialState: WorkflowTemplatesState = {
       name: 'Sponsored Content Workflow',
       contentType: 'Article',
       version: 3,
-      lastModified: '2025-09-01',
+      lastModified: '2025-09-01T00:00:00Z',
       stages: [
         { id: 'stage_201', name: 'Draft', assignedRoles: ['Author'], slaHours: 0 },
         { id: 'stage_202', name: 'Sponsor Review', assignedRoles: ['Sponsor'], slaHours: 120 },
