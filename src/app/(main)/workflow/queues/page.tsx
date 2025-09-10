@@ -17,12 +17,25 @@ import { Badge } from "@/components/ui/badge";
 import { selectAllWorkflowTasks, TaskPriority, TaskStatus } from '@/lib/redux/slices/workflowQueueSlice';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow, isPast } from 'date-fns';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { selectAllWorkflowTemplates } from '@/lib/redux/slices/workflowTemplatesSlice';
+import { CheckCircle2, Circle, Radio } from 'lucide-react';
+
 
 type FilterType = 'all' | 'my-tasks' | 'team-tasks';
 
 export default function ReviewQueuesPage() {
     const allTasks = useSelector(selectAllWorkflowTasks);
+    const workflowTemplates = useSelector(selectAllWorkflowTemplates);
     const [filter, setFilter] = useState<FilterType>('all');
+    const [selectedTask, setSelectedTask] = useState<any>(null);
 
     const getPriorityClass = (priority: TaskPriority) => {
         switch (priority) {
@@ -41,77 +54,137 @@ export default function ReviewQueuesPage() {
             default: return 'bg-gray-100 text-gray-800';
         }
     }
+
+    const getWorkflowStagesForTask = (task: any) => {
+        if (!task) return [];
+        const template = workflowTemplates.find(t => t.contentType === task.contentType);
+        return template ? template.stages : [];
+    }
     
     const filteredTasks = allTasks.filter(task => {
-        // In a real app, you'd have logic here to determine which tasks belong to the current user or their team.
         if (filter === 'my-tasks') return task.assignedTo === 'Admin User';
-        if (filter === 'team-tasks') return ['John Doe', 'Jane Smith'].includes(task.assignedTo);
+        if (filter === 'team-tasks') return ['John Doe', 'Jane Smith', 'Dr. Emily Carter'].includes(task.assignedTo);
         return true;
     });
 
     return (
-        <div className="p-6 md:p-8">
-            <PageHeader
-                title="Review Queues"
-                description="Tasks assigned to you or your team for content review and approval."
-            />
-            <div className="flex items-center gap-2 mb-4">
-                <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All Tasks</Button>
-                <Button variant={filter === 'my-tasks' ? 'default' : 'outline'} onClick={() => setFilter('my-tasks')}>My Tasks</Button>
-                <Button variant={filter === 'team-tasks' ? 'default' : 'outline'} onClick={() => setFilter('team-tasks')}>Team Tasks</Button>
-            </div>
-            <div className="border rounded-lg">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Task ID</TableHead>
-                            <TableHead>Content Title</TableHead>
-                            <TableHead>Stage</TableHead>
-                            <TableHead>Assigned To</TableHead>
-                            <TableHead>Priority</TableHead>
-                            <TableHead>Due Date</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                       {filteredTasks.map(task => {
-                           const dueDate = new Date(task.dueDate);
-                           const isOverdue = isPast(dueDate);
-                           return (
-                             <TableRow key={task.taskId}>
-                                <TableCell className="font-mono text-xs">{task.taskId}</TableCell>
-                                <TableCell className="font-medium">{task.title}</TableCell>
-                                <TableCell>{task.stage}</TableCell>
-                                <TableCell>{task.assignedTo}</TableCell>
-                                <TableCell>
-                                    <Badge variant="outline" className={cn('font-semibold', getPriorityClass(task.priority))}>
-                                        {task.priority}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className={cn(isOverdue && 'text-red-600 font-semibold')}>
-                                    {format(dueDate, 'MMM d')}
-                                    {isOverdue && ` (${formatDistanceToNow(dueDate, { addSuffix: true })})`}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant="outline" className={cn(getStatusClass(task.status))}>{task.status}</Badge>
-                                </TableCell>
-                                <TableCell className="text-right space-x-2">
-                                     <Button variant="outline" size="sm" className="text-xs">View</Button>
-                                     <Button variant="outline" size="sm" className="text-xs border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700">Approve</Button>
-                                     <Button variant="outline" size="sm" className="text-xs border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700">Reject</Button>
-                                     <Button variant="outline" size="sm" className="text-xs">Comment</Button>
-                                </TableCell>
+        <Dialog onOpenChange={(isOpen) => { if (!isOpen) setSelectedTask(null) }}>
+            <div className="p-6 md:p-8">
+                <PageHeader
+                    title="Review Queues"
+                    description="Tasks assigned to you or your team for content review and approval."
+                />
+                <div className="flex items-center gap-2 mb-4">
+                    <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All Tasks</Button>
+                    <Button variant={filter === 'my-tasks' ? 'default' : 'outline'} onClick={() => setFilter('my-tasks')}>My Tasks</Button>
+                    <Button variant={filter === 'team-tasks' ? 'default' : 'outline'} onClick={() => setFilter('team-tasks')}>Team Tasks</Button>
+                </div>
+                <div className="border rounded-lg">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Task ID</TableHead>
+                                <TableHead>Content Title</TableHead>
+                                <TableHead>Stage</TableHead>
+                                <TableHead>Assigned To</TableHead>
+                                <TableHead>Priority</TableHead>
+                                <TableHead>Due Date</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
-                           )
-                       })}
-                    </TableBody>
-                </Table>
-                 {filteredTasks.length === 0 && (
-                    <div className="text-center p-12 text-muted-foreground">
-                        No tasks found for the selected filter.
-                    </div>
-                )}
+                        </TableHeader>
+                        <TableBody>
+                           {filteredTasks.map(task => {
+                               const dueDate = new Date(task.dueDate);
+                               const isOverdue = isPast(dueDate);
+                               return (
+                                 <TableRow key={task.taskId}>
+                                    <TableCell className="font-mono text-xs">{task.taskId}</TableCell>
+                                    <TableCell className="font-medium">{task.title}</TableCell>
+                                    <TableCell>
+                                        <DialogTrigger asChild>
+                                            <button 
+                                                className="text-primary hover:underline"
+                                                onClick={() => setSelectedTask(task)}
+                                            >
+                                                {task.stage}
+                                            </button>
+                                        </DialogTrigger>
+                                    </TableCell>
+                                    <TableCell>{task.assignedTo}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline" className={cn('font-semibold', getPriorityClass(task.priority))}>
+                                            {task.priority}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className={cn(isOverdue && 'text-red-600 font-semibold')}>
+                                        {format(dueDate, 'MMM d')}
+                                        {isOverdue && ` (${formatDistanceToNow(dueDate, { addSuffix: true })})`}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline" className={cn(getStatusClass(task.status))}>{task.status}</Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right space-x-2">
+                                         <Button variant="outline" size="sm" className="text-xs">View</Button>
+                                         <Button variant="outline" size="sm" className="text-xs border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700">Approve</Button>
+                                         <Button variant="outline" size="sm" className="text-xs border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700">Reject</Button>
+                                         <Button variant="outline" size="sm" className="text-xs">Comment</Button>
+                                    </TableCell>
+                                </TableRow>
+                               )
+                           })}
+                        </TableBody>
+                    </Table>
+                     {filteredTasks.length === 0 && (
+                        <div className="text-center p-12 text-muted-foreground">
+                            No tasks found for the selected filter.
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+
+            {selectedTask && (
+                 <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Workflow Status: {selectedTask.title}</DialogTitle>
+                        <DialogDescription>
+                           Tracking the progress of the content through the publishing workflow.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <ul className="space-y-4">
+                            {getWorkflowStagesForTask(selectedTask).map((stage, index) => {
+                                const allStages = getWorkflowStagesForTask(selectedTask);
+                                const currentStageIndex = allStages.findIndex(s => s.name === selectedTask.stage);
+                                const isCompleted = index < currentStageIndex;
+                                const isCurrent = stage.name === selectedTask.stage;
+
+                                return (
+                                    <li key={stage.id} className="flex items-center gap-4">
+                                        <div>
+                                            {isCompleted ? (
+                                                <CheckCircle2 className="h-6 w-6 text-green-500" />
+                                            ) : isCurrent ? (
+                                                <Radio className="h-6 w-6 text-blue-500 animate-pulse" />
+                                            ) : (
+                                                <Circle className="h-6 w-6 text-muted-foreground/50" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <p className={cn("font-medium", isCurrent && "text-blue-600", isCompleted && "text-muted-foreground line-through")}>
+                                                {stage.name}
+                                            </p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {isCurrent ? `Status: ${selectedTask.status}` : isCompleted ? 'Completed' : 'Pending'}
+                                            </p>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </DialogContent>
+            )}
+        </Dialog>
     );
+}
