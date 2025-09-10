@@ -22,6 +22,7 @@ import {
 } from 'react-icons/ai'
 import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
+import { User } from 'lucide-react'
 
 const menuItems = [
   { id: 'analytics', href: '/analytics', label: 'Analytics', icon: AiOutlineBarChart },
@@ -56,6 +57,15 @@ const contentManagementItems = [
             { id: 'flagged-content', href: '/content/comments/flagged', label: 'Flagged Content' },
             { id: 'spam-queue', href: '/content/comments/spam', label: 'Spam Queue' },
         ]
+    }
+];
+
+const profileManagementItems = [
+    {
+        id: 'profiles',
+        label: 'Profiles',
+        icon: User,
+        href: '/profiles/all'
     }
 ];
 
@@ -119,7 +129,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts', 'profile-management']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -241,6 +251,17 @@ export function AdminSidebar() {
             {menuItems.map(item => renderMenuItem(item as MenuItemProps))}
         </div>
         
+        <div className="pt-6">
+          <div className="px-3 mb-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Profile Management
+            </span>
+          </div>
+          <div className="space-y-1">
+            {profileManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
+          </div>
+        </div>
+
         <div className="pt-6">
           <div className="px-3 mb-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">

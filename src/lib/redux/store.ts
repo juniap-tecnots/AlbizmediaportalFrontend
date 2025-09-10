@@ -14,6 +14,7 @@ import workflowQueueReducer from './slices/workflowQueueSlice';
 import workflowTemplatesReducer from './slices/workflowTemplatesSlice';
 import workflowAuditReducer from './slices/workflowAuditSlice';
 import contractsReducer from './slices/contractsSlice';
+import profileCardsReducer from './slices/profileCardsSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from './storage';
 
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   workflowTemplates: workflowTemplatesReducer,
   workflowAudit: workflowAuditReducer,
   contracts: contractsReducer,
+  profileCards: profileCardsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

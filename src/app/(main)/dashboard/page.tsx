@@ -17,7 +17,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { Activity, Bell, Bolt, HeartPulse, Newspaper, PenSquare, PlusCircle, Settings, LayoutDashboard } from "lucide-react"
+import { Activity, Bell, Bolt, HeartPulse, Newspaper, PenSquare, PlusCircle, Settings, LayoutDashboard, UserCheck } from "lucide-react"
 import { SystemHealth } from "@/components/dashboard/system-health"
 import { QuickActions } from "@/components/dashboard/quick-actions"
 import { Notifications } from "@/components/dashboard/notifications"
@@ -64,39 +64,55 @@ export default function DashboardPage() {
                     <RecentSales />
                 </div>
                 <div className="col-span-3">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Recent Articles</CardTitle>
-                            <CardDescription>
-                                A quick look at the latest content.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-6">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">The Future of AI in Journalism</p>
-                                        <p className="text-xs text-muted-foreground">Published 2 hours ago</p>
+                     <div className="grid gap-4">
+                         <Card>
+                            <CardHeader>
+                                <CardTitle>Recent Articles</CardTitle>
+                                <CardDescription>
+                                    A quick look at the latest content.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">The Future of AI in Journalism</p>
+                                            <p className="text-xs text-muted-foreground">Published 2 hours ago</p>
+                                        </div>
+                                        <Button variant="ghost" size="sm">View</Button>
                                     </div>
-                                    <Button variant="ghost" size="sm">View</Button>
-                                </div>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">City Council Approves New Budget</p>
-                                        <p className="text-xs text-muted-foreground">Published yesterday</p>
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">City Council Approves New Budget</p>
+                                            <p className="text-xs text-muted-foreground">Published yesterday</p>
+                                        </div>
+                                        <Button variant="ghost" size="sm">View</Button>
                                     </div>
-                                    <Button variant="ghost" size="sm">View</Button>
-                                </div>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">Tech Stocks Rally on Positive News</p>
-                                        <p className="text-xs text-muted-foreground">Published 3 days ago</p>
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <p className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer">Tech Stocks Rally on Positive News</p>
+                                            <p className="text-xs text-muted-foreground">Published 3 days ago</p>
+                                        </div>
+                                        <Button variant="ghost" size="sm">View</Button>
                                     </div>
-                                    <Button variant="ghost" size="sm">View</Button>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                             <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><UserCheck className="text-primary"/> Profile Approvals</CardTitle>
+                                <CardDescription>
+                                    New user profiles waiting for review.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground mb-4">There are 3 new profiles to be reviewed.</p>
+                                <Link href="/profiles/pending">
+                                    <Button variant="secondary">Review Profiles</Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </TabsContent>
