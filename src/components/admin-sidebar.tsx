@@ -22,7 +22,7 @@ import {
 } from 'react-icons/ai'
 import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
-import { User } from 'lucide-react'
+import { User, CreditCard } from 'lucide-react'
 
 const menuItems = [
   { id: 'analytics', href: '/analytics', label: 'Analytics', icon: AiOutlineBarChart },
@@ -114,6 +114,7 @@ const settingsMenuItem = {
         { id: 'roles', href: '/settings/roles', label: 'Roles' },
         { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
         { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
+        { id: 'subscriptions', href: '/settings/subscriptions', label: 'Subscriptions' },
     ]
 };
 
@@ -248,7 +249,7 @@ export function AdminSidebar() {
 
       <div className="flex-1 px-4 py-6 overflow-y-auto">
         <div className='space-y-1'>
-            {menuItems.map(item => renderMenuItem(item as MenuItemProps))}
+            {renderMenuItem(item as MenuItemProps))}
         </div>
         
         <div className="pt-6">

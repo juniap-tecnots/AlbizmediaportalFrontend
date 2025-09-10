@@ -15,6 +15,7 @@ import workflowTemplatesReducer from './slices/workflowTemplatesSlice';
 import workflowAuditReducer from './slices/workflowAuditSlice';
 import contractsReducer from './slices/contractsSlice';
 import profileCardsReducer from './slices/profileCardsSlice';
+import subscriptionPlansReducer from './slices/subscriptionPlansSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from './storage';
 
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   workflowAudit: workflowAuditReducer,
   contracts: contractsReducer,
   profileCards: profileCardsReducer,
+  subscriptionPlans: subscriptionPlansReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
