@@ -88,7 +88,6 @@ export default function ContractsList() {
                             <TableHead>Party Name</TableHead>
                             <TableHead>Type</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Start Date</TableHead>
                             <TableHead>End Date</TableHead>
                             <TableHead>Last Modified</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
@@ -104,7 +103,6 @@ export default function ContractsList() {
                                 <TableCell>
                                     <Badge variant="outline" className={cn('font-semibold', getStatusBadgeClass(contract.status))}>{contract.status}</Badge>
                                 </TableCell>
-                                <TableCell>{format(new Date(contract.startDate), 'dd-MMM-yyyy')}</TableCell>
                                 <TableCell>{format(new Date(contract.endDate), 'dd-MMM-yyyy')}</TableCell>
                                 <TableCell>{format(new Date(contract.lastModified), 'dd-MMM-yyyy')}</TableCell>
                                 <TableCell className="text-right space-x-2">
