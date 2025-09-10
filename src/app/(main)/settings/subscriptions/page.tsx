@@ -30,7 +30,7 @@ export default function SubscriptionsPage() {
                 <span className="text-sm font-semibold text-primary bg-primary/10 px-2 py-1 rounded-md">Save 20%</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {plans.map((plan) => (
                     <Card key={plan.id} className={cn("flex flex-col", plan.isMostPopular && "border-primary border-2 shadow-lg")}>
                         {plan.isMostPopular && (

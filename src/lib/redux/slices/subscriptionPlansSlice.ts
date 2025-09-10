@@ -4,7 +4,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
-export type PlanTier = 'Free' | 'Premium' | 'Pro' | 'Managed';
+export type PlanTier = 'Free' | 'Premium' | 'Managed';
 
 export interface PlanFeature {
   text: string;
@@ -63,30 +63,13 @@ const initialState: SubscriptionPlansState = {
       ],
     },
     {
-      id: 'Pro',
-      name: 'Pro',
-      priceMonthly: 49,
-      priceYearly: 499,
-      description: 'For businesses and power users requiring advanced tools.',
-      features: [
-        { text: 'All Premium features', included: true },
-        { text: 'Instant approval', included: true },
-        { text: 'Lead generation tools', included: true },
-        { text: 'Integration with CRM systems', included: true },
-        { text: 'A/B testing for profile optimization', included: true },
-        { text: 'API access for profile data', included: true },
-        { text: 'Dedicated account manager', included: true },
-        { text: 'Priority feature requests', included: true },
-      ],
-    },
-    {
       id: 'Managed',
       name: 'Managed Service',
-      priceMonthly: 149,
-      priceYearly: 1499,
+      priceMonthly: 99,
+      priceYearly: 999,
       description: 'A fully managed solution for a hands-off experience.',
       features: [
-        { text: 'All Pro features', included: true },
+        { text: 'All Premium features', included: true },
         { text: 'Dedicated profile manager', included: true },
         { text: 'Professional content writing', included: true },
         { text: 'Weekly profile optimization', included: true },
