@@ -30,9 +30,9 @@ const initialState: WorkflowState = {
     { id: 3, name: 'Live' }
   ],
   articles: [
-    { id: 1, title: 'The Future of AI in Journalism', author: 'Jane Doe', submitted: '2024-05-10', status: 'Pending' },
-    { id: 2, title: 'City Council Approves New Budget', author: 'John Smith', submitted: '2024-05-09', status: 'Approved' },
-    { id: 3, title: 'Tech Stocks Rally on Positive News', author: 'Emily White', submitted: '2024-05-08', status: 'Rejected' },
+    { id: 1, title: 'The Future of AI in Journalism', author: 'Jane Doe', submitted: '2024-05-10T00:00:00Z', status: 'Pending' },
+    { id: 2, title: 'City Council Approves New Budget', author: 'John Smith', submitted: '2024-05-09T00:00:00Z', status: 'Approved' },
+    { id: 3, title: 'Tech Stocks Rally on Positive News', author: 'Emily White', submitted: '2024-05-08T00:00:00Z', status: 'Rejected' },
   ],
   activeStep: 1,
 };
