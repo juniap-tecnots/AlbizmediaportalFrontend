@@ -21,8 +21,10 @@ export default function ProfilesLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const isNewPage = pathname === '/profiles/new';
 
   const getCurrentTab = () => {
+    if (isNewPage) return 'new';
     return tabs.find(tab => pathname.includes(tab.value))?.value || 'all';
   }
 
@@ -38,7 +40,7 @@ export default function ProfilesLayout({
       <PageHeader
         title="Profile Card Management"
         description="Manage user profiles, approvals, and settings."
-        actions={(
+        actions={!isNewPage && (
             <Link href="/profiles/new">
                 <Button>
                     <PlusCircle className="mr-2" />
@@ -48,7 +50,7 @@ export default function ProfilesLayout({
         )}
       />
       <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
-          <TabsList>
+          <TabsList className={isNewPage ? "hidden" : ""}>
               {tabs.map(tab => (
                   <TabsTrigger key={tab.value} value={tab.value}>
                       {tab.label}
@@ -56,7 +58,7 @@ export default function ProfilesLayout({
               ))}
           </TabsList>
       </Tabs>
-      <div className="mt-4">{children}</div>
+      <div className={!isNewPage ? "mt-4" : ""}>{children}</div>
     </div>
   );
 }
