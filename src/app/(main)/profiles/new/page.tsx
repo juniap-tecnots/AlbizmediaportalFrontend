@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { useState, useRef } from "react";
@@ -8,20 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { UploadCloud, File as FileIcon, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { addProfileCard, ManagementType, SubscriptionTier, VerificationLevel, ApprovalStatus } from "@/lib/redux/slices/profileCardsSlice";
 import { PageHeader } from "@/components/page-header";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ArrowLeft } from "lucide-react";
 
 export default function NewProfileCardPage() {
     const dispatch = useDispatch();
     const router = useRouter();
     const { toast } = useToast();
-    const verificationFileInputRef = useRef<HTMLInputElement>(null);
     const profileImageInputRef = useRef<HTMLInputElement>(null);
 
     // Form State
@@ -38,7 +36,7 @@ export default function NewProfileCardPage() {
     const [bio, setBio] = useState('');
 
     const [websiteUrl, setWebsiteUrl] = useState('');
-    const [linkedin, setLinkedin] =useState('');
+    const [linkedin, setLinkedin] = useState('');
     const [twitter, setTwitter] = useState('');
     const [instagram, setInstagram] = useState('');
     const [otherLinks, setOtherLinks] = useState('');
@@ -49,31 +47,17 @@ export default function NewProfileCardPage() {
     const [mediaMentions, setMediaMentions] = useState('');
     const [portfolio, setPortfolio] = useState('');
 
-    const [verificationDocs, setVerificationDocs] = useState<File[]>([]);
-    
-    const [managementType, setManagementType] = useState<ManagementType>('self_managed');
-    const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier>('free');
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, fileType: 'verification' | 'profileImage') => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files && files.length > 0) {
             const file = files[0];
-            if (fileType === 'verification') {
-                 setVerificationDocs(prev => [...prev, file]);
-            } else {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    setProfileImage(e.target?.result as string);
-                };
-                reader.readAsDataURL(file);
-            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setProfileImage(e.target?.result as string);
+            };
+            reader.readAsDataURL(file);
         }
     };
-    
-    const handleRemoveFile = (index: number) => {
-        setVerificationDocs(prev => prev.filter((_, i) => i !== index));
-    }
-
 
     const handleSubmit = () => {
         if (!fullName || !title) {
@@ -87,8 +71,8 @@ export default function NewProfileCardPage() {
 
         const newProfileCard = {
             userId: 'temp-user-id', // This should be replaced with the actual logged-in user's ID
-            managementType,
-            subscriptionTier,
+            managementType: 'self_managed' as ManagementType,
+            subscriptionTier: 'free' as SubscriptionTier,
             profileData: {
                 fullName,
                 profileImage,
@@ -128,10 +112,15 @@ export default function NewProfileCardPage() {
 
     return (
         <div className="p-6 md:p-8">
-            <PageHeader
-                title="Create New Profile Card"
-                description="Fill in the details to create a new universal profile card."
-            />
+            <div className="flex items-center gap-4 mb-8">
+                <Button variant="outline" size="icon" onClick={() => router.back()}>
+                    <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight">Create New Profile Card</h1>
+                    <p className="text-sm text-muted-foreground mt-1">Fill in the details to create a new universal profile card.</p>
+                </div>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-3 space-y-8">
                     <Card>
@@ -152,7 +141,7 @@ export default function NewProfileCardPage() {
                                     <input
                                         type="file"
                                         ref={profileImageInputRef}
-                                        onChange={(e) => handleFileChange(e, 'profileImage')}
+                                        onChange={handleFileChange}
                                         className="hidden"
                                         accept="image/*"
                                     />
@@ -261,7 +250,7 @@ export default function NewProfileCardPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="topics">Topics of Interest</Label>
-                                <Input id="topics" placeholder="e.g., Machine Learning, SaaS, Media Trends" value={topics} onChange={(e) => setTopics(e.target.value)} />
+                                <Input id="topics" placeholder="e.g., Machine Learning, SaaS, Media Trends" value={topics} onChange={(e) => setTopics(e.g.t.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="mediaMentions">Media Mentions</Label>
