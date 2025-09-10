@@ -185,7 +185,7 @@ export default function NewArticlePage() {
         dispatch(addArticle(articleData as any));
         toast({
           title: "Article Saved!",
-          description: "Your new article has been saved as a draft.",
+          description: "Your new article has been saved as In-progress.",
         });
 
         // Reset form
@@ -488,7 +488,7 @@ export default function NewArticlePage() {
                                 <Separator />
 
                                 <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between"><span>Status</span><span className="font-medium">Draft</span></div>
+                                    <div className="flex justify-between"><span>Status</span><span className="font-medium">In-progress</span></div>
                                     <div className="flex justify-between items-center">
                                         <Label htmlFor="slug">Slug</Label>
                                         <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} className="w-1/2 h-8 text-right border-0" placeholder="auto-generates" />

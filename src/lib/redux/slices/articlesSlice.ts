@@ -220,7 +220,7 @@ const articlesSlice = createSlice({
         id: (state.articles.length + 1).toString(),
         date: new Date().toISOString(),
         author: 'albiz',
-        status: 'DRAFT',
+        status: 'IN_PROGRESS',
       };
       state.articles.push(newArticle);
     },
