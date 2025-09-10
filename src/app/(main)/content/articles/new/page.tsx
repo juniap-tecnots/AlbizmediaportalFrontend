@@ -295,7 +295,7 @@ export default function NewArticlePage() {
                     </Button>
                     <Button onClick={handlePublish}>
                         <Send className="mr-2 h-4 w-4" />
-                        Save Draft
+                        Save Progress
                     </Button>
                      <Button variant="ghost" size="icon">
                         <Settings className="h-5 w-5" />

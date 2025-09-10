@@ -19,8 +19,12 @@ export type ArticleStatus =
   | 'SUBMITTED_FOR_REVIEW' 
   | 'UNDER_EDITORIAL_REVIEW' 
   | 'REQUIRES_REVISION' 
-  | 'IN_REVISION' 
-  | 'LEGAL_REVIEW_REQUIRED' 
+  | 'IN_REVISION'
+  | 'RESUBMITTED_FOR_REVIEW'
+  | 'LEGAL_REVIEW_REQUIRED'
+  | 'LEGAL_APPROVED'
+  | 'LEGAL_REJECTED'
+  | 'REQUIRES_LEGAL_REVISION'
   | 'APPROVED_FOR_PUBLICATION' 
   | 'SCHEDULED_FOR_PUBLICATION' 
   | 'PUBLISHED_LIVE' 
@@ -31,9 +35,6 @@ export type ArticleStatus =
   | 'REJECTED' 
   | 'EDITORIAL_INTERVENTION' 
   | 'RETURNED_TO_AUTHOR' 
-  | 'LEGAL_APPROVED' 
-  | 'LEGAL_REJECTED' 
-  | 'REQUIRES_LEGAL_REVISION' 
   | 'PUBLICATION_DELAYED' 
   | 'PULLED_FROM_SCHEDULE';
 
@@ -240,7 +241,7 @@ export const { addArticle, updateArticle, deleteArticle } = articlesSlice.action
 export const selectAllArticles = (state: RootState) => state.articles.articles;
 export const selectArticleById = (state: RootState, articleId: string) => state.articles.articles.find(article => article.id === articleId);
 export const selectPublishedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'PUBLISHED_LIVE');
-export const selectDraftArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'DRAFT');
+export const selectDraftArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'DRAFT' || a.status === 'IN_PROGRESS');
 export const selectScheduledArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'SCHEDULED_FOR_PUBLICATION');
 export const selectArchivedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'ARCHIVED');
 
