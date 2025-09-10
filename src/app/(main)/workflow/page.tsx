@@ -218,7 +218,7 @@ const WorkflowManagementSystem = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
@@ -289,70 +289,72 @@ const WorkflowManagementSystem = () => {
           </CardContent>
         </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Stage Components</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-                {stageTypes.map(stage => (
-                <div
-                    key={stage.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, stage)}
-                    className="flex items-center p-3 border-2 border-dashed border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                >
-                    <div>
-                    <div className="font-medium text-gray-900">{stage.name}</div>
-                    <div className="text-xs text-gray-500">Drag to canvas</div>
-                    </div>
-                </div>
-                ))}
-            </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card>
+              <CardHeader>
+                  <CardTitle>Stage Components</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                  {stageTypes.map(stage => (
+                  <div
+                      key={stage.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, stage)}
+                      className="flex items-center p-3 border-2 border-dashed border-gray-200 rounded-lg cursor-move hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                  >
+                      <div>
+                      <div className="font-medium text-gray-900">{stage.name}</div>
+                      <div className="text-xs text-gray-500">Drag to canvas</div>
+                      </div>
+                  </div>
+                  ))}
+              </CardContent>
+          </Card>
 
-        <div className="lg:col-span-2">
-            <Card>
-                 <CardHeader>
-                    <CardTitle>Workflow Canvas</CardTitle>
-                </CardHeader>
-                 <CardContent>
-                     <div
-                        className="min-h-96 border-2 border-dashed border-gray-300 rounded-lg p-4"
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                    >
-                        {workflowBuilder.stages.length === 0 ? (
-                        <div className="flex items-center justify-center h-full text-gray-500">
-                            <div className="text-center">
-                            <div className="text-4xl mb-2">🎯</div>
-                            <div>Drag stages here to build your workflow</div>
-                            </div>
-                        </div>
-                        ) : (
-                        <div className="flex items-center space-x-4 flex-wrap gap-y-4">
-                            <div className="bg-gray-100 px-4 py-2 rounded-lg font-medium">START</div>
-                            {workflowBuilder.stages.map((stage, index) => (
-                            <React.Fragment key={stage.id}>
-                                <ArrowRight className="w-5 h-5 text-gray-400" />
-                                <div
-                                className={`${stage.color} text-white px-4 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity flex items-center space-x-2`}
-                                onClick={() => {
-                                    setSelectedStage(stage);
-                                    setShowStageModal(true);
-                                }}
-                                >
-                                <span className="font-medium">{stage.name}</span>
-                                <Settings className="w-4 h-4" />
-                                </div>
-                            </React.Fragment>
-                            ))}
-                            <ArrowRight className="w-5 h-5 text-gray-400" />
-                            <div className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium">PUBLISH</div>
-                        </div>
-                        )}
-                    </div>
-                 </CardContent>
-            </Card>
+          <div className="lg:col-span-2">
+              <Card>
+                   <CardHeader>
+                      <CardTitle>Workflow Canvas</CardTitle>
+                  </CardHeader>
+                   <CardContent>
+                       <div
+                          className="min-h-96 border-2 border-dashed border-gray-300 rounded-lg p-4"
+                          onDrop={handleDrop}
+                          onDragOver={handleDragOver}
+                      >
+                          {workflowBuilder.stages.length === 0 ? (
+                          <div className="flex items-center justify-center h-full text-gray-500">
+                              <div className="text-center">
+                              <div className="text-4xl mb-2">🎯</div>
+                              <div>Drag stages here to build your workflow</div>
+                              </div>
+                          </div>
+                          ) : (
+                          <div className="flex items-center space-x-4 flex-wrap gap-y-4">
+                              <div className="bg-gray-100 px-4 py-2 rounded-lg font-medium">START</div>
+                              {workflowBuilder.stages.map((stage, index) => (
+                              <React.Fragment key={stage.id}>
+                                  <ArrowRight className="w-5 h-5 text-gray-400" />
+                                  <div
+                                  className={`${stage.color} text-white px-4 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity flex items-center space-x-2`}
+                                  onClick={() => {
+                                      setSelectedStage(stage);
+                                      setShowStageModal(true);
+                                  }}
+                                  >
+                                  <span className="font-medium">{stage.name}</span>
+                                  <Settings className="w-4 h-4" />
+                                  </div>
+                              </React.Fragment>
+                              ))}
+                              <ArrowRight className="w-5 h-5 text-gray-400" />
+                              <div className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium">PUBLISH</div>
+                          </div>
+                          )}
+                      </div>
+                   </CardContent>
+              </Card>
+          </div>
         </div>
       </div>
     </div>
@@ -452,3 +454,5 @@ const WorkflowManagementSystem = () => {
 };
 
 export default WorkflowManagementSystem;
+
+    
