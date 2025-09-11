@@ -22,7 +22,7 @@ import {
 } from 'react-icons/ai'
 import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
-import { User, Star } from 'lucide-react'
+import { User, Star, MapPin, Calendar, Utensils } from 'lucide-react'
 
 const menuItems = [
   { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: AiOutlineDashboard },
@@ -151,7 +151,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts', 'curated']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'contracts']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
