@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useSelector } from "react-redux"
 import { selectProfileCardById } from "@/lib/redux/slices/profileCardsSlice"
 import type { RootState } from "@/lib/redux/store"
@@ -9,12 +9,13 @@ import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Twitter, Linkedin, Facebook, Instagram, Car, Rocket, BrainCircuit, X, MessageSquare, Repeat, Heart, BarChart2, Upload, CheckCircle2 } from "lucide-react"
+import { Twitter, Linkedin, Facebook, Instagram, Car, Rocket, BrainCircuit, X, MessageSquare, Repeat, Heart, BarChart2, Upload, CheckCircle2, Briefcase, Phone, ArrowLeft } from "lucide-react"
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 export default function ProfileDetailPage() {
     const params = useParams();
+    const router = useRouter();
     const profileId = params.id as string;
     const profile = useSelector((state: RootState) => selectProfileCardById(state, profileId));
 
@@ -22,12 +23,16 @@ export default function ProfileDetailPage() {
         return <div className="text-center p-12">Profile not found.</div>
     }
 
-    const { fullName, profileImage, title, bio, customUrlSlug } = profile.profileData;
+    const { fullName, profileImage, title, bio, customUrlSlug, location, contactInfo } = profile.profileData;
     const { verificationLevel } = profile;
     const isVerified = verificationLevel !== 'unverified';
 
     return (
         <div className="p-6 md:p-8">
+             <Button variant="outline" size="sm" className="mb-4" onClick={() => router.back()}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Profiles
+            </Button>
             <div className="relative">
                 <Image
                     src="https://picsum.photos/seed/cover/1200/300"
@@ -51,18 +56,24 @@ export default function ProfileDetailPage() {
                         <h1 className="text-2xl font-bold">{fullName}</h1>
                         <p className="text-muted-foreground">@{customUrlSlug || fullName.toLowerCase().replace(' ', '')}</p>
                         <p className="mt-2 text-sm max-w-prose">{bio || 'Edit your profile to add a description.'}</p>
-                        <div className="flex gap-4 mt-2 text-sm">
-                            <p><span className="font-bold">0</span> Following</p>
-                            <p><span className="font-bold">0</span> Followers</p>
+                        <div className="flex items-center gap-6 mt-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                                <Briefcase className="h-4 w-4" />
+                                <span>{title}</span>
+                            </div>
+                             <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4" />
+                                <span>{contactInfo || 'Not available'}</span>
+                            </div>
                         </div>
                          <div className="flex gap-4 mt-4">
-                            <Twitter className="text-blue-500" />
-                            <Linkedin className="text-blue-700" />
-                            <Facebook className="text-blue-800" />
-                            <Instagram className="text-pink-600" />
+                            <Twitter className="text-blue-500 cursor-pointer" />
+                            <Linkedin className="text-blue-700 cursor-pointer" />
+                            <Facebook className="text-blue-800 cursor-pointer" />
+                            <Instagram className="text-pink-600 cursor-pointer" />
                         </div>
                     </div>
-                    {isVerified ? (
+                     {isVerified ? (
                         <Badge className="bg-green-100 text-green-800 border-green-200 text-sm">
                             <CheckCircle2 className="h-4 w-4 mr-2" />
                             Verified
