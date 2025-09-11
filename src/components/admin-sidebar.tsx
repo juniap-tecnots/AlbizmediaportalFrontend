@@ -22,7 +22,7 @@ import {
 } from 'react-icons/ai'
 import { FaGem, FaMapPin, FaCalendarAlt, FaHamburger } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
-import { User, CreditCard } from 'lucide-react'
+import { User, CreditCard, Star } from 'lucide-react'
 
 const menuItems = [
   { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: AiOutlineDashboard },
@@ -67,47 +67,31 @@ const contentManagementItems = [
     }
 ];
 
-const curatedSectionsItems = [
-    {
-        id: 'curated-overview',
-        label: 'Overview',
-        icon: AiOutlineDashboard,
-        href: '/curated/overview'
-    },
-    {
-        id: 'top-places',
-        label: 'Top Places',
-        icon: FaMapPin,
-        children: [
-            { id: 'all-places', href: '/curated/places/all', label: 'All Places' },
-            { id: 'add-new-place', href: '/curated/places/new', label: 'Add New Place' },
-            { id: 'places-categories', href: '/curated/places/categories', label: 'Categories' },
-            { id: 'places-verification', href: '/curated/places/verification', label: 'Verification Queue' },
-        ]
-    },
-    {
-        id: 'events',
-        label: 'Events',
-        icon: FaCalendarAlt,
-        children: [
-            { id: 'all-events', href: '/curated/events/all', label: 'All Events' },
-            { id: 'add-new-event', href: '/curated/events/new', label: 'Add New Event' },
-            { id: 'events-calendar', href: '/curated/events/calendar', label: 'Calendar View' },
-            { id: 'expired-events', href: '/curated/events/expired', label: 'Expired Events' },
-        ]
-    },
-    {
-        id: 'foods',
-        label: 'Foods',
-        icon: FaHamburger,
-        children: [
-            { id: 'all-restaurants', href: '/curated/foods/all', label: 'All Restaurants' },
-            { id: 'add-new-restaurant', href: '/curated/foods/new', label: 'Add New' },
-            { id: 'cuisine-management', href: '/curated/foods/cuisines', label: 'Cuisine Management' },
-            { id: 'menu-updates', href: '/curated/foods/updates', label: 'Menu Updates' },
-        ]
-    }
-];
+const curatedMenuItem = {
+    id: 'curated',
+    label: 'Curated',
+    icon: Star,
+    children: [
+        {
+            id: 'top-places',
+            label: 'Top Places',
+            icon: FaMapPin,
+            href: '/curated/places/all',
+        },
+        {
+            id: 'events',
+            label: 'Events',
+            icon: FaCalendarAlt,
+            href: '/curated/events/all',
+        },
+        {
+            id: 'foods',
+            label: 'Foods',
+            icon: FaHamburger,
+            href: '/curated/foods/all',
+        }
+    ]
+};
 
 const workflowManagementItems = [
     {
@@ -140,7 +124,7 @@ const contractsMenuItem = {
     id: 'contracts',
     label: 'Contracts',
     href: '/contracts/list',
-    icon: AiOutlineFileText, // Using the same icon as articles for now
+    icon: AiOutlineFileText,
 };
 
 
@@ -164,13 +148,13 @@ interface MenuItemProps {
   label: string;
   icon: React.ElementType;
   href?: string;
-  children?: (Omit<MenuItemProps, 'icon'>)[];
+  children?: (Omit<MenuItemProps, 'icon'> & { icon?: React.ElementType })[];
 }
 
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts', 'curated-sections', 'top-places', 'events', 'foods']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts', 'curated']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -183,15 +167,17 @@ export function AdminSidebar() {
   const isActive = (path?: string, hasChildren?: boolean) => {
     if (!path) return false;
     
+    // Exact match
     if (pathname === path) return true;
 
+    // Parent match for nested routes
     if(hasChildren && pathname.startsWith(path)) {
-        // More specific check for items with children to avoid broad matches
-        if (path === '/settings') return pathname.startsWith('/settings/') || pathname === '/users' || pathname.startsWith('/contracts');
-        if (path === '/contracts') return pathname.startsWith('/contracts/');
         return true;
     }
     
+    // Special case for curated top level
+    if (path === '/curated' && pathname.startsWith('/curated')) return true;
+
     return false;
   }
   
@@ -200,24 +186,18 @@ export function AdminSidebar() {
     return parent.children.some(child => child.href === childHref || (child.children && itemIsChildOf(child as MenuItemProps, childHref)));
   }
 
-  const renderMenuItem = (item: MenuItemProps) => {
+  const renderMenuItem = (item: MenuItemProps, isSubmenuItem = false) => {
     const hasChildren = item.children && item.children.length > 0;
     
+    let active = isActive(item.href || (hasChildren ? `/${item.id}` : undefined), hasChildren);
+    
+    // For nested children, ensure parent isn't highlighted if a child is the active page
     const anyChildActive = hasChildren && item.children?.some(child => isActive(child.href, child.children && child.children.length > 0));
+    if (active && hasChildren && anyChildActive && pathname !== item.href) {
+        active = false;
+    }
     
     const isExpanded = expandedItems.includes(item.id) || !!anyChildActive;
-    
-    let active = isActive(item.href, hasChildren);
-
-    // If a more specific child is active, the parent should not be highlighted as the primary active link.
-    if (active && hasChildren && anyChildActive) {
-        // Exception for top-level parents like 'Settings'
-        if (item.id !== 'settings' && item.id !== 'contracts') {
-            const isDirectMatch = pathname === item.href;
-            if(!isDirectMatch) active = false;
-        }
-    }
-
 
     const MenuItemContent = () => (
         <div
@@ -268,8 +248,8 @@ export function AdminSidebar() {
             )}
 
             {hasChildren && isExpanded && (
-                <div className="mt-1 ml-4 pl-5 border-l border-sidebar-border space-y-1 py-1">
-                    {item.children?.map(child => renderMenuItem(child as MenuItemProps))}
+                <div className={cn("mt-1 space-y-1 py-1", !isSubmenuItem && "ml-4 pl-5 border-l border-sidebar-border")}>
+                    {item.children?.map(child => renderMenuItem(child as MenuItemProps, true))}
                 </div>
             )}
         </div>
@@ -295,29 +275,19 @@ export function AdminSidebar() {
         <div className="pt-6">
           <div className="px-3 mb-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Content Management
+              Content
             </span>
           </div>
           <div className="space-y-1">
             {contentManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
+            {renderMenuItem(curatedMenuItem as MenuItemProps)}
           </div>
         </div>
         
         <div className="pt-6">
           <div className="px-3 mb-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Curated Sections
-            </span>
-          </div>
-          <div className="space-y-1">
-            {curatedSectionsItems.map(item => renderMenuItem(item as MenuItemProps))}
-          </div>
-        </div>
-
-        <div className="pt-6">
-          <div className="px-3 mb-2">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Workflow Management
+              Workflow
             </span>
           </div>
           <div className="space-y-1">
