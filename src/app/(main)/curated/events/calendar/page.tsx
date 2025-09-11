@@ -13,10 +13,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 
 
 const eventStatusColors: { [key: string]: string } = {
-    'Published': 'bg-green-500 text-white',
-    'Under Review': 'bg-blue-500 text-white',
-    'Draft': 'bg-yellow-500 text-black',
-    'Cancelled': 'bg-red-500 text-white line-through'
+    'Published': 'bg-[#68d391] text-white',
+    'Under Review': 'bg-[#90cdf4] text-white',
+    'Draft': 'bg-[#fbb6ce] text-black',
+    'Cancelled': 'bg-[#fc8181] text-white line-through',
+    'Conference': 'bg-[#90cdf4] text-white',
+    'Festival': 'bg-[#fbb6ce] text-black',
+    'Concert': 'bg-pink-500 text-white',
+    'Sports': 'bg-green-500 text-white',
 };
 
 const eventStatusBadgeColors: { [key: string]: string } = {
@@ -184,4 +188,3 @@ export default function EventsCalendarPage() {
         </div>
     );
 }
-
