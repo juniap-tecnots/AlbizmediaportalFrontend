@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -19,7 +20,12 @@ export interface ProfileCard {
         profileImage: string;
         title: string;
         location: string;
+        contactInfo: string;
         bio: string;
+        company?: string;
+        industry?: string;
+        role?: string;
+        experienceLevel?: string;
         customUrlSlug?: string;
     };
     verificationLevel: VerificationLevel;
@@ -46,7 +52,12 @@ const initialState: ProfileCardsState = {
         profileImage: 'https://picsum.photos/100?a=6',
         title: 'Chief Editor',
         location: 'New York, NY',
+        contactInfo: 'emma.w@albiz.com',
         bio: 'Leading the editorial team at Albiz Media with a passion for quality journalism.',
+        company: 'Albiz Media',
+        industry: 'Publishing',
+        role: 'Chief Editor',
+        experienceLevel: '10+ Years',
         customUrlSlug: 'emma-wilson',
       },
       verificationLevel: 'identity_verified',
@@ -66,7 +77,12 @@ const initialState: ProfileCardsState = {
         profileImage: 'https://picsum.photos/100?a=7',
         title: 'Senior Editor',
         location: 'London, UK',
+        contactInfo: 'liam.s@albiz.com',
         bio: 'Specializing in tech and business journalism.',
+        company: 'Tech Chronicle',
+        industry: 'Technology Journalism',
+        role: 'Senior Editor',
+        experienceLevel: '5-7 Years'
       },
       verificationLevel: 'email_verified',
       approvalStatus: 'approved',
@@ -85,7 +101,12 @@ const initialState: ProfileCardsState = {
         profileImage: 'https://picsum.photos/100?a=9',
         title: 'Staff Writer',
         location: 'San Francisco, CA',
+        contactInfo: 'noah.b@albiz.com',
         bio: 'Covering the latest trends in Silicon Valley.',
+        company: 'Innovate Today',
+        industry: 'Venture Capital',
+        role: 'Writer',
+        experienceLevel: '1-3 Years'
       },
       verificationLevel: 'unverified',
       approvalStatus: 'pending',

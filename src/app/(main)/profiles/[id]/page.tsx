@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { useParams, useRouter } from 'next/navigation'
@@ -9,9 +10,20 @@ import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Twitter, Linkedin, Facebook, Instagram, Car, Rocket, BrainCircuit, X, MessageSquare, Repeat, Heart, BarChart2, Upload, CheckCircle2, Briefcase, Phone, ArrowLeft } from "lucide-react"
+import { Twitter, Linkedin, Facebook, Instagram, MessageSquare, Repeat, Heart, BarChart2, Upload, CheckCircle2, Briefcase, Phone, ArrowLeft } from "lucide-react"
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+
+const InfoRow = ({ label, value }: { label: string, value?: string }) => {
+    if (!value) return null;
+    return (
+        <div>
+            <p className="text-sm text-muted-foreground">{label}</p>
+            <p className="font-medium">{value}</p>
+        </div>
+    )
+};
+
 
 export default function ProfileDetailPage() {
     const params = useParams();
@@ -23,7 +35,7 @@ export default function ProfileDetailPage() {
         return <div className="text-center p-12">Profile not found.</div>
     }
 
-    const { fullName, profileImage, title, bio, customUrlSlug, location, contactInfo } = profile.profileData;
+    const { fullName, profileImage, title, bio, customUrlSlug, location, contactInfo, company, industry, role, experienceLevel } = profile.profileData;
     const { verificationLevel } = profile;
     const isVerified = verificationLevel !== 'unverified';
 
@@ -116,37 +128,19 @@ export default function ProfileDetailPage() {
                 </Card>
                 <Card>
                         <CardHeader>
-                        <CardTitle>Companies</CardTitle>
-                        <CardDescription>Associated ventures and organizations.</CardDescription>
+                        <CardTitle>Professional Information</CardTitle>
+                        <CardDescription>An overview of the user's professional background.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="flex gap-4 items-start">
-                            <div className="bg-muted p-3 rounded-lg"><Car /></div>
-                            <div>
-                                <p className="font-semibold">Tesla</p>
-                                <p className="text-sm text-muted-foreground">Electric vehicles, energy generation and storage systems.</p>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <InfoRow label="Company/Organization" value={company} />
+                            <InfoRow label="Industry" value={industry} />
+                            <InfoRow label="Role/Position" value={role} />
+                            <InfoRow label="Experience Level" value={experienceLevel} />
                         </div>
-                        <div className="flex gap-4 items-start">
-                            <div className="bg-muted p-3 rounded-lg"><Rocket /></div>
-                            <div>
-                                <p className="font-semibold">SpaceX</p>
-                                <p className="text-sm text-muted-foreground">Designs, manufactures and launches advanced rockets and spacecraft.</p>
-                            </div>
-                        </div>
-                            <div className="flex gap-4 items-start">
-                            <div className="bg-muted p-3 rounded-lg"><X /></div>
-                            <div>
-                                <p className="font-semibold">X</p>
-                                <p className="text-sm text-muted-foreground">The everything app.</p>
-                            </div>
-                        </div>
-                        <div className="flex gap-4 items-start">
-                            <div className="bg-muted p-3 rounded-lg"><BrainCircuit /></div>
-                            <div>
-                                <p className="font-semibold">Neuralink</p>
-                                <p className="text-sm text-muted-foreground">Developing ultra-high bandwidth brain-machine interfaces.</p>
-                            </div>
+                         <div>
+                            <p className="text-sm text-muted-foreground">Bio/About Section</p>
+                            <p className="font-medium pt-1">{bio || 'Not provided.'}</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -156,7 +150,7 @@ export default function ProfileDetailPage() {
                 </Card>
                 <Card>
                     <CardHeader><CardTitle>Industry</CardTitle></CardHeader>
-                    <CardContent><p className="text-muted-foreground">Not specified</p></CardContent>
+                    <CardContent><p className="text-muted-foreground">{industry || 'Not specified'}</p></CardContent>
                 </Card>
             </div>
         </div>
