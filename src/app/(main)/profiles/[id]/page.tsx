@@ -9,7 +9,9 @@ import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Twitter, Linkedin, Facebook, Instagram, Car, Rocket, BrainCircuit, X, MessageSquare, Repeat, Heart, BarChart2, Upload } from "lucide-react"
+import { Twitter, Linkedin, Facebook, Instagram, Car, Rocket, BrainCircuit, X, MessageSquare, Repeat, Heart, BarChart2, Upload, CheckCircle2 } from "lucide-react"
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 
 export default function ProfileDetailPage() {
     const params = useParams();
@@ -21,6 +23,8 @@ export default function ProfileDetailPage() {
     }
 
     const { fullName, profileImage, title, bio, customUrlSlug } = profile.profileData;
+    const { verificationLevel } = profile;
+    const isVerified = verificationLevel !== 'unverified';
 
     return (
         <div className="p-6 md:p-8">
@@ -52,7 +56,16 @@ export default function ProfileDetailPage() {
                             <p><span className="font-bold">0</span> Followers</p>
                         </div>
                     </div>
-                    <Button>Follow</Button>
+                    {isVerified ? (
+                        <Badge className="bg-green-100 text-green-800 border-green-200 text-sm">
+                            <CheckCircle2 className="h-4 w-4 mr-2" />
+                            Verified
+                        </Badge>
+                    ) : (
+                         <Badge variant="outline" className="text-sm">
+                            Not Verified
+                        </Badge>
+                    )}
                 </div>
             </Card>
 
