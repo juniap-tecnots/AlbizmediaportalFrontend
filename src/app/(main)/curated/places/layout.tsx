@@ -21,9 +21,10 @@ export default function PlacesLayout({
   const router = useRouter();
   const pathname = usePathname();
 
-  const isNewPlacePage = pathname === '/curated/places/new';
+  const isNewOrEditPage = pathname.startsWith('/curated/places/new') || pathname.startsWith('/curated/places/edit');
 
-  if (isNewPlacePage) {
+
+  if (isNewOrEditPage) {
     return <>{children}</>;
   }
 

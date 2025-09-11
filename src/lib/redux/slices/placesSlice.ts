@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -79,11 +78,21 @@ const placesSlice = createSlice({
       };
       state.places.push(newPlace);
     },
+    updatePlace: (state, action: PayloadAction<Place>) => {
+        const index = state.places.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) {
+            state.places[index] = { ...action.payload, lastUpdated: new Date().toISOString() };
+        }
+    },
+    deletePlace: (state, action: PayloadAction<string>) => {
+        state.places = state.places.filter(p => p.id !== action.payload);
+    }
   },
 });
 
-export const { addPlace } = placesSlice.actions;
+export const { addPlace, updatePlace, deletePlace } = placesSlice.actions;
 
 export const selectAllPlaces = (state: RootState) => state.places.places;
+export const selectPlaceById = (state: RootState, id: string) => state.places.places.find(p => p.id === id);
 
 export default placesSlice.reducer;
