@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -28,8 +29,7 @@ interface EventsState {
   events: Event[];
 }
 
-const initialState: EventsState = {
-  events: [
+const sampleEvents: Event[] = [
     {
       id: 'evt_101',
       eventTitle: 'Annual Tech Summit 2025',
@@ -60,7 +60,11 @@ const initialState: EventsState = {
       socialMediaLinks: ['https://instagram.com/summermusicfest'],
       rsvpLink: 'https://example.com/rsvp-fest'
     },
-  ],
+  ];
+
+
+const initialState: EventsState = {
+  events: sampleEvents,
 };
 
 const eventsSlice = createSlice({
