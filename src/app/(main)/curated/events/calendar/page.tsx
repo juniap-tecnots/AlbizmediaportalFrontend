@@ -13,11 +13,19 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 
 
 const eventStatusColors: { [key: string]: string } = {
-    Published: 'bg-green-500 text-white',
+    'Published': 'bg-green-500 text-white',
     'Under Review': 'bg-blue-500 text-white',
-    Draft: 'bg-yellow-500 text-black',
-    Cancelled: 'bg-red-500 text-white line-through'
+    'Draft': 'bg-yellow-500 text-black',
+    'Cancelled': 'bg-red-500 text-white line-through'
 };
+
+const eventStatusBadgeColors: { [key: string]: string } = {
+    'Conference': 'bg-blue-100 text-blue-800 border-blue-200',
+    'Festival': 'bg-purple-100 text-purple-800 border-purple-200',
+    'Concert': 'bg-pink-100 text-pink-800 border-pink-200',
+    'Sports': 'bg-green-100 text-green-800 border-green-200',
+};
+
 
 export default function EventsCalendarPage() {
     const allEvents = useSelector(selectAllEvents);
@@ -33,24 +41,15 @@ export default function EventsCalendarPage() {
     
     const startingDayIndex = getDay(monthStart);
 
-    const prevMonthDays = Array.from({ length: startingDayIndex }).map((_, i) => {
-        const day = new Date(monthStart);
-        day.setDate(day.getDate() - (startingDayIndex - i));
-        return day;
-    });
-
-    const calendarDays = [...prevMonthDays, ...daysInMonth];
-
-    const handleEventClick = (event: Event) => {
-        setSelectedEvent(event);
-        setIsSidebarOpen(true);
-    };
-
-    const handleSidebarClose = () => {
-        setIsSidebarOpen(false);
-        // Delay clearing event to allow sidebar to animate out
-        setTimeout(() => setSelectedEvent(null), 300);
-    }
+    // Create an array of day objects for the entire grid
+    const calendarDays = [
+        ...Array.from({ length: startingDayIndex }).map((_, i) => {
+            const day = new Date(monthStart);
+            day.setDate(day.getDate() - (startingDayIndex - i));
+            return { date: day, isCurrentMonth: false };
+        }),
+        ...daysInMonth.map(day => ({ date: day, isCurrentMonth: true })),
+    ];
     
     const eventsByDate = allEvents.reduce((acc, event) => {
         const date = format(new Date(event.startTime), 'yyyy-MM-dd');
@@ -61,15 +60,24 @@ export default function EventsCalendarPage() {
         return acc;
     }, {} as Record<string, Event[]>);
 
+    const handleEventClick = (event: Event) => {
+        setSelectedEvent(event);
+        setIsSidebarOpen(true);
+    };
+
     const changePeriod = (amount: number) => {
         const newDate = new Date(currentDate);
-        newDate.setMonth(newDate.getMonth() + amount);
+        if (activeView === 'month') {
+            newDate.setMonth(newDate.getMonth() + amount);
+        } else if (activeView === 'week') {
+            newDate.setDate(newDate.getDate() + (amount * 7));
+        }
         setCurrentDate(newDate);
     };
 
     return (
         <div className="space-y-6">
-            <div className="bg-card p-4 rounded-lg shadow-sm border flex justify-between items-center flex-wrap gap-4">
+             <div className="bg-card p-4 rounded-lg shadow-sm border flex justify-around items-center flex-wrap gap-4">
                 <div className="text-center">
                     <div className="text-2xl font-bold text-foreground">34</div>
                     <div className="text-xs text-muted-foreground uppercase">Upcoming Events</div>
@@ -124,14 +132,13 @@ export default function EventsCalendarPage() {
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                         <div key={day} className="p-3 text-center font-semibold text-muted-foreground border-r border-b">{day}</div>
                     ))}
-                    {calendarDays.map((day, index) => {
-                        const dayStr = format(day, 'yyyy-MM-dd');
+                    {calendarDays.map(({ date, isCurrentMonth }, index) => {
+                        const dayStr = format(date, 'yyyy-MM-dd');
                         const dayEvents = eventsByDate[dayStr] || [];
-                        const isCurrentMonth = day.getMonth() === currentDate.getMonth();
 
                         return (
-                            <div key={index} className={cn("min-h-[120px] p-2 border-b border-r", !isCurrentMonth && "bg-muted/50 text-muted-foreground", isToday(day) && "bg-blue-50")}>
-                                <div className="font-semibold mb-1">{format(day, 'd')}</div>
+                            <div key={index} className={cn("min-h-[120px] p-2 border-b border-r", !isCurrentMonth && "bg-muted/50 text-muted-foreground", isToday(date) && "bg-blue-50")}>
+                                <div className="font-semibold mb-1">{format(date, 'd')}</div>
                                 <div className="space-y-1">
                                     {dayEvents.map(event => (
                                         <div
@@ -157,14 +164,14 @@ export default function EventsCalendarPage() {
                     {selectedEvent && (
                         <div className="py-4 space-y-4">
                             <h3 className="text-xl font-semibold">{selectedEvent.eventTitle}</h3>
-                            <Badge>{selectedEvent.eventType}</Badge>
+                            <Badge variant="outline" className={cn(eventStatusBadgeColors[selectedEvent.eventType])}>{selectedEvent.eventType}</Badge>
                             <div className="space-y-2 text-sm">
                                 <p><strong>Date:</strong> {format(new Date(selectedEvent.startTime), 'PPP')}</p>
                                 <p><strong>Time:</strong> {format(new Date(selectedEvent.startTime), 'p')} - {format(new Date(selectedEvent.endTime), 'p')}</p>
                                 <p><strong>Venue:</strong> {selectedEvent.venueInfo}</p>
                                 <p><strong>Organizer:</strong> {selectedEvent.organizerDetails}</p>
                             </div>
-                             <div className="prose prose-sm" dangerouslySetInnerHTML={{ __html: selectedEvent.description }} />
+                             <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selectedEvent.description }} />
 
                              <div className="flex gap-2 pt-4">
                                 <Button size="sm">Edit Event</Button>
@@ -177,3 +184,4 @@ export default function EventsCalendarPage() {
         </div>
     );
 }
+
