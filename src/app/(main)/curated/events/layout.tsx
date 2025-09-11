@@ -4,7 +4,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { PageHeader } from "@/components/page-header";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
@@ -54,7 +54,7 @@ export default function EventsLayout({
             </Link>
         )}
       />
-      <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
+      <Tabs value={getCurrentTab()} onValueChange={handleTabChange} className="w-full">
           <TabsList>
               {tabs.map(tab => (
                   <TabsTrigger key={tab.value} value={tab.value} asChild>
@@ -62,8 +62,10 @@ export default function EventsLayout({
                   </TabsTrigger>
               ))}
           </TabsList>
+        <TabsContent value={getCurrentTab()} className="mt-4">
+          {children}
+        </TabsContent>
       </Tabs>
-      <div className="mt-4">{children}</div>
     </div>
   );
 }
