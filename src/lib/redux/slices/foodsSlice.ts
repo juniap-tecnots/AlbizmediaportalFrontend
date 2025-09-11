@@ -11,6 +11,7 @@ export interface FoodVenue {
   location: string;
   priceRange: '$' | '$$' | '$$$' | '$$$$';
   diningStyle: 'Fast casual' | 'Fine dining' | 'Cafe';
+  description: string;
 }
 
 interface FoodsState {
@@ -18,7 +19,26 @@ interface FoodsState {
 }
 
 const initialState: FoodsState = {
-  venues: [],
+  venues: [
+    {
+      id: 'food_101',
+      restaurantName: 'The Golden Spoon',
+      cuisineType: ['Italian', 'Modern'],
+      location: 'Downtown Cityville',
+      priceRange: '$$$',
+      diningStyle: 'Fine dining',
+      description: 'An exquisite fine dining experience with a modern twist on Italian classics.'
+    },
+    {
+      id: 'food_102',
+      restaurantName: 'The Daily Grind',
+      cuisineType: ['Coffee', 'Bakery'],
+      location: 'Uptown Plaza',
+      priceRange: '$$',
+      diningStyle: 'Cafe',
+      description: 'Your neighborhood-friendly cafe for the best coffee and pastries.'
+    }
+  ],
 };
 
 const foodsSlice = createSlice({
@@ -32,10 +52,13 @@ const foodsSlice = createSlice({
       };
       state.venues.push(newVenue);
     },
+    deleteFoodVenue: (state, action: PayloadAction<string>) => {
+      state.venues = state.venues.filter(v => v.id !== action.payload);
+    }
   },
 });
 
-export const { addFoodVenue } = foodsSlice.actions;
+export const { addFoodVenue, deleteFoodVenue } = foodsSlice.actions;
 
 export const selectAllFoodVenues = (state: RootState) => state.foods.venues;
 
