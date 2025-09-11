@@ -56,93 +56,87 @@ export default function ProfileDetailPage() {
                 </div>
             </Card>
 
-            <div className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="md:col-span-2 space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Recent Activity</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex gap-4">
-                                     <Avatar>
-                                        <AvatarImage src={profileImage} alt={fullName} />
-                                        <AvatarFallback>{fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className="font-bold">{fullName}</span>
-                                            <span className="text-muted-foreground">@{customUrlSlug || fullName.toLowerCase().replace(' ', '')} · 2h</span>
-                                        </div>
-                                        <p>Starship is ready for launch!</p>
-                                        <div className="flex justify-between text-muted-foreground mt-4 text-sm w-full max-w-md">
-                                            <div className="flex items-center gap-2"><MessageSquare size={16}/><span>2.1K</span></div>
-                                            <div className="flex items-center gap-2"><Repeat size={16}/><span>5.8K</span></div>
-                                            <div className="flex items-center gap-2"><Heart size={16}/><span>34K</span></div>
-                                            <div className="flex items-center gap-2"><BarChart2 size={16}/><span>1.2M</span></div>
-                                            <div className="flex items-center gap-2"><Upload size={16}/></div>
-                                        </div>
-                                    </div>
+            <div className="mt-6 space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Recent Activity</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-4">
+                                <Avatar>
+                                <AvatarImage src={profileImage} alt={fullName} />
+                                <AvatarFallback>{fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <div className="flex items-center gap-2 text-sm">
+                                    <span className="font-bold">{fullName}</span>
+                                    <span className="text-muted-foreground">@{customUrlSlug || fullName.toLowerCase().replace(' ', '')} · 2h</span>
                                 </div>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                             <CardHeader>
-                                <CardTitle>Companies</CardTitle>
-                                <CardDescription>Associated ventures and organizations.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex gap-4 items-start">
-                                    <div className="bg-muted p-3 rounded-lg"><Car /></div>
-                                    <div>
-                                        <p className="font-semibold">Tesla</p>
-                                        <p className="text-sm text-muted-foreground">Electric vehicles, energy generation and storage systems.</p>
-                                    </div>
+                                <p>Starship is ready for launch!</p>
+                                <div className="flex justify-between text-muted-foreground mt-4 text-sm w-full max-w-md">
+                                    <div className="flex items-center gap-2"><MessageSquare size={16}/><span>2.1K</span></div>
+                                    <div className="flex items-center gap-2"><Repeat size={16}/><span>5.8K</span></div>
+                                    <div className="flex items-center gap-2"><Heart size={16}/><span>34K</span></div>
+                                    <div className="flex items-center gap-2"><BarChart2 size={16}/><span>1.2M</span></div>
+                                    <div className="flex items-center gap-2"><Upload size={16}/></div>
                                 </div>
-                                <div className="flex gap-4 items-start">
-                                    <div className="bg-muted p-3 rounded-lg"><Rocket /></div>
-                                    <div>
-                                        <p className="font-semibold">SpaceX</p>
-                                        <p className="text-sm text-muted-foreground">Designs, manufactures and launches advanced rockets and spacecraft.</p>
-                                    </div>
-                                </div>
-                                 <div className="flex gap-4 items-start">
-                                    <div className="bg-muted p-3 rounded-lg"><X /></div>
-                                    <div>
-                                        <p className="font-semibold">X</p>
-                                        <p className="text-sm text-muted-foreground">The everything app.</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4 items-start">
-                                    <div className="bg-muted p-3 rounded-lg"><BrainCircuit /></div>
-                                    <div>
-                                        <p className="font-semibold">Neuralink</p>
-                                        <p className="text-sm text-muted-foreground">Developing ultra-high bandwidth brain-machine interfaces.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                    <div className="space-y-6">
-                        <Card>
-                            <CardHeader><CardTitle>Net Worth</CardTitle></CardHeader>
-                            <CardContent><p className="text-2xl font-bold">N/A</p></CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader><CardTitle>Industry</CardTitle></CardHeader>
-                            <CardContent><p className="text-muted-foreground">Not specified</p></CardContent>
-                        </Card>
-                         <Card>
-                            <CardHeader><CardTitle>Socials</CardTitle></CardHeader>
-                            <CardContent className="flex gap-4">
-                                <Twitter className="text-blue-500" />
-                                <Linkedin className="text-blue-700" />
-                                <Facebook className="text-blue-800" />
-                                <Instagram className="text-pink-600" />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                        <CardHeader>
+                        <CardTitle>Companies</CardTitle>
+                        <CardDescription>Associated ventures and organizations.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex gap-4 items-start">
+                            <div className="bg-muted p-3 rounded-lg"><Car /></div>
+                            <div>
+                                <p className="font-semibold">Tesla</p>
+                                <p className="text-sm text-muted-foreground">Electric vehicles, energy generation and storage systems.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-4 items-start">
+                            <div className="bg-muted p-3 rounded-lg"><Rocket /></div>
+                            <div>
+                                <p className="font-semibold">SpaceX</p>
+                                <p className="text-sm text-muted-foreground">Designs, manufactures and launches advanced rockets and spacecraft.</p>
+                            </div>
+                        </div>
+                            <div className="flex gap-4 items-start">
+                            <div className="bg-muted p-3 rounded-lg"><X /></div>
+                            <div>
+                                <p className="font-semibold">X</p>
+                                <p className="text-sm text-muted-foreground">The everything app.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-4 items-start">
+                            <div className="bg-muted p-3 rounded-lg"><BrainCircuit /></div>
+                            <div>
+                                <p className="font-semibold">Neuralink</p>
+                                <p className="text-sm text-muted-foreground">Developing ultra-high bandwidth brain-machine interfaces.</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader><CardTitle>Net Worth</CardTitle></CardHeader>
+                    <CardContent><p className="text-2xl font-bold">N/A</p></CardContent>
+                </Card>
+                <Card>
+                    <CardHeader><CardTitle>Industry</CardTitle></CardHeader>
+                    <CardContent><p className="text-muted-foreground">Not specified</p></CardContent>
+                </Card>
+                    <Card>
+                    <CardHeader><CardTitle>Socials</CardTitle></CardHeader>
+                    <CardContent className="flex gap-4">
+                        <Twitter className="text-blue-500" />
+                        <Linkedin className="text-blue-700" />
+                        <Facebook className="text-blue-800" />
+                        <Instagram className="text-pink-600" />
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
