@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -16,10 +17,22 @@ export interface Place {
     address: string;
   };
   description: string;
-  openingHours: string; // Could be a structured object
+  openingHours: string; 
   contactInfo: string;
   priceRange: '$' | '$$' | '$$$' | '$$$$';
   status: PlaceStatus;
+  amenities: string[];
+  photoGallery: { url: string; caption: string }[];
+  website?: string;
+  accessibilityInfo?: string;
+  bestVisitTimes?: string;
+  curator: {
+      name: string;
+      verificationDate?: string;
+  };
+  lastUpdated: string;
+  partnershipStatus?: string;
+  internalRating?: number;
 }
 
 interface PlacesState {
@@ -41,7 +54,15 @@ const initialState: PlacesState = {
         openingHours: 'Mon-Fri: 5pm - 11pm, Sat-Sun: 12pm - 12am',
         contactInfo: 'contact@grandview.com',
         priceRange: '$$$',
-        status: 'Published'
+        status: 'Published',
+        amenities: ['wifi', 'parking', 'outdoor-seating'],
+        photoGallery: [],
+        website: 'https://grandview.com',
+        curator: {
+            name: 'Admin User',
+            verificationDate: new Date().toISOString(),
+        },
+        lastUpdated: new Date().toISOString(),
     }
   ],
 };
@@ -50,10 +71,11 @@ const placesSlice = createSlice({
   name: 'places',
   initialState,
   reducers: {
-    addPlace: (state, action: PayloadAction<Omit<Place, 'id'>>) => {
+    addPlace: (state, action: PayloadAction<Omit<Place, 'id' | 'lastUpdated'>>) => {
       const newPlace: Place = {
         ...action.payload,
         id: `place_${state.places.length + 101}`,
+        lastUpdated: new Date().toISOString(),
       };
       state.places.push(newPlace);
     },

@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
@@ -100,6 +101,8 @@ export default function NewPlacePage() {
     const [verificationDate, setVerificationDate] = useState<Date | undefined>();
     const [partnershipStatus, setPartnershipStatus] = useState('None');
     const [status, setStatus] = useState<PlaceStatus>('Draft');
+    const [internalRating, setInternalRating] = useState('');
+
 
     const editorRef = useRef<HTMLDivElement>(null);
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
@@ -158,7 +161,7 @@ export default function NewPlacePage() {
             return;
         }
 
-        const newPlace: Omit<Place, 'id'> = {
+        const newPlace: Omit<Place, 'id' | 'lastUpdated'> = {
             placeName,
             category,
             location: {
@@ -171,9 +174,20 @@ export default function NewPlacePage() {
             contactInfo,
             priceRange,
             status,
+            amenities: selectedAmenities,
+            website,
+            accessibilityInfo,
+            bestVisitTimes,
+            photoGallery: [], // Placeholder for photo gallery
+            curator: {
+                name: curatorName,
+                verificationDate: verificationDate?.toISOString(),
+            },
+            partnershipStatus,
+            internalRating: parseFloat(internalRating) || undefined,
         };
 
-        dispatch(addPlace(newPlace));
+        dispatch(addPlace(newPlace as any));
         toast({
             title: "Place Created",
             description: `"${placeName}" has been successfully added as a draft.`,
@@ -190,7 +204,7 @@ export default function NewPlacePage() {
     return (
         <EditorContext.Provider value={editorContextValue}>
         <TooltipProvider>
-        <div className="space-y-8">
+        <div className="space-y-8 p-6 md:p-8">
             <div className="flex items-center gap-4">
                  <Button variant="outline" size="icon" onClick={() => router.back()}>
                     <ArrowLeft className="h-4 w-4" />
@@ -472,7 +486,7 @@ export default function NewPlacePage() {
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="rating">Internal Rating</Label>
-                                <Input id="rating" type="number" min="1" max="5" placeholder="1-5" />
+                                <Input id="rating" type="number" min="1" max="5" placeholder="1-5" value={internalRating} onChange={(e) => setInternalRating(e.target.value)} />
                             </div>
                         </CardContent>
                     </Card>
