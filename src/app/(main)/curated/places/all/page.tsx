@@ -7,6 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { selectAllPlaces, Place, PlaceStatus } from "@/lib/redux/slices/placesSlice";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 export default function AllPlacesPage() {
     const allPlaces = useSelector(selectAllPlaces);
@@ -39,7 +41,7 @@ export default function AllPlacesPage() {
                         <TableHead>Category</TableHead>
                         <TableHead>Location</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -53,8 +55,16 @@ export default function AllPlacesPage() {
                                     {place.status}
                                 </Badge>
                             </TableCell>
-                            <TableCell>
-                                <Button variant="outline" size="sm">Edit</Button>
+                            <TableCell className="text-right space-x-2">
+                                <Button variant="outline" size="icon" className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
+                                    <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button variant="outline" size="icon" className="h-8 w-8 text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button variant="outline" size="icon" className="h-8 w-8 text-red-500 border-red-500 bg-red-500/10 hover:bg-red-500/20 hover:text-red-600">
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}
