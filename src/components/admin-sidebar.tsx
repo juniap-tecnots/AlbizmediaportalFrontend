@@ -194,7 +194,7 @@ export function AdminSidebar() {
         active = false;
     }
     
-    const isExpanded = expandedItems.includes(item.id) || !!anyChildActive;
+    const isExpanded = expandedItems.includes(item.id) || (anyChildActive && item.id !== 'curated' && item.id !== 'settings');
 
     const MenuItemContent = () => (
         <div
