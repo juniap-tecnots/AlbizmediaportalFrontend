@@ -37,6 +37,12 @@ const contentManagementItems = [
         href: '/content/articles/all'
     },
     {
+        id: 'profiles',
+        label: 'Profiles',
+        icon: User,
+        href: '/profiles/all'
+    },
+    {
         id: 'categories',
         label: 'Categories',
         icon: AiOutlineTag,
@@ -58,15 +64,6 @@ const contentManagementItems = [
             { id: 'flagged-content', href: '/content/comments/flagged', label: 'Flagged Content' },
             { id: 'spam-queue', href: '/content/comments/spam', label: 'Spam Queue' },
         ]
-    }
-];
-
-const profileManagementItems = [
-    {
-        id: 'profiles',
-        label: 'Profiles',
-        icon: User,
-        href: '/profiles/all'
     }
 ];
 
@@ -131,7 +128,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts', 'profile-management']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -251,17 +248,6 @@ export function AdminSidebar() {
       <div className="flex-1 px-4 py-6 overflow-y-auto">
         <div className='space-y-1'>
             {menuItems.map(item => renderMenuItem(item as MenuItemProps))}
-        </div>
-        
-        <div className="pt-6">
-          <div className="px-3 mb-2">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Profile Management
-            </span>
-          </div>
-          <div className="space-y-1">
-            {profileManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
-          </div>
         </div>
 
         <div className="pt-6">
