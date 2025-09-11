@@ -38,7 +38,7 @@ const contentManagementItems = [
     },
     {
         id: 'profiles',
-        label: 'Profiles',
+        label: 'ProfileCards',
         icon: User,
         href: '/profiles/all'
     },
