@@ -21,6 +21,12 @@ export default function PlacesLayout({
   const router = useRouter();
   const pathname = usePathname();
 
+  const isNewPlacePage = pathname === '/curated/places/new';
+
+  if (isNewPlacePage) {
+    return <>{children}</>;
+  }
+
   const getCurrentTab = () => {
     const currentPath = pathname.split('/').pop();
     return tabs.find(tab => tab.value === currentPath)?.value || 'all';
