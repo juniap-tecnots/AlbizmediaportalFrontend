@@ -128,8 +128,8 @@ export default function ProfileDetailPage() {
                 </Card>
                 <Card>
                         <CardHeader>
-                        <CardTitle>Professional Information</CardTitle>
-                        <CardDescription>An overview of the user's professional background.</CardDescription>
+                        <CardTitle>Companies</CardTitle>
+                        <CardDescription>Associated ventures and organizations.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
