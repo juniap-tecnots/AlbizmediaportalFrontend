@@ -12,6 +12,16 @@ export interface Event {
   endTime: string;
   venueInfo: string;
   description: string;
+  organizerDetails: string;
+  ticketInfo: {
+    price: string;
+    link: string;
+    availability: string;
+  };
+  ageRestrictions: string;
+  dressCode: string;
+  socialMediaLinks: string[];
+  rsvpLink: string;
 }
 
 interface EventsState {
@@ -41,3 +51,5 @@ export const { addEvent } = eventsSlice.actions;
 export const selectAllEvents = (state: RootState) => state.events.events;
 
 export default eventsSlice.reducer;
+
+    
