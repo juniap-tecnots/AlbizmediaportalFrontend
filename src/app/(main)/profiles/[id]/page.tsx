@@ -38,6 +38,9 @@ export default function ProfileDetailPage() {
     const { fullName, profileImage, title, bio, customUrlSlug, location, contactInfo, company, industry, role, experienceLevel } = profile.profileData;
     const { verificationLevel } = profile;
     const isVerified = verificationLevel !== 'unverified';
+    
+    const hasProfessionalInfo = company || industry || role || experienceLevel;
+
 
     return (
         <div className="p-6 md:p-8">
@@ -126,24 +129,26 @@ export default function ProfileDetailPage() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                {hasProfessionalInfo && (
+                    <Card>
                         <CardHeader>
-                        <CardTitle>Companies</CardTitle>
-                        <CardDescription>Associated ventures and organizations.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <InfoRow label="Company/Organization" value={company} />
-                            <InfoRow label="Industry" value={industry} />
-                            <InfoRow label="Role/Position" value={role} />
-                            <InfoRow label="Experience Level" value={experienceLevel} />
-                        </div>
-                         <div>
-                            <p className="text-sm text-muted-foreground">Bio/About Section</p>
-                            <p className="font-medium pt-1">{bio || 'Not provided.'}</p>
-                        </div>
-                    </CardContent>
-                </Card>
+                            <CardTitle>Companies</CardTitle>
+                            <CardDescription>Associated ventures and organizations.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <InfoRow label="Company/Organization" value={company} />
+                                <InfoRow label="Industry" value={industry} />
+                                <InfoRow label="Role/Position" value={role} />
+                                <InfoRow label="Experience Level" value={experienceLevel} />
+                            </div>
+                            <div>
+                                <p className="text-sm text-muted-foreground">Bio/About Section</p>
+                                <p className="font-medium pt-1">{bio || 'Not provided.'}</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
                 <Card>
                     <CardHeader><CardTitle>Net Worth</CardTitle></CardHeader>
                     <CardContent><p className="text-2xl font-bold">N/A</p></CardContent>
