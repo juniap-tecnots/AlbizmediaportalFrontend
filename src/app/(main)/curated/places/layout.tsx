@@ -11,7 +11,6 @@ import { PlusCircle } from 'lucide-react';
 const tabs = [
     { value: 'all', label: 'All Places', href: '/curated/places/all' },
     { value: 'new', label: 'Add New Place', href: '/curated/places/new' },
-    { value: 'categories', label: 'Categories', href: '/curated/places/categories' },
     { value: 'verification', label: 'Verification Queue', href: '/curated/places/verification' },
 ];
 
