@@ -122,5 +122,7 @@ export const { addProfileCard, updateProfileCard } = profileCardsSlice.actions;
 
 export const selectAllProfileCards = (state: RootState) => state.profileCards.profiles;
 export const selectPendingProfileCards = (state: RootState) => state.profileCards.profiles.filter(p => p.approvalStatus === 'pending');
+export const selectProfileCardById = (state: RootState, id: string) => state.profileCards.profiles.find(p => p.id === id);
+
 
 export default profileCardsSlice.reducer;

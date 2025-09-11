@@ -22,9 +22,11 @@ export default function ProfilesLayout({
   const router = useRouter();
   const pathname = usePathname();
   const isNewPage = pathname === '/profiles/new';
+  const isDetailPage = /^\/profiles\/(prof_).+$/.test(pathname);
 
   const getCurrentTab = () => {
     if (isNewPage) return 'new';
+    if (isDetailPage) return 'detail';
     return tabs.find(tab => pathname.includes(tab.value))?.value || 'all';
   }
 
@@ -35,32 +37,36 @@ export default function ProfilesLayout({
     }
   };
 
+  const showHeaderAndTabs = !isNewPage && !isDetailPage;
+
   return (
     <div className="p-6 md:p-8">
-      {!isNewPage && (
-          <PageHeader
-            title="Profile Card Management"
-            description="Manage user profiles, approvals, and settings."
-            actions={(
-                <Link href="/profiles/new">
-                    <Button>
-                        <PlusCircle className="mr-2" />
-                        Create Profile
-                    </Button>
-                </Link>
-            )}
-          />
+      {showHeaderAndTabs && (
+          <>
+            <PageHeader
+                title="Profile Card Management"
+                description="Manage user profiles, approvals, and settings."
+                actions={(
+                    <Link href="/profiles/new">
+                        <Button>
+                            <PlusCircle className="mr-2" />
+                            Create Profile
+                        </Button>
+                    </Link>
+                )}
+            />
+            <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
+                <TabsList>
+                    {tabs.map(tab => (
+                        <TabsTrigger key={tab.value} value={tab.value}>
+                            {tab.label}
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+            </Tabs>
+          </>
       )}
-      <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
-          <TabsList className={isNewPage ? "hidden" : ""}>
-              {tabs.map(tab => (
-                  <TabsTrigger key={tab.value} value={tab.value}>
-                      {tab.label}
-                  </TabsTrigger>
-              ))}
-          </TabsList>
-      </Tabs>
-      <div className={!isNewPage ? "mt-4" : ""}>{children}</div>
+      <div className={showHeaderAndTabs ? "mt-4" : ""}>{children}</div>
     </div>
   );
 }
