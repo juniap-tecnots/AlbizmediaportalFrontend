@@ -20,11 +20,11 @@ export interface ProfileCard {
         title: string;
         location: string;
         bio: string;
+        customUrlSlug?: string;
     };
     verificationLevel: VerificationLevel;
     approvalStatus: ApprovalStatus;
     isPublic: boolean;
-    customUrlSlug?: string;
     createdAt: string;
     updatedAt: string;
     approvedAt?: string;
@@ -47,11 +47,11 @@ const initialState: ProfileCardsState = {
         title: 'Chief Editor',
         location: 'New York, NY',
         bio: 'Leading the editorial team at Albiz Media with a passion for quality journalism.',
+        customUrlSlug: 'emma-wilson',
       },
       verificationLevel: 'identity_verified',
       approvalStatus: 'approved',
       isPublic: true,
-      customUrlSlug: 'emma-wilson',
       createdAt: '2024-04-01T10:00:00Z',
       updatedAt: '2024-05-10T11:30:00Z',
       approvedAt: '2024-04-02T14:00:00Z',

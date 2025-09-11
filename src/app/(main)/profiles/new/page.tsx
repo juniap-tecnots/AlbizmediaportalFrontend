@@ -28,6 +28,7 @@ export default function NewProfileCardPage() {
     const [title, setTitle] = useState('');
     const [location, setLocation] = useState('');
     const [contactInfo, setContactInfo] = useState('');
+    const [customUrlSlug, setCustomUrlSlug] = useState('');
     
     const [company, setCompany] = useState('');
     const [industry, setIndustry] = useState('');
@@ -93,7 +94,8 @@ export default function NewProfileCardPage() {
                 expertise,
                 topics,
                 mediaMentions,
-                portfolio
+                portfolio,
+                customUrlSlug,
             },
             verificationLevel: 'unverified' as VerificationLevel,
             approvalStatus: 'draft' as ApprovalStatus,
@@ -166,6 +168,11 @@ export default function NewProfileCardPage() {
                                     <Label htmlFor="contactInfo">Contact Information</Label>
                                     <Input id="contactInfo" placeholder="e.g., email or phone" value={contactInfo} onChange={(e) => setContactInfo(e.target.value)} />
                                 </div>
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="customUrlSlug">Custom URL Slug</Label>
+                                <Input id="customUrlSlug" placeholder="e.g., jane-doe" value={customUrlSlug} onChange={(e) => setCustomUrlSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))} />
+                                <p className="text-sm text-muted-foreground">This will be used for the profile URL (e.g., albizmedia.com/@your-slug).</p>
                             </div>
                         </CardContent>
                     </Card>
@@ -250,7 +257,7 @@ export default function NewProfileCardPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="topics">Topics of Interest</Label>
-                                <Input id="topics" placeholder="e.g., Machine Learning, SaaS, Media Trends" value={topics} onChange={(e) => setTopics(e.g.t.value)} />
+                                <Input id="topics" placeholder="e.g., Machine Learning, SaaS, Media Trends" value={topics} onChange={(e) => setTopics(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="mediaMentions">Media Mentions</Label>
