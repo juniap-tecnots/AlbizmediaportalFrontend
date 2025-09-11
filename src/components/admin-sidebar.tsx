@@ -20,9 +20,9 @@ import {
     AiOutlineHistory,
     AiOutlineNodeIndex,
 } from 'react-icons/ai'
-import { FaGem, FaMapPin, FaCalendarAlt, FaHamburger } from 'react-icons/fa'
+import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
-import { User, CreditCard, Star } from 'lucide-react'
+import { User, CreditCard, Star, MapPin, Calendar, Utensils } from 'lucide-react'
 
 const menuItems = [
   { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: AiOutlineDashboard },
@@ -75,19 +75,19 @@ const curatedMenuItem = {
         {
             id: 'top-places',
             label: 'Top Places',
-            icon: FaMapPin,
+            icon: MapPin,
             href: '/curated/places/all',
         },
         {
             id: 'events',
             label: 'Events',
-            icon: FaCalendarAlt,
+            icon: Calendar,
             href: '/curated/events/all',
         },
         {
             id: 'foods',
             label: 'Foods',
-            icon: FaHamburger,
+            icon: Utensils,
             href: '/curated/foods/all',
         }
     ]
