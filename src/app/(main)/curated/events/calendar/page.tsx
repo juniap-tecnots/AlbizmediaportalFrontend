@@ -12,18 +12,14 @@ import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 
 
-const eventStatusColors: { [key: string]: string } = {
-    'Published': 'bg-[#68d391] text-white',
-    'Under Review': 'bg-[#90cdf4] text-white',
-    'Draft': 'bg-[#fbb6ce] text-black',
-    'Cancelled': 'bg-[#fc8181] text-white line-through',
-    'Conference': 'bg-[#90cdf4] text-white',
-    'Festival': 'bg-[#fbb6ce] text-black',
+const eventTypeColors: { [key: string]: string } = {
+    'Conference': 'bg-blue-500 text-white',
+    'Festival': 'bg-purple-500 text-white',
     'Concert': 'bg-pink-500 text-white',
     'Sports': 'bg-green-500 text-white',
 };
 
-const eventStatusBadgeColors: { [key: string]: string } = {
+const eventTypeBadgeColors: { [key: string]: string } = {
     'Conference': 'bg-blue-100 text-blue-800 border-blue-200',
     'Festival': 'bg-purple-100 text-purple-800 border-purple-200',
     'Concert': 'bg-pink-100 text-pink-800 border-pink-200',
@@ -147,7 +143,7 @@ export default function EventsCalendarPage() {
                                     {dayEvents.map(event => (
                                         <div
                                             key={event.id}
-                                            className={cn("text-xs text-white p-1 rounded truncate cursor-pointer", eventStatusColors[event.eventType] || 'bg-gray-400')}
+                                            className={cn("text-xs text-white p-1 rounded truncate cursor-pointer", eventTypeColors[event.eventType] || 'bg-gray-400')}
                                             onClick={() => handleEventClick(event)}
                                         >
                                             {event.eventTitle}
@@ -168,7 +164,7 @@ export default function EventsCalendarPage() {
                     {selectedEvent && (
                         <div className="py-4 space-y-4">
                             <h3 className="text-xl font-semibold">{selectedEvent.eventTitle}</h3>
-                            <Badge variant="outline" className={cn(eventStatusBadgeColors[selectedEvent.eventType])}>{selectedEvent.eventType}</Badge>
+                            <Badge variant="outline" className={cn(eventTypeBadgeColors[selectedEvent.eventType])}>{selectedEvent.eventType}</Badge>
                             <div className="space-y-2 text-sm">
                                 <p><strong>Date:</strong> {format(new Date(selectedEvent.startTime), 'PPP')}</p>
                                 <p><strong>Time:</strong> {format(new Date(selectedEvent.startTime), 'p')} - {format(new Date(selectedEvent.endTime), 'p')}</p>
