@@ -10,7 +10,6 @@ import { PlusCircle } from 'lucide-react';
 
 const tabs = [
     { value: 'all', label: 'All Places', href: '/curated/places/all' },
-    { value: 'new', label: 'Add New Place', href: '/curated/places/new' },
     { value: 'verification', label: 'Verification Queue', href: '/curated/places/verification' },
 ];
 
@@ -39,6 +38,14 @@ export default function PlacesLayout({
       <PageHeader
         title="Top Places"
         description="Manage your curated places and attractions."
+        actions={(
+            <Link href="/curated/places/new">
+                <Button>
+                    <PlusCircle className="mr-2" />
+                    Add New
+                </Button>
+            </Link>
+        )}
       />
       <Tabs value={getCurrentTab()} onValueChange={handleTabChange}>
           <TabsList>
