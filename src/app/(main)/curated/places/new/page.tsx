@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -13,11 +13,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, UploadCloud, ArrowLeft } from "lucide-react";
+import { CalendarIcon, UploadCloud, ArrowLeft, AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, Undo, Redo } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { addPlace, Place, PlaceStatus } from "@/lib/redux/slices/placesSlice";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const amenities = [
     { id: 'wifi', label: 'Free Wi-Fi' },
@@ -27,6 +30,52 @@ const amenities = [
     { id: 'wheelchair-accessible', label: 'Wheelchair Accessible' },
     { id: 'family-friendly', label: 'Family-Friendly' },
 ];
+
+
+const EditorContext = React.createContext<{
+    handleFormat: (command: string, value?: string) => void;
+    activeCommands: Set<string>;
+} | null>(null);
+
+const useEditorContext = () => {
+    const context = React.useContext(EditorContext);
+    if (!context) {
+        throw new Error('useEditorContext must be used within an EditorProvider');
+    }
+    return context;
+};
+
+const ToolbarButton = ({ command, icon: Icon, tooltip, onClick }: { command: string, icon: React.ElementType, tooltip: string, onClick?: () => void }) => {
+    const { handleFormat, activeCommands } = useEditorContext();
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (onClick) {
+            onClick();
+        } else {
+            handleFormat(command);
+        }
+    };
+
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>
+                 <Button
+                    variant="ghost"
+                    size="sm"
+                    className={cn("px-2", { 'bg-accent text-accent-foreground': activeCommands.has(command) })}
+                    onMouseDown={handleClick}
+                >
+                    <Icon className="w-4 h-4"/>
+                </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+                <p>{tooltip}</p>
+            </TooltipContent>
+        </Tooltip>
+    );
+};
+
 
 export default function NewPlacePage() {
     const dispatch = useDispatch();
@@ -52,11 +101,52 @@ export default function NewPlacePage() {
     const [partnershipStatus, setPartnershipStatus] = useState('None');
     const [status, setStatus] = useState<PlaceStatus>('Draft');
 
+    const editorRef = useRef<HTMLDivElement>(null);
+    const [activeCommands, setActiveCommands] = useState(new Set<string>());
+
     const handleAmenityChange = (amenityId: string, checked: boolean) => {
         setSelectedAmenities(prev =>
             checked ? [...prev, amenityId] : prev.filter(id => id !== amenityId)
         );
     };
+
+    const handleFormat = (command: string, value?: string) => {
+        if (editorRef.current) {
+            editorRef.current.focus();
+            document.execCommand(command, false, value);
+            updateActiveCommands();
+        }
+    };
+    
+    const updateActiveCommands = useCallback(() => {
+        const commands = new Set<string>();
+        if (document.queryCommandState('bold')) commands.add('bold');
+        if (document.queryCommandState('italic')) commands.add('italic');
+        if (document.queryCommandState('underline')) commands.add('underline');
+        if (document.queryCommandState('strikeThrough')) commands.add('strikeThrough');
+        if (document.queryCommandState('justifyLeft')) commands.add('justifyLeft');
+        if (document.queryCommandState('justifyCenter')) commands.add('justifyCenter');
+        if (document.queryCommandState('justifyRight')) commands.add('justifyRight');
+        if (document.queryCommandState('justifyFull')) commands.add('justifyFull');
+        if (document.queryCommandState('insertUnorderedList')) commands.add('insertUnorderedList');
+        if (document.queryCommandState('insertOrderedList')) commands.add('insertOrderedList');
+        setActiveCommands(commands);
+    }, []);
+
+    useEffect(() => {
+        const editor = editorRef.current;
+        const handleSelectionChange = () => {
+            if (document.activeElement === editor) {
+                updateActiveCommands();
+            }
+        };
+
+        document.addEventListener('selectionchange', handleSelectionChange);
+        return () => {
+            document.removeEventListener('selectionchange', handleSelectionChange);
+        };
+    }, [updateActiveCommands]);
+
 
     const handleSubmit = () => {
         if (!placeName) {
@@ -76,7 +166,7 @@ export default function NewPlacePage() {
                 longitude: parseFloat(longitude) || 0,
                 address,
             },
-            description,
+            description: editorRef.current?.innerHTML || '',
             openingHours,
             contactInfo,
             priceRange,
@@ -91,7 +181,15 @@ export default function NewPlacePage() {
         router.push('/curated/places/all');
     };
 
+    const editorContextValue = {
+        handleFormat,
+        activeCommands
+    };
+
+
     return (
+        <EditorContext.Provider value={editorContextValue}>
+        <TooltipProvider>
         <div className="space-y-8">
             <div className="flex items-center gap-4">
                  <Button variant="outline" size="icon" onClick={() => router.back()}>
@@ -148,9 +246,121 @@ export default function NewPlacePage() {
                                     <Input value={longitude} onChange={(e) => setLongitude(e.target.value)} placeholder="Longitude (e.g., -74.0060)" />
                                 </div>
                             </div>
-                            <div className="space-y-2">
+                             <div className="space-y-2">
                                 <Label htmlFor="description">Description</Label>
-                                <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={5} placeholder="A rich description of the place..."/>
+                                <Card>
+                                    <div className="p-2 border-b">
+                                        <div className="flex items-center gap-x-1 text-gray-600 flex-wrap">
+                                            <Tooltip>
+                                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('undo'); }}><Undo className="w-4 h-4" /></Button></TooltipTrigger>
+                                                <TooltipContent><p>Undo (Ctrl+Z)</p></TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('redo'); }}><Redo className="w-4 h-4" /></Button></TooltipTrigger>
+                                                <TooltipContent><p>Redo (Ctrl+Y)</p></TooltipContent>
+                                            </Tooltip>
+                                            <Separator orientation="vertical" className="h-6 mx-1" />
+                                            <Select defaultValue="p" onValueChange={(value) => handleFormat('formatBlock', value)}>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <SelectTrigger className="w-auto border-0 text-sm focus:ring-0">
+                                                            <SelectValue placeholder="Normal" />
+                                                        </SelectTrigger>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent><p>Format</p></TooltipContent>
+                                                </Tooltip>
+                                                <SelectContent>
+                                                    <SelectItem value="p">Normal</SelectItem>
+                                                    <SelectItem value="h1">Heading 1</SelectItem>
+                                                    <SelectItem value="h2">Heading 2</SelectItem>
+                                                    <SelectItem value="h3">Heading 3</SelectItem>
+                                                    <SelectItem value="h4">Heading 4</SelectItem>
+                                                    <SelectItem value="h5">Heading 5</SelectItem>
+                                                    <SelectItem value="h6">Heading 6</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <Separator orientation="vertical" className="h-6 mx-1" />
+                                            <ToolbarButton command="bold" icon={Bold} tooltip="Bold (Ctrl+B)" />
+                                            <ToolbarButton command="italic" icon={Italic} tooltip="Italic (Ctrl+I)" />
+                                            <ToolbarButton command="underline" icon={Underline} tooltip="Underline (Ctrl+U)" />
+                                            <ToolbarButton command="strikeThrough" icon={Strikethrough} tooltip="Strikethrough" />
+                                            <Separator orientation="vertical" className="h-6 mx-1" />
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="sm" className="px-2 relative">
+                                                        <Palette className="w-4 h-4"/>
+                                                        <input type="color" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(e) => handleFormat('foreColor', e.currentTarget.value)} />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent><p>Text Color</p></TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                     <Button variant="ghost" size="sm" className="px-2 relative">
+                                                        <Highlighter className="w-4 h-4"/>
+                                                        <input type="color" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(e) => handleFormat('hiliteColor', e.currentTarget.value)} />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent><p>Highlight Color</p></TooltipContent>
+                                            </Tooltip>
+                                            <Separator orientation="vertical" className="h-6 mx-1" />
+                                            <DropdownMenu>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="sm" className="px-2">
+                                                                <MoreHorizontal className="w-4 h-4"/>
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent><p>More options</p></TooltipContent>
+                                                </Tooltip>
+                                                <DropdownMenuContent>
+                                                    <div className="flex">
+                                                        <ToolbarButton command="justifyLeft" icon={AlignLeft} tooltip="Align Left" />
+                                                        <ToolbarButton command="justifyCenter" icon={AlignCenter} tooltip="Align Center" />
+                                                        <ToolbarButton command="justifyRight" icon={AlignRight} tooltip="Align Right" />
+                                                        <ToolbarButton command="justifyFull" icon={AlignJustify} tooltip="Justify" />
+                                                    </div>
+                                                    <DropdownMenuSeparator />
+                                                     <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertUnorderedList'); }}>
+                                                        <List className="w-4 h-4 mr-2"/>Bulleted list
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertOrderedList'); }}>
+                                                        <ListOrdered className="w-4 h-4 mr-2"/>Numbered list
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('formatBlock', 'blockquote'); }}>
+                                                        <Quote className="w-4 h-4 mr-2"/>Quote
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('outdent'); }}>
+                                                        <Outdent className="w-4 h-4 mr-2"/>Decrease indent
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('indent'); }}>
+                                                        <Indent className="w-4 h-4 mr-2"/>Increase indent
+                                                    </DropdownMenuItem>
+                                                     <DropdownMenuSeparator />
+                                                     <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('removeFormat'); }}>
+                                                        <Eraser className="w-4 h-4 mr-2"/>Clear formatting
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                    </div>
+                                    <CardContent className="p-4 min-h-[200px]">
+                                        <div
+                                            ref={editorRef}
+                                            contentEditable
+                                            className="w-full h-full border-0 focus-visible:ring-0 p-0 shadow-none resize-none focus:outline-none"
+                                            onInput={(e) => setDescription(e.currentTarget.innerHTML)}
+                                            onBlur={updateActiveCommands}
+                                            onFocus={updateActiveCommands}
+                                            onClick={updateActiveCommands}
+                                            onKeyUp={updateActiveCommands}
+                                            placeholder="A rich description of the place..."
+                                        />
+                                    </CardContent>
+                                </Card>
                             </div>
                         </CardContent>
                     </Card>
@@ -269,5 +479,7 @@ export default function NewPlacePage() {
                 </div>
             </div>
         </div>
+        </TooltipProvider>
+        </EditorContext.Provider>
     );
 }
