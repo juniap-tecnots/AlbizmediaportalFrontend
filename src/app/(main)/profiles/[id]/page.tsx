@@ -55,6 +55,12 @@ export default function ProfileDetailPage() {
                             <p><span className="font-bold">0</span> Following</p>
                             <p><span className="font-bold">0</span> Followers</p>
                         </div>
+                         <div className="flex gap-4 mt-4">
+                            <Twitter className="text-blue-500" />
+                            <Linkedin className="text-blue-700" />
+                            <Facebook className="text-blue-800" />
+                            <Instagram className="text-pink-600" />
+                        </div>
                     </div>
                     {isVerified ? (
                         <Badge className="bg-green-100 text-green-800 border-green-200 text-sm">
@@ -140,15 +146,6 @@ export default function ProfileDetailPage() {
                 <Card>
                     <CardHeader><CardTitle>Industry</CardTitle></CardHeader>
                     <CardContent><p className="text-muted-foreground">Not specified</p></CardContent>
-                </Card>
-                    <Card>
-                    <CardHeader><CardTitle>Socials</CardTitle></CardHeader>
-                    <CardContent className="flex gap-4">
-                        <Twitter className="text-blue-500" />
-                        <Linkedin className="text-blue-700" />
-                        <Facebook className="text-blue-800" />
-                        <Instagram className="text-pink-600" />
-                    </CardContent>
                 </Card>
             </div>
         </div>
