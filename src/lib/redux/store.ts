@@ -16,6 +16,9 @@ import workflowAuditReducer from './slices/workflowAuditSlice';
 import contractsReducer from './slices/contractsSlice';
 import profileCardsReducer from './slices/profileCardsSlice';
 import subscriptionPlansReducer from './slices/subscriptionPlansSlice';
+import placesReducer from './slices/placesSlice';
+import eventsReducer from './slices/eventsSlice';
+import foodsReducer from './slices/foodsSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from './storage';
 
@@ -41,6 +44,9 @@ const rootReducer = combineReducers({
   contracts: contractsReducer,
   profileCards: profileCardsReducer,
   subscriptionPlans: subscriptionPlansReducer,
+  places: placesReducer,
+  events: eventsReducer,
+  foods: foodsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

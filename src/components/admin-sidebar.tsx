@@ -20,7 +20,7 @@ import {
     AiOutlineHistory,
     AiOutlineNodeIndex,
 } from 'react-icons/ai'
-import { FaGem } from 'react-icons/fa'
+import { FaGem, FaMapPin, FaCalendarAlt, FaHamburger } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 import { User, CreditCard } from 'lucide-react'
 
@@ -63,6 +63,48 @@ const contentManagementItems = [
             { id: 'moderation', href: '/content/comments/moderation', label: 'Pending Moderation' },
             { id: 'flagged-content', href: '/content/comments/flagged', label: 'Flagged Content' },
             { id: 'spam-queue', href: '/content/comments/spam', label: 'Spam Queue' },
+        ]
+    }
+];
+
+const curatedSectionsItems = [
+    {
+        id: 'curated-overview',
+        label: 'Overview',
+        icon: AiOutlineDashboard,
+        href: '/curated/overview'
+    },
+    {
+        id: 'top-places',
+        label: 'Top Places',
+        icon: FaMapPin,
+        children: [
+            { id: 'all-places', href: '/curated/places/all', label: 'All Places' },
+            { id: 'add-new-place', href: '/curated/places/new', label: 'Add New Place' },
+            { id: 'places-categories', href: '/curated/places/categories', label: 'Categories' },
+            { id: 'places-verification', href: '/curated/places/verification', label: 'Verification Queue' },
+        ]
+    },
+    {
+        id: 'events',
+        label: 'Events',
+        icon: FaCalendarAlt,
+        children: [
+            { id: 'all-events', href: '/curated/events/all', label: 'All Events' },
+            { id: 'add-new-event', href: '/curated/events/new', label: 'Add New Event' },
+            { id: 'events-calendar', href: '/curated/events/calendar', label: 'Calendar View' },
+            { id: 'expired-events', href: '/curated/events/expired', label: 'Expired Events' },
+        ]
+    },
+    {
+        id: 'foods',
+        label: 'Foods',
+        icon: FaHamburger,
+        children: [
+            { id: 'all-restaurants', href: '/curated/foods/all', label: 'All Restaurants' },
+            { id: 'add-new-restaurant', href: '/curated/foods/new', label: 'Add New' },
+            { id: 'cuisine-management', href: '/curated/foods/cuisines', label: 'Cuisine Management' },
+            { id: 'menu-updates', href: '/curated/foods/updates', label: 'Menu Updates' },
         ]
     }
 ];
@@ -128,7 +170,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'settings', 'contracts', 'curated-sections', 'top-places', 'events', 'foods']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -258,6 +300,17 @@ export function AdminSidebar() {
           </div>
           <div className="space-y-1">
             {contentManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
+          </div>
+        </div>
+        
+        <div className="pt-6">
+          <div className="px-3 mb-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Curated Sections
+            </span>
+          </div>
+          <div className="space-y-1">
+            {curatedSectionsItems.map(item => renderMenuItem(item as MenuItemProps))}
           </div>
         </div>
 
