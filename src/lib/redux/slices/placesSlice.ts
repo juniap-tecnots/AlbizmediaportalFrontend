@@ -26,6 +26,9 @@ export interface Place {
   imageUrl: string;
   photoGallery: { url: string; caption: string }[];
   website?: string;
+  twitter?: string;
+  instagram?: string;
+  facebook?: string;
   accessibilityInfo?: string;
   bestVisitTimes?: string;
   curator: {
@@ -65,6 +68,9 @@ const initialState: PlacesState = {
           { url: 'https://picsum.photos/seed/gallery2/600/400', caption: 'Outdoor patio' },
         ],
         website: 'https://grandview.com',
+        twitter: 'https://twitter.com/grandview',
+        instagram: 'https://instagram.com/grandview',
+        facebook: 'https://facebook.com/grandview',
         curator: {
             name: 'Admin User',
             verificationDate: new Date().toISOString(),
@@ -104,5 +110,5 @@ export const { addPlace, updatePlace, deletePlace } = placesSlice.actions;
 export const selectAllPlaces = (state: RootState) => state.places.places;
 export const selectPlaceById = (state: RootState, id: string) => state.places.places.find(p => p.id === id);
 
-export default placesSlice.reducer;
 
+export default placesSlice.reducer;

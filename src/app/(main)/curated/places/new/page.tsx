@@ -99,6 +99,9 @@ export default function NewPlacePage() {
     const [priceRange, setPriceRange] = useState<'$' | '$$' | '$$$' | '$$$$'>('$$');
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
     const [website, setWebsite] = useState('');
+    const [twitter, setTwitter] = useState('');
+    const [instagram, setInstagram] = useState('');
+    const [facebook, setFacebook] = useState('');
     const [accessibilityInfo, setAccessibilityInfo] = useState('');
     const [bestVisitTimes, setBestVisitTimes] = useState('');
     const [curatorName, setCuratorName] = useState('Admin User');
@@ -211,7 +214,7 @@ export default function NewPlacePage() {
             return;
         }
 
-        const newPlace: Omit<Place, 'id' | 'lastUpdated'> = {
+        const newPlace: Omit<Place, 'id' | 'lastUpdated' | 'status'> = {
             title,
             slug: title.toLowerCase().replace(/\s+/g, '-'),
             category,
@@ -224,11 +227,13 @@ export default function NewPlacePage() {
             openingHours,
             contactInfo,
             priceRange,
-            status,
             amenities: selectedAmenities,
             imageUrl,
             photoGallery,
             website,
+            twitter,
+            instagram,
+            facebook,
             accessibilityInfo,
             bestVisitTimes,
             curator: {
@@ -495,8 +500,16 @@ export default function NewPlacePage() {
                                     <Input id="contactInfo" value={contactInfo} onChange={(e) => setContactInfo(e.target.value)} placeholder="Phone number or email"/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="website">Website/Social Link</Label>
+                                    <Label htmlFor="website">Website</Label>
                                     <Input id="website" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://example.com"/>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Social Media</Label>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                     <Input value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="Twitter URL"/>
+                                     <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="Instagram URL"/>
+                                     <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="Facebook URL"/>
                                 </div>
                             </div>
                             <div className="space-y-2">
