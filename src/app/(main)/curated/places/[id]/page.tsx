@@ -47,76 +47,75 @@ export default function PlaceDetailPage() {
                 Back to Places
             </Button>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-8">
-                    <Card>
-                         <CardHeader>
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <Badge variant="secondary" className="mb-2">{category}</Badge>
-                                    <CardTitle className="text-3xl">{title}</CardTitle>
-                                    <CardDescription>{location.address}</CardDescription>
-                                </div>
+            <div className="space-y-8">
+                <Card>
+                    <CardHeader>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <Badge variant="secondary" className="mb-2">{category}</Badge>
+                                <CardTitle className="text-3xl">{title}</CardTitle>
+                                <CardDescription>{location.address}</CardDescription>
                             </div>
-                        </CardHeader>
-                        <CardContent>
-                            {imageUrl && (
-                                <Image 
-                                    src={imageUrl} 
-                                    alt={`Photo of ${title}`}
-                                    width={800}
-                                    height={500}
-                                    className="rounded-lg w-full object-cover"
-                                />
-                            )}
-                            <div className="prose max-w-none mt-6" dangerouslySetInnerHTML={{ __html: description }} />
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {imageUrl && (
+                            <Image 
+                                src={imageUrl} 
+                                alt={`Photo of ${title}`}
+                                width={800}
+                                height={500}
+                                className="rounded-lg w-full object-cover"
+                            />
+                        )}
+                        <div className="prose max-w-none mt-6" dangerouslySetInnerHTML={{ __html: description }} />
+                    </CardContent>
+                </Card>
 
-                     <Card>
-                        <CardHeader><CardTitle>Gallery</CardTitle></CardHeader>
-                        <CardContent>
-                           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                {photoGallery && photoGallery.map((photo, index) => (
+                <Card>
+                    <CardHeader><CardTitle>Gallery</CardTitle></CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            {photoGallery && photoGallery.length > 0 ? (
+                                photoGallery.map((photo, index) => (
                                     <div key={index} className="relative aspect-video">
                                         <Image src={photo.url} alt={photo.caption || `Gallery image ${index + 1}`} fill className="rounded-md object-cover" />
                                     </div>
-                                ))}
-                                {(!photoGallery || photoGallery.length === 0) && (
-                                    <p className="text-muted-foreground col-span-full">No gallery images available.</p>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                                ))
+                            ) : (
+                                <p className="text-muted-foreground col-span-full">No gallery images available.</p>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
 
-                    <Card>
-                        <CardHeader><CardTitle>Amenities</CardTitle></CardHeader>
-                        <CardContent>
-                           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                {amenities && amenities.map(amenity => (
+                <Card>
+                    <CardHeader><CardTitle>Amenities</CardTitle></CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            {amenities && amenities.length > 0 ? (
+                                amenities.map(amenity => (
                                     <div key={amenity} className="flex items-center gap-2 text-sm">
                                         <Check className="h-4 w-4 text-primary"/>
                                         <span>{amenity}</span>
                                     </div>
-                                ))}
-                                {(!amenities || amenities.length === 0) && (
-                                    <p className="text-muted-foreground col-span-full">No amenities listed.</p>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader><CardTitle>Details</CardTitle></CardHeader>
-                        <CardContent className="space-y-4">
-                            <InfoRow icon={Clock} label="Opening Hours" value={openingHours} />
-                            <InfoRow icon={Phone} label="Contact" value={contactInfo} />
-                            <InfoRow icon={DollarSign} label="Price Range" value={priceRange} />
-                            <InfoRow icon={Info} label="Website" value={website} />
-                        </CardContent>
-                    </Card>
-                </div>
+                                ))
+                            ) : (
+                                <p className="text-muted-foreground col-span-full">No amenities listed.</p>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+                
+                <Card>
+                    <CardHeader><CardTitle>Details</CardTitle></CardHeader>
+                    <CardContent className="space-y-4">
+                        <InfoRow icon={Clock} label="Opening Hours" value={openingHours} />
+                        <InfoRow icon={Phone} label="Contact" value={contactInfo} />
+                        <InfoRow icon={DollarSign} label="Price Range" value={priceRange} />
+                        <InfoRow icon={Info} label="Website" value={website} />
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
