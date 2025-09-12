@@ -57,10 +57,6 @@ export default function PlaceDetailPage() {
                                     <CardTitle className="text-3xl">{title}</CardTitle>
                                     <CardDescription>{location.address}</CardDescription>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Button variant="outline">Share</Button>
-                                    <Button>Save</Button>
-                                </div>
                             </div>
                         </CardHeader>
                         <CardContent>
