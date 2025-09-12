@@ -65,7 +65,8 @@ export default function AllPlacesPage() {
     const filteredPlaces = allPlaces.filter(place => {
         const matchesStatus = statusFilter === 'All' || place.status === statusFilter;
         const matchesCategory = categoryFilter === 'All' || place.category === categoryFilter;
-        const matchesSearch = place.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const placeTitle = place.title || (place as any).placeName || '';
+        const matchesSearch = placeTitle.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesStatus && matchesCategory && matchesSearch;
     });
 
