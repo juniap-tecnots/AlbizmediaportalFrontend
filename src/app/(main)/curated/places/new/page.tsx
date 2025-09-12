@@ -23,6 +23,9 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 const amenities = [
     { id: 'wifi', label: 'Free Wi-Fi' },
@@ -111,6 +114,14 @@ export default function NewPlacePage() {
 
     const editorRef = useRef<HTMLDivElement>(null);
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
+
+    const [showImageDialog, setShowImageDialog] = useState(false);
+    const [insertImageUrl, setInsertImageUrl] = useState('');
+    const [showVideoDialog, setShowVideoDialog] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('');
+    const contentImageFileInputRef = useRef<HTMLInputElement>(null);
+    const contentVideoFileInputRef = useRef<HTMLInputElement>(null);
+
 
     const handleAmenityChange = (amenityId: string, checked: boolean) => {
         setSelectedAmenities(prev =>
@@ -236,6 +247,52 @@ export default function NewPlacePage() {
         router.push('/curated/places/all');
     };
 
+    const handleInsertImage = () => {
+        if (insertImageUrl) {
+            handleFormat('insertImage', insertImageUrl);
+        }
+        setShowImageDialog(false);
+        setInsertImageUrl('');
+    };
+
+    const handleInsertVideo = () => {
+        if (videoUrl) {
+            const videoElement = `<video controls src="${videoUrl}" width="100%"></video>`;
+            handleFormat('insertHTML', videoElement);
+        }
+        setShowVideoDialog(false);
+        setVideoUrl('');
+    };
+
+    const handleContentFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const src = e.target?.result as string;
+                if (type === 'image') {
+                    handleFormat('insertImage', src);
+                    setShowImageDialog(false);
+                } else if (type === 'video') {
+                    const videoElement = `<video controls src="${src}" width="100%"></video>`;
+                    handleFormat('insertHTML', videoElement);
+                    setShowVideoDialog(false);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSelectContentFilesClick = (type: 'image' | 'video') => {
+        if (type === 'image') {
+            contentImageFileInputRef.current?.click();
+        } else if (type === 'video') {
+            contentVideoFileInputRef.current?.click();
+        }
+    };
+
+
     const editorContextValue = {
         handleFormat,
         activeCommands
@@ -339,6 +396,9 @@ export default function NewPlacePage() {
                                             <ToolbarButton command="italic" icon={Italic} tooltip="Italic (Ctrl+I)" />
                                             <ToolbarButton command="underline" icon={Underline} tooltip="Underline (Ctrl+U)" />
                                             <ToolbarButton command="strikeThrough" icon={Strikethrough} tooltip="Strikethrough" />
+                                            <Separator orientation="vertical" className="h-6 mx-1" />
+                                            <ToolbarButton command="" icon={ImageIcon} tooltip="Insert Image" onClick={() => setShowImageDialog(true)} />
+                                            <ToolbarButton command="" icon={Video} tooltip="Insert Video" onClick={() => setShowVideoDialog(true)} />
                                             <Separator orientation="vertical" className="h-6 mx-1" />
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -581,7 +641,102 @@ export default function NewPlacePage() {
                 </div>
             </div>
         </div>
+
+        <AlertDialog open={showImageDialog} onOpenChange={setShowImageDialog}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Insert Image</AlertDialogTitle>
+                </AlertDialogHeader>
+                <Tabs defaultValue="url">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="url">From URL</TabsTrigger>
+                        <TabsTrigger value="upload">Upload</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="url">
+                        <div className="py-4">
+                             <Input
+                                placeholder="https://example.com/image.jpg"
+                                value={insertImageUrl}
+                                onChange={(e) => setInsertImageUrl(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleInsertImage()}
+                            />
+                        </div>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel onClick={() => setInsertImageUrl('')}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleInsertImage}>Insert</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </TabsContent>
+                    <TabsContent value="upload">
+                        <div className="py-4">
+                            <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-12 text-center">
+                                <div className="flex flex-col items-center gap-4">
+                                    <UploadCloud className="h-12 w-12 text-muted-foreground" />
+                                    <p className="text-muted-foreground">Drag 'n' drop an image here, or click to select</p>
+                                    <Button variant="outline" onClick={() => handleSelectContentFilesClick('image')}>Select File</Button>
+                                    <input
+                                        type="file"
+                                        ref={contentImageFileInputRef}
+                                        onChange={(e) => handleContentFileChange(e, 'image')}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
+            </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Insert Video</AlertDialogTitle>
+                </AlertDialogHeader>
+                <Tabs defaultValue="url">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="url">From URL</TabsTrigger>
+                        <TabsTrigger value="upload">Upload</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="url">
+                        <div className="py-4">
+                            <Input
+                                placeholder="https://example.com/video.mp4"
+                                value={videoUrl}
+                                onChange={(e) => setVideoUrl(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleInsertVideo()}
+                            />
+                        </div>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel onClick={() => setVideoUrl('')}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleInsertVideo}>Insert</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </TabsContent>
+                     <TabsContent value="upload">
+                        <div className="py-4">
+                            <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-12 text-center">
+                                <div className="flex flex-col items-center gap-4">
+                                    <UploadCloud className="h-12 w-12 text-muted-foreground" />
+                                    <p className="text-muted-foreground">Drag 'n' drop a video here, or click to select</p>
+                                    <Button variant="outline" onClick={() => handleSelectContentFilesClick('video')}>Select File</Button>
+                                    <input
+                                        type="file"
+                                        ref={contentVideoFileInputRef}
+                                        onChange={(e) => handleContentFileChange(e, 'video')}
+                                        className="hidden"
+                                        accept="video/*"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
+            </AlertDialogContent>
+        </AlertDialog>
+
         </TooltipProvider>
         </EditorContext.Provider>
     );
 }
+
+    
