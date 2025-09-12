@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { useState } from 'react';
@@ -15,6 +16,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { selectAllWorkflowTasks, TaskPriority, TaskStatus } from '@/lib/redux/slices/workflowQueueSlice';
+import { selectAllPlaces } from '@/lib/redux/slices/placesSlice';
+import { selectAllEvents } from '@/lib/redux/slices/eventsSlice';
+import { selectAllFoodVenues } from '@/lib/redux/slices/foodsSlice';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow, isPast } from 'date-fns';
 import {
@@ -32,7 +36,11 @@ import { CheckCircle2, Circle, Radio } from 'lucide-react';
 type FilterType = 'all' | 'my-tasks' | 'team-tasks';
 
 export default function ReviewQueuesPage() {
-    const allTasks = useSelector(selectAllWorkflowTasks);
+    const allWorkflowTasks = useSelector(selectAllWorkflowTasks);
+    const allPlaces = useSelector(selectAllPlaces);
+    const allEvents = useSelector(selectAllEvents);
+    const allFoodVenues = useSelector(selectAllFoodVenues);
+    
     const workflowTemplates = useSelector(selectAllWorkflowTemplates);
     const [filter, setFilter] = useState<FilterType>('all');
     const [selectedTask, setSelectedTask] = useState<any>(null);
@@ -51,19 +59,61 @@ export default function ReviewQueuesPage() {
             case 'Pending': return 'bg-blue-100 text-blue-800 border-blue-200';
             case 'Approved': return 'bg-green-100 text-green-800 border-green-200';
             case 'Rejected': return 'bg-red-100 text-red-800 border-red-200';
+            case 'Submitted for review': return 'bg-orange-100 text-orange-800 border-orange-200';
             default: return 'bg-gray-100 text-gray-800';
         }
     }
 
     const getWorkflowStagesForTask = (task: any) => {
         if (!task) return [];
-        const template = workflowTemplates.find(t => t.contentType === task.contentType);
+        const template = workflowTemplates.find(t => Array.isArray(t.contentType) ? t.contentType.includes(task.contentType) : t.contentType === task.contentType);
         return template ? template.stages : [];
     }
+
+    const submittedPlaces = allPlaces
+        .filter(p => p.status === 'Submitted for review')
+        .map(p => ({
+            taskId: p.id,
+            title: p.placeName,
+            contentType: 'Place',
+            stage: 'Initial Review',
+            assignedTo: 'Unassigned',
+            priority: 'Medium' as TaskPriority,
+            dueDate: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'Pending' as TaskStatus,
+        }));
+    
+    const submittedEvents = allEvents
+        .filter(e => e.status === 'Submitted for review')
+        .map(e => ({
+            taskId: e.id,
+            title: e.eventTitle,
+            contentType: 'Event',
+            stage: 'Initial Review',
+            assignedTo: 'Unassigned',
+            priority: 'Medium' as TaskPriority,
+            dueDate: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'Pending' as TaskStatus,
+        }));
+
+    const submittedFoods = allFoodVenues
+        .filter(f => f.status === 'Submitted for review')
+        .map(f => ({
+            taskId: f.id,
+            title: f.restaurantName,
+            contentType: 'Food',
+            stage: 'Initial Review',
+            assignedTo: 'Unassigned',
+            priority: 'Medium' as TaskPriority,
+            dueDate: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'Pending' as TaskStatus,
+        }));
+
+    const allTasks = [...allWorkflowTasks, ...submittedPlaces, ...submittedEvents, ...submittedFoods];
     
     const filteredTasks = allTasks.filter(task => {
         if (filter === 'my-tasks') return task.assignedTo === 'Admin User';
-        if (filter === 'team-tasks') return ['John Doe', 'Jane Smith', 'Dr. Emily Carter'].includes(task.assignedTo);
+        if (filter === 'team-tasks') return ['John Doe', 'Jane Smith', 'Dr. Emily Carter', 'Unassigned'].includes(task.assignedTo);
         return true;
     });
 
@@ -85,6 +135,7 @@ export default function ReviewQueuesPage() {
                             <TableRow>
                                 <TableHead>Task ID</TableHead>
                                 <TableHead>Content Title</TableHead>
+                                <TableHead>Content Type</TableHead>
                                 <TableHead>Stage</TableHead>
                                 <TableHead>Assigned To</TableHead>
                                 <TableHead>Priority</TableHead>
@@ -101,6 +152,7 @@ export default function ReviewQueuesPage() {
                                  <TableRow key={task.taskId}>
                                     <TableCell className="font-mono text-xs">{task.taskId}</TableCell>
                                     <TableCell className="font-medium">{task.title}</TableCell>
+                                    <TableCell>{task.contentType}</TableCell>
                                     <TableCell>
                                         <DialogTrigger asChild>
                                             <button 
@@ -188,3 +240,6 @@ export default function ReviewQueuesPage() {
         </Dialog>
     );
 }
+
+
+    
