@@ -185,9 +185,6 @@ const WorkflowManagementSystem = () => {
                     <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-800">
                       <Copy className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-green-600 hover:text-green-800">
-                      <BarChart3 className="w-4 h-4" />
-                    </Button>
                     <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-800">
                       <Trash2 className="w-4 h-4" />
                     </Button>
