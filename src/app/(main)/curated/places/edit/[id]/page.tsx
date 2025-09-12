@@ -285,8 +285,8 @@ export default function EditPlacePage() {
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="placeName">Place Name</Label>
-                                <Input id="placeName" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., The Grand View Restaurant" />
+                                <Label htmlFor="title">Title</Label>
+                                <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., The Grand View Restaurant" />
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
