@@ -1,7 +1,7 @@
 
 'use client'
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Plus, Edit3, Trash2, Copy, Play, Pause, BarChart3, Users, Clock, AlertCircle, CheckCircle, ArrowRight, Settings, Filter, Search } from 'lucide-react';
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSelector, useDispatch } from 'react-redux';
-import { selectAllWorkflowTemplates, WorkflowTemplate, addTemplate } from "@/lib/redux/slices/workflowTemplatesSlice";
+import { selectAllWorkflowTemplates, WorkflowTemplate, addTemplate, updateTemplate } from "@/lib/redux/slices/workflowTemplatesSlice";
 import { format } from "date-fns";
 import type { RootState } from '@/lib/redux/store';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const WorkflowManagementSystem = () => {
   const [currentView, setCurrentView] = useState('list');
+  const [editingTemplate, setEditingTemplate] = useState<WorkflowTemplate | null>(null);
   const dispatch = useDispatch();
   const { toast } = useToast();
   
@@ -34,6 +35,30 @@ const WorkflowManagementSystem = () => {
     autoActivate: false,
     stages: [] as any[]
   });
+
+  useEffect(() => {
+    if (editingTemplate) {
+        setWorkflowBuilder({
+            name: editingTemplate.name,
+            description: '', // description is not in the model
+            contentType: Array.isArray(editingTemplate.contentType) ? editingTemplate.contentType : [editingTemplate.contentType],
+            priority: 'Medium', // priority is not in the model
+            autoActivate: false, // autoActivate is not in the model
+            stages: editingTemplate.stages.map(s => ({...s, color: stageTypes.find(st => st.name === s.name)?.color || 'bg-gray-500'}))
+        });
+    } else {
+        // Reset for creation
+        setWorkflowBuilder({
+            name: '',
+            description: '',
+            contentType: [],
+            priority: 'Medium',
+            autoActivate: false,
+            stages: []
+        });
+    }
+  }, [editingTemplate, currentView]);
+
 
   const [selectedStage, setSelectedStage] = useState<any>(null);
   const [showStageModal, setShowStageModal] = useState(false);
@@ -83,37 +108,56 @@ const WorkflowManagementSystem = () => {
       return;
     }
     
-    const newTemplate: Omit<WorkflowTemplate, 'id'> = {
-        name: workflowBuilder.name,
-        contentType: workflowBuilder.contentType,
-        version: 1,
-        lastModified: new Date().toISOString(),
-        stages: workflowBuilder.stages.map(s => ({
-            id: s.id.toString(),
-            name: s.name,
-            assignedRoles: s.config.reviewers,
-            slaHours: s.config.sla
-        })),
-    };
+    if (editingTemplate) {
+        // Update existing template
+        const updatedTemplate: WorkflowTemplate = {
+            ...editingTemplate,
+            name: workflowBuilder.name,
+            contentType: workflowBuilder.contentType,
+            lastModified: new Date().toISOString(),
+            stages: workflowBuilder.stages.map(s => ({
+                id: s.id.toString(),
+                name: s.name,
+                assignedRoles: s.config?.reviewers || [],
+                slaHours: s.config?.sla || 24,
+            })),
+        };
+        dispatch(updateTemplate(updatedTemplate));
+        toast({
+            title: "Workflow Updated",
+            description: `The "${workflowBuilder.name}" workflow has been updated.`,
+        });
+    } else {
+        // Create new template
+        const newTemplate: Omit<WorkflowTemplate, 'id'> = {
+            name: workflowBuilder.name,
+            contentType: workflowBuilder.contentType,
+            version: 1,
+            lastModified: new Date().toISOString(),
+            stages: workflowBuilder.stages.map(s => ({
+                id: s.id.toString(),
+                name: s.name,
+                assignedRoles: s.config.reviewers,
+                slaHours: s.config.sla
+            })),
+        };
 
-    dispatch(addTemplate(newTemplate));
+        dispatch(addTemplate(newTemplate));
 
-    toast({
-      title: "Workflow Saved",
-      description: `The "${workflowBuilder.name}" workflow has been created.`,
-    });
+        toast({
+          title: "Workflow Saved",
+          description: `The "${workflowBuilder.name}" workflow has been created.`,
+        });
+    }
     
-    // Reset builder state
-    setWorkflowBuilder({
-        name: '',
-        description: '',
-        contentType: [],
-        priority: 'Medium',
-        autoActivate: false,
-        stages: []
-    });
-
+    // Reset state and go back to list
+    setEditingTemplate(null);
     setCurrentView('list');
+  };
+
+  const handleEditClick = (template: WorkflowTemplate) => {
+    setEditingTemplate(template);
+    setCurrentView('create');
   };
 
 
@@ -123,7 +167,7 @@ const WorkflowManagementSystem = () => {
         title="Workflow Management"
         description="Manage content approval workflows"
         actions={
-            <Button onClick={() => setCurrentView('create')}>
+            <Button onClick={() => { setEditingTemplate(null); setCurrentView('create'); }}>
               <Plus className="w-5 h-5 mr-2" />
               Create New Workflow
             </Button>
@@ -179,7 +223,7 @@ const WorkflowManagementSystem = () => {
                 <TableCell>{format(new Date(template.lastModified), 'dd-MMM-yyyy')}</TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-1">
-                    <Button variant="ghost" size="icon" className="text-blue-600 hover:text-blue-800">
+                    <Button variant="ghost" size="icon" className="text-blue-600 hover:text-blue-800" onClick={() => handleEditClick(template)}>
                       <Edit3 className="w-4 h-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-800">
@@ -202,15 +246,15 @@ const WorkflowManagementSystem = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Workflow Builder</h1>
-          <p className="text-gray-600 mt-2">Create and configure your workflow</p>
+          <h1 className="text-3xl font-bold text-gray-900">{editingTemplate ? 'Edit Workflow' : 'Workflow Builder'}</h1>
+          <p className="text-gray-600 mt-2">{editingTemplate ? `Editing "${editingTemplate.name}"` : 'Create and configure your workflow'}</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" onClick={() => setCurrentView('list')}>
+          <Button variant="outline" onClick={() => { setCurrentView('list'); setEditingTemplate(null); }}>
             Back to List
           </Button>
           <Button onClick={handleSaveWorkflow}>
-            Save Workflow
+             {editingTemplate ? 'Save Changes' : 'Save Workflow'}
           </Button>
         </div>
       </div>
@@ -242,7 +286,7 @@ const WorkflowManagementSystem = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Content Type</label>
               <div className="space-y-2">
-                {['Articles', 'Profiles', 'News', 'Features'].map(type => (
+                {['Article', 'Place', 'Event', 'Food'].map(type => (
                   <div key={type} className="flex items-center">
                     <Checkbox
                       id={`type-${type}`}
@@ -451,5 +495,3 @@ const WorkflowManagementSystem = () => {
 };
 
 export default WorkflowManagementSystem;
-
-    

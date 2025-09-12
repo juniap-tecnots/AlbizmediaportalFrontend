@@ -81,11 +81,17 @@ const workflowTemplatesSlice = createSlice({
             id: `template_${state.templates.length + 1}`
         };
         state.templates.push(newTemplate);
+    },
+    updateTemplate: (state, action: PayloadAction<WorkflowTemplate>) => {
+        const index = state.templates.findIndex(t => t.id === action.payload.id);
+        if (index !== -1) {
+            state.templates[index] = action.payload;
+        }
     }
   },
 });
 
-export const { addTemplate } = workflowTemplatesSlice.actions;
+export const { addTemplate, updateTemplate } = workflowTemplatesSlice.actions;
 
 export const selectAllWorkflowTemplates = (state: RootState) => state.workflowTemplates.templates;
 
