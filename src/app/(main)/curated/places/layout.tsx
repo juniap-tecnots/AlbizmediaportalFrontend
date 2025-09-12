@@ -10,7 +10,6 @@ import { PlusCircle } from 'lucide-react';
 
 const tabs = [
     { value: 'all', label: 'All Places', href: '/curated/places/all' },
-    { value: 'verification', label: 'Verification Queue', href: '/curated/places/verification' },
 ];
 
 export default function PlacesLayout({
