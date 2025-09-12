@@ -33,7 +33,7 @@ import { selectAllWorkflowTemplates } from '@/lib/redux/slices/workflowTemplates
 import { CheckCircle2, Circle, Radio } from 'lucide-react';
 
 
-type FilterType = 'all' | 'my-tasks' | 'team-tasks';
+type FilterType = 'all' | 'my-tasks';
 
 export default function ReviewQueuesPage() {
     const allWorkflowTasks = useSelector(selectAllWorkflowTasks);
@@ -113,7 +113,6 @@ export default function ReviewQueuesPage() {
     
     const filteredTasks = allTasks.filter(task => {
         if (filter === 'my-tasks') return task.assignedTo === 'Admin User';
-        if (filter === 'team-tasks') return ['John Doe', 'Jane Smith', 'Dr. Emily Carter', 'Unassigned'].includes(task.assignedTo);
         return true;
     });
 
@@ -127,7 +126,6 @@ export default function ReviewQueuesPage() {
                 <div className="flex items-center gap-2 mb-4">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All Tasks</Button>
                     <Button variant={filter === 'my-tasks' ? 'default' : 'outline'} onClick={() => setFilter('my-tasks')}>My Tasks</Button>
-                    <Button variant={filter === 'team-tasks' ? 'default' : 'outline'} onClick={() => setFilter('team-tasks')}>Team Tasks</Button>
                 </div>
                 <div className="border rounded-lg">
                     <Table>
