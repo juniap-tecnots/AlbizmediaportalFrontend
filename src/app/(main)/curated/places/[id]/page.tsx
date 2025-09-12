@@ -102,19 +102,6 @@ export default function PlaceDetailPage() {
                             <InfoRow icon={Info} label="Website" value={website} />
                         </CardContent>
                     </Card>
-                    <Card>
-                        <CardHeader><CardTitle>Curator</CardTitle></CardHeader>
-                        <CardContent className="flex items-center gap-3">
-                            <Avatar>
-                                <AvatarImage src={`https://picsum.photos/seed/${curator.name}/100`} />
-                                <AvatarFallback>{curator.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-semibold">{curator.name}</p>
-                                <p className="text-xs text-muted-foreground">Verified on {curator.verificationDate ? new Date(curator.verificationDate).toLocaleDateString() : 'N/A'}</p>
-                            </div>
-                        </CardContent>
-                    </Card>
                 </div>
             </div>
         </div>
