@@ -19,6 +19,7 @@ import subscriptionPlansReducer from './slices/subscriptionPlansSlice';
 import placesReducer from './slices/placesSlice';
 import eventsReducer from './slices/eventsSlice';
 import foodsReducer from './slices/foodsSlice';
+import slaReducer from './slices/slaSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from './storage';
 
@@ -47,6 +48,7 @@ const rootReducer = combineReducers({
   places: placesReducer,
   events: eventsReducer,
   foods: foodsReducer,
+  sla: slaReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
