@@ -14,14 +14,18 @@ import { Twitter, Linkedin, Facebook, Instagram, MessageSquare, Repeat, Heart, B
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
-const InfoRow = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value?: string | number }) => {
+const InfoRow = ({ icon: Icon, label, value, isLink }: { icon: React.ElementType, label: string, value?: string | number, isLink?: boolean }) => {
     if (!value) return null;
     return (
         <div className="flex items-start gap-3">
             <Icon className="h-5 w-5 text-muted-foreground mt-1" />
             <div>
                 <p className="text-sm text-muted-foreground">{label}</p>
-                <p className="font-medium">{value}</p>
+                 {isLink && typeof value === 'string' ? (
+                    <a href={value} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline">{value}</a>
+                ) : (
+                    <p className="font-medium">{value}</p>
+                )}
             </div>
         </div>
     )
@@ -55,11 +59,6 @@ export default function PlaceDetailPage() {
                                 <Badge variant="secondary" className="mb-2">{category}</Badge>
                                 <CardTitle className="text-3xl">{title}</CardTitle>
                                 <CardDescription>{location.address}</CardDescription>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {twitter && <a href={twitter} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="icon"><Twitter className="h-4 w-4" /></Button></a>}
-                                {instagram && <a href={instagram} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="icon"><Instagram className="h-4 w-4" /></Button></a>}
-                                {facebook && <a href={facebook} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="icon"><Facebook className="h-4 w-4" /></Button></a>}
                             </div>
                         </div>
                     </CardHeader>
@@ -95,15 +94,6 @@ export default function PlaceDetailPage() {
                                 </div>
                             </CardContent>
                         </Card>
-                         <Card>
-                            <CardHeader><CardTitle>Details</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <InfoRow icon={Clock} label="Opening Hours" value={openingHours} />
-                                <InfoRow icon={Phone} label="Contact" value={contactInfo} />
-                                <InfoRow icon={DollarSign} label="Price Range" value={priceRange} />
-                                {website && <InfoRow icon={Info} label="Website" value={website} />}
-                            </CardContent>
-                        </Card>
                     </div>
 
                      <div className="space-y-8">
@@ -126,6 +116,23 @@ export default function PlaceDetailPage() {
                         </Card>
                     </div>
                 </div>
+                 <Card>
+                    <CardHeader><CardTitle>Details</CardTitle></CardHeader>
+                    <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <InfoRow icon={Clock} label="Opening Hours" value={openingHours} />
+                        <InfoRow icon={Phone} label="Contact" value={contactInfo} />
+                        <InfoRow icon={DollarSign} label="Price Range" value={priceRange} />
+                        {website && <InfoRow icon={Info} label="Website" value={website} isLink />}
+
+                        <div className="flex items-start gap-3">
+                             <div className="flex items-center gap-4">
+                                {twitter && <a href={twitter} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="icon"><Twitter className="h-4 w-4" /></Button></a>}
+                                {instagram && <a href={instagram} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="icon"><Instagram className="h-4 w-4" /></Button></a>}
+                                {facebook && <a href={facebook} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="icon"><Facebook className="h-4 w-4" /></Button></a>}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
