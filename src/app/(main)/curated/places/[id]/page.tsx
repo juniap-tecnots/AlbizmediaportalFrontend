@@ -64,13 +64,15 @@ export default function PlaceDetailPage() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <Image 
-                                src={imageUrl} 
-                                alt={`Photo of ${title}`}
-                                width={800}
-                                height={500}
-                                className="rounded-lg w-full object-cover"
-                            />
+                            {imageUrl && (
+                                <Image 
+                                    src={imageUrl} 
+                                    alt={`Photo of ${title}`}
+                                    width={800}
+                                    height={500}
+                                    className="rounded-lg w-full object-cover"
+                                />
+                            )}
                             <div className="prose max-w-none mt-6" dangerouslySetInnerHTML={{ __html: description }} />
                         </CardContent>
                     </Card>

@@ -81,7 +81,7 @@ export default function EventDetailPage() {
                         <CardHeader><CardTitle>Links</CardTitle></CardHeader>
                         <CardContent className="space-y-4">
                             <InfoRow icon={LinkIcon} label="RSVP / Purchase" value={rsvpLink || ticketInfo.link} isLink />
-                            {socialMediaLinks.map((link, index) => (
+                            {socialMediaLinks && socialMediaLinks.map((link, index) => (
                                 <InfoRow key={index} icon={LinkIcon} label={`Social Link ${index + 1}`} value={link} isLink />
                             ))}
                         </CardContent>
