@@ -71,7 +71,13 @@ const curatedMenuItem = {
     id: 'curated',
     label: 'Curated',
     icon: Star,
+    href: '/curated/overview',
     children: [
+        {
+            id: 'overview',
+            label: 'Overview',
+            href: '/curated/overview',
+        },
         {
             id: 'top-places',
             label: 'Top Places',
@@ -151,7 +157,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'contracts']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'contracts', 'curated']);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 

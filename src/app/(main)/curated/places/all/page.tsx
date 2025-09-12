@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from "react";
@@ -36,7 +37,7 @@ export default function AllPlacesPage() {
         dispatch(updatePlace({ ...place, status }));
         toast({
             title: "Place Submitted",
-            description: `The place "${place.placeName}" has been submitted for review.`
+            description: `The place "${place.title}" has been submitted for review.`
         });
     }
 
@@ -64,7 +65,7 @@ export default function AllPlacesPage() {
     const filteredPlaces = allPlaces.filter(place => {
         const matchesStatus = statusFilter === 'All' || place.status === statusFilter;
         const matchesCategory = categoryFilter === 'All' || place.category === categoryFilter;
-        const matchesSearch = place.placeName.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = place.title.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesStatus && matchesCategory && matchesSearch;
     });
 
@@ -125,7 +126,7 @@ export default function AllPlacesPage() {
                     <TableBody>
                         {filteredPlaces.map((place: Place) => (
                             <TableRow key={place.id}>
-                                <TableCell className="font-medium">{place.placeName}</TableCell>
+                                <TableCell className="font-medium">{place.title}</TableCell>
                                 <TableCell>{place.category}</TableCell>
                                 <TableCell>{place.location.address}</TableCell>
                                 <TableCell>
@@ -139,9 +140,11 @@ export default function AllPlacesPage() {
                                             <Send className="h-4 w-4" />
                                         </Button>
                                     )}
-                                    <Button variant="outline" size="icon" className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
-                                        <Eye className="h-4 w-4" />
-                                    </Button>
+                                    <Link href={`/curated/places/${place.id}`}>
+                                        <Button variant="outline" size="icon" className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
+                                            <Eye className="h-4 w-4" />
+                                        </Button>
+                                    </Link>
                                     <Link href={`/curated/places/edit/${place.id}`}>
                                         <Button variant="outline" size="icon" className="h-8 w-8 text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
                                             <Pencil className="h-4 w-4" />

@@ -9,7 +9,8 @@ export type PlaceStatus = 'In-progress' | 'Submitted for review' | 'Under Review
 
 export interface Place {
   id: string;
-  placeName: string;
+  title: string;
+  slug: string;
   category: 'Restaurant' | 'Attraction' | 'Shopping' | 'Entertainment';
   location: {
     latitude: number;
@@ -43,7 +44,8 @@ const initialState: PlacesState = {
   places: [
     {
         id: 'place_001',
-        placeName: 'The Grand View Restaurant',
+        title: 'The Grand View Restaurant',
+        slug: 'the-grand-view-restaurant',
         category: 'Restaurant',
         location: {
             latitude: 40.7128,

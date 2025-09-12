@@ -8,7 +8,8 @@ export type FoodVenueStatus = 'In-progress' | 'Submitted for review' | 'Publishe
 
 export interface FoodVenue {
   id: string;
-  restaurantName: string;
+  title: string;
+  slug: string;
   cuisineType: string[];
   location: string;
   priceRange: '$' | '$$' | '$$$' | '$$$$';
@@ -25,7 +26,8 @@ const initialState: FoodsState = {
   venues: [
     {
       id: 'food_101',
-      restaurantName: 'The Golden Spoon',
+      title: 'The Golden Spoon',
+      slug: 'the-golden-spoon',
       cuisineType: ['Italian', 'Modern'],
       location: 'Downtown Cityville',
       priceRange: '$$$',
@@ -35,7 +37,8 @@ const initialState: FoodsState = {
     },
     {
       id: 'food_102',
-      restaurantName: 'The Daily Grind',
+      title: 'The Daily Grind',
+      slug: 'the-daily-grind',
       cuisineType: ['Coffee', 'Bakery'],
       location: 'Uptown Plaza',
       priceRange: '$$',

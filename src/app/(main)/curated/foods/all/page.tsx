@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useSelector, useDispatch } from "react-redux";
@@ -29,7 +30,7 @@ export default function AllFoodsPage() {
         dispatch(updateFoodVenue({ ...venue, status }));
         toast({
             title: "Restaurant Submitted",
-            description: `The venue "${venue.restaurantName}" has been submitted for review.`
+            description: `The venue "${venue.title}" has been submitted for review.`
         });
     }
 
@@ -58,7 +59,7 @@ export default function AllFoodsPage() {
                 <TableBody>
                     {allVenues.map((venue: FoodVenue) => (
                         <TableRow key={venue.id}>
-                            <TableCell className="font-medium">{venue.restaurantName}</TableCell>
+                            <TableCell className="font-medium">{venue.title}</TableCell>
                             <TableCell>
                                 {venue.cuisineType.map(cuisine => (
                                     <Badge key={cuisine} variant="outline" className="mr-1">{cuisine}</Badge>
@@ -77,9 +78,11 @@ export default function AllFoodsPage() {
                                         <Send className="h-4 w-4" />
                                     </Button>
                                 )}
-                                <Button variant="outline" size="icon" className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
-                                    <Eye className="h-4 w-4" />
-                                </Button>
+                                <Link href={`/curated/foods/${venue.id}`}>
+                                    <Button variant="outline" size="icon" className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
+                                        <Eye className="h-4 w-4" />
+                                    </Button>
+                                </Link>
                                 <Link href={`/curated/foods/edit/${venue.id}`}>
                                     <Button variant="outline" size="icon" className="h-8 w-8 text-green-500 border-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600">
                                         <Pencil className="h-4 w-4" />

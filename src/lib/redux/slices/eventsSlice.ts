@@ -9,7 +9,8 @@ export type EventStatus = 'In-progress' | 'Submitted for review' | 'Published';
 
 export interface Event {
   id: string;
-  eventTitle: string;
+  title: string;
+  slug: string;
   eventType: 'Concert' | 'Festival' | 'Conference' | 'Sports';
   startTime: string;
   endTime: string;
@@ -35,7 +36,8 @@ interface EventsState {
 const sampleEvents: Event[] = [
     {
       id: 'evt_101',
-      eventTitle: 'Annual Tech Summit 2025',
+      title: 'Annual Tech Summit 2025',
+      slug: 'annual-tech-summit-2025',
       eventType: 'Conference',
       startTime: '2025-10-20T09:00:00Z',
       endTime: '2025-10-22T17:00:00Z',
@@ -51,7 +53,8 @@ const sampleEvents: Event[] = [
     },
     {
       id: 'evt_102',
-      eventTitle: 'Summer Music Fest',
+      title: 'Summer Music Fest',
+      slug: 'summer-music-fest',
       eventType: 'Festival',
       startTime: '2025-07-15T12:00:00Z',
       endTime: '2025-07-17T23:00:00Z',
