@@ -100,7 +100,7 @@ export default function NewPlacePage() {
     const [curatorName, setCuratorName] = useState('Admin User');
     const [verificationDate, setVerificationDate] = useState<Date | undefined>();
     const [partnershipStatus, setPartnershipStatus] = useState('None');
-    const [status, setStatus] = useState<PlaceStatus>('Draft');
+    const [status, setStatus] = useState<PlaceStatus>('In-progress');
     const [internalRating, setInternalRating] = useState('');
 
 
@@ -436,10 +436,11 @@ export default function NewPlacePage() {
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="status">Status</Label>
-                                <Select onValueChange={(value: PlaceStatus) => setStatus(value)} defaultValue={status}>
+                                <Select onValueChange={(value: PlaceStatus) => setStatus(value)} value={status}>
                                     <SelectTrigger id="status"><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Draft">Draft</SelectItem>
+                                        <SelectItem value="In-progress">In-progress</SelectItem>
+                                        <SelectItem value="Submitted for review">Submitted for review</SelectItem>
                                         <SelectItem value="Under Review">Under Review</SelectItem>
                                         <SelectItem value="Verified">Verified</SelectItem>
                                         <SelectItem value="Published">Published</SelectItem>

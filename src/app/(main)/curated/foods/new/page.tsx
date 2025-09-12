@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { addFoodVenue } from "@/lib/redux/slices/foodsSlice";
+import { addFoodVenue, FoodVenueStatus } from "@/lib/redux/slices/foodsSlice";
 import { ArrowLeft } from "lucide-react";
 
 export default function NewFoodPage() {
@@ -26,6 +26,7 @@ export default function NewFoodPage() {
     const [priceRange, setPriceRange] = useState<'$' | '$$' | '$$$' | '$$$$'>('$$');
     const [diningStyle, setDiningStyle] = useState<'Fast casual' | 'Fine dining' | 'Cafe'>('Fast casual');
     const [description, setDescription] = useState('');
+    const [status, setStatus] = useState<FoodVenueStatus>('In-progress');
 
     const handleSubmit = () => {
         if (!restaurantName || !cuisineType || !location) {
@@ -44,6 +45,7 @@ export default function NewFoodPage() {
             priceRange,
             diningStyle,
             description,
+            status,
         };
 
         dispatch(addFoodVenue(newVenue as any));

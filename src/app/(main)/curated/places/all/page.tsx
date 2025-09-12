@@ -4,10 +4,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { selectAllPlaces, Place, PlaceStatus, deletePlace } from "@/lib/redux/slices/placesSlice";
+import { selectAllPlaces, Place, PlaceStatus, deletePlace, updatePlace } from "@/lib/redux/slices/placesSlice";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2, Send } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
@@ -25,6 +25,14 @@ export default function AllPlacesPage() {
         })
     }
 
+    const handleStatusUpdate = (place: Place, status: PlaceStatus) => {
+        dispatch(updatePlace({ ...place, status }));
+        toast({
+            title: "Place Submitted",
+            description: `The place "${place.placeName}" has been submitted for review.`
+        });
+    }
+
     const getStatusBadgeClass = (status: PlaceStatus) => {
         switch (status) {
             case 'Published':
@@ -33,8 +41,10 @@ export default function AllPlacesPage() {
                 return 'bg-blue-100 text-blue-800 border-blue-200';
             case 'Under Review':
                 return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            case 'Draft':
+            case 'In-progress':
                 return 'bg-gray-100 text-gray-800 border-gray-200';
+            case 'Submitted for review':
+                return 'bg-orange-100 text-orange-800 border-orange-200';
             case 'Needs Update':
                 return 'bg-orange-100 text-orange-800 border-orange-200';
             case 'Archived':
@@ -68,6 +78,11 @@ export default function AllPlacesPage() {
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right space-x-2">
+                                {place.status === 'In-progress' && (
+                                    <Button variant="outline" size="icon" onClick={() => handleStatusUpdate(place, 'Submitted for review')} className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
+                                        <Send className="h-4 w-4" />
+                                    </Button>
+                                )}
                                 <Button variant="outline" size="icon" className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
                                     <Eye className="h-4 w-4" />
                                 </Button>

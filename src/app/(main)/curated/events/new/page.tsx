@@ -17,7 +17,7 @@ import { CalendarIcon, UploadCloud, ArrowLeft, Bold, Italic, Underline, List, Li
 import { format, set } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { addEvent, Event } from "@/lib/redux/slices/eventsSlice";
+import { addEvent, Event, EventStatus } from "@/lib/redux/slices/eventsSlice";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -88,6 +88,7 @@ export default function NewEventPage() {
     const [partnershipLevel, setPartnershipLevel] = useState<PartnershipLevel>('None');
     const [capacity, setCapacity] = useState('');
     const [weatherDependency, setWeatherDependency] = useState(false);
+    const [status, setStatus] = useState<EventStatus>('In-progress');
 
     const editorRef = useRef<HTMLDivElement>(null);
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
@@ -139,7 +140,8 @@ export default function NewEventPage() {
             ageRestrictions,
             dressCode,
             socialMediaLinks: socialLinks.split(','),
-            rsvpLink
+            rsvpLink,
+            status,
         };
 
         dispatch(addEvent(newEvent as any));
@@ -352,5 +354,3 @@ export default function NewEventPage() {
         </EditorContext.Provider>
     );
 }
-
-    

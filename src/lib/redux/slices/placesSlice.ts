@@ -4,7 +4,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
-export type PlaceStatus = 'Draft' | 'Under Review' | 'Verified' | 'Published' | 'Needs Update' | 'Archived';
+export type PlaceStatus = 'In-progress' | 'Submitted for review' | 'Under Review' | 'Verified' | 'Published' | 'Needs Update' | 'Archived';
 
 export interface Place {
   id: string;

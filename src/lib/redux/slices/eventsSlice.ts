@@ -5,6 +5,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
+export type EventStatus = 'In-progress' | 'Submitted for review' | 'Published';
+
 export interface Event {
   id: string;
   eventTitle: string;
@@ -23,6 +25,7 @@ export interface Event {
   dressCode: string;
   socialMediaLinks: string[];
   rsvpLink: string;
+  status: EventStatus;
 }
 
 interface EventsState {
@@ -43,7 +46,8 @@ const sampleEvents: Event[] = [
       ageRestrictions: '18+',
       dressCode: 'Business Casual',
       socialMediaLinks: ['https://twitter.com/techsummit'],
-      rsvpLink: 'https://example.com/rsvp'
+      rsvpLink: 'https://example.com/rsvp',
+      status: 'Published'
     },
     {
       id: 'evt_102',
@@ -58,7 +62,8 @@ const sampleEvents: Event[] = [
       ageRestrictions: 'All ages',
       dressCode: 'Casual',
       socialMediaLinks: ['https://instagram.com/summermusicfest'],
-      rsvpLink: 'https://example.com/rsvp-fest'
+      rsvpLink: 'https://example.com/rsvp-fest',
+      status: 'Published'
     },
   ];
 
@@ -78,10 +83,16 @@ const eventsSlice = createSlice({
       };
       state.events.push(newEvent);
     },
+    updateEvent: (state, action: PayloadAction<Event>) => {
+      const index = state.events.findIndex(e => e.id === action.payload.id);
+      if (index !== -1) {
+        state.events[index] = action.payload;
+      }
+    },
   },
 });
 
-export const { addEvent } = eventsSlice.actions;
+export const { addEvent, updateEvent } = eventsSlice.actions;
 
 export const selectAllEvents = (state: RootState) => state.events.events;
 
