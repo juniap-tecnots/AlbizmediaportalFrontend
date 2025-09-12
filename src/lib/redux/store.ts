@@ -26,6 +26,7 @@ import storage from './storage';
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['media'], // Prevent media slice from being persisted
 };
 
 const rootReducer = combineReducers({
