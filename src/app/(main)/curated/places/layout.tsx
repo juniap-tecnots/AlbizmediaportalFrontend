@@ -21,9 +21,9 @@ export default function PlacesLayout({
   const pathname = usePathname();
 
   const isNewOrEditPage = pathname.startsWith('/curated/places/new') || pathname.startsWith('/curated/places/edit');
+  const isDetailPage = /^\/curated\/places\/place_[a-zA-Z0-9_]+$/.test(pathname);
 
-
-  if (isNewOrEditPage) {
+  if (isNewOrEditPage || isDetailPage) {
     return <>{children}</>;
   }
 
