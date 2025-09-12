@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -70,11 +71,12 @@ const placesSlice = createSlice({
   name: 'places',
   initialState,
   reducers: {
-    addPlace: (state, action: PayloadAction<Omit<Place, 'id' | 'lastUpdated'>>) => {
+    addPlace: (state, action: PayloadAction<Omit<Place, 'id' | 'lastUpdated' | 'status'>>) => {
       const newPlace: Place = {
-        ...action.payload,
-        id: `place_${state.places.length + 101}`,
+        ...(action.payload as Omit<Place, 'id' | 'lastUpdated'>),
+        id: `place_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}`,
         lastUpdated: new Date().toISOString(),
+        status: 'In-progress',
       };
       state.places.push(newPlace);
     },
