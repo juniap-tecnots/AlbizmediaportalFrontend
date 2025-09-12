@@ -26,7 +26,7 @@ import storage from './storage';
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['media'], // Prevent media slice from being persisted
+  blacklist: ['media', 'articles', 'places', 'events', 'foods'], // Prevent large slices from being persisted
 };
 
 const rootReducer = combineReducers({
