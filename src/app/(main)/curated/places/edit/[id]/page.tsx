@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, UploadCloud, ArrowLeft, AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, Undo, Redo } from "lucide-react";
+import { CalendarIcon, UploadCloud, ArrowLeft, AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, Undo, Redo, X as XIcon } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -107,7 +107,9 @@ export default function EditPlacePage() {
     const [status, setStatus] = useState<PlaceStatus>('Draft');
     const [internalRating, setInternalRating] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+    const [photoGallery, setPhotoGallery] = useState<{ url: string; caption: string }[]>([]);
     const imageInputRef = useRef<HTMLInputElement>(null);
+    const galleryInputRef = useRef<HTMLInputElement>(null);
 
     const editorRef = useRef<HTMLDivElement>(null);
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
@@ -128,6 +130,7 @@ export default function EditPlacePage() {
             setPriceRange(place.priceRange);
             setSelectedAmenities(place.amenities);
             setImageUrl(place.imageUrl || '');
+            setPhotoGallery(place.photoGallery || []);
             setWebsite(place.website || '');
             setAccessibilityInfo(place.accessibilityInfo || '');
             setBestVisitTimes(place.bestVisitTimes || '');
@@ -154,6 +157,28 @@ export default function EditPlacePage() {
             };
             reader.readAsDataURL(file);
         }
+    };
+    
+    const handleGalleryFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files) {
+            const newPhotos = Array.from(files).map(file => {
+                const reader = new FileReader();
+                return new Promise<{ url: string, caption: string }>((resolve) => {
+                    reader.onload = (e) => {
+                        resolve({ url: e.target?.result as string, caption: file.name });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+            Promise.all(newPhotos).then(photoData => {
+                setPhotoGallery(prev => [...prev, ...photoData]);
+            });
+        }
+    };
+    
+    const handleRemoveFromGallery = (url: string) => {
+        setPhotoGallery(prev => prev.filter(p => p.url !== url));
     };
     
     const handleFormat = (command: string, value?: string) => {
@@ -209,6 +234,7 @@ export default function EditPlacePage() {
             status,
             amenities: selectedAmenities,
             imageUrl,
+            photoGallery,
             website,
             accessibilityInfo,
             bestVisitTimes,
@@ -367,7 +393,7 @@ export default function EditPlacePage() {
                             </div>
                              <div className="space-y-2">
                                 <Label>Featured Image</Label>
-                                {imageUrl && <Image src={imageUrl} alt="Featured image preview" width={200} height={100} className="rounded-md" />}
+                                {imageUrl && <Image src={imageUrl} alt="Featured image preview" width={200} height={100} className="rounded-md object-cover" />}
                                 <div 
                                     className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer hover:border-primary"
                                     onClick={() => imageInputRef.current?.click()}
@@ -382,6 +408,41 @@ export default function EditPlacePage() {
                                         accept="image/*"
                                     />
                                 </div>
+                            </div>
+                              <div className="space-y-2">
+                                <Label>Photo Gallery</Label>
+                                <div 
+                                    className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer hover:border-primary"
+                                    onClick={() => galleryInputRef.current?.click()}
+                                >
+                                    <UploadCloud className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                                    <p className="text-sm text-muted-foreground">Drag & drop gallery images or click to browse</p>
+                                    <input
+                                        type="file"
+                                        ref={galleryInputRef}
+                                        onChange={handleGalleryFileChange}
+                                        className="hidden"
+                                        accept="image/*"
+                                        multiple
+                                    />
+                                </div>
+                                {photoGallery.length > 0 && (
+                                    <div className="mt-4 grid grid-cols-3 gap-4">
+                                        {photoGallery.map(photo => (
+                                            <div key={photo.url} className="relative group">
+                                                <Image src={photo.url} alt={photo.caption} width={150} height={100} className="rounded-md object-cover" />
+                                                <Button
+                                                    variant="destructive"
+                                                    size="icon"
+                                                    className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100"
+                                                    onClick={() => handleRemoveFromGallery(photo.url)}
+                                                >
+                                                    <XIcon className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                          </CardContent>
                     </Card>

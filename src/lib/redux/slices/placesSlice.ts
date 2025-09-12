@@ -60,7 +60,10 @@ const initialState: PlacesState = {
         status: 'Published',
         amenities: ['wifi', 'parking', 'outdoor-seating'],
         imageUrl: 'https://picsum.photos/seed/place-main/800/500',
-        photoGallery: [],
+        photoGallery: [
+          { url: 'https://picsum.photos/seed/gallery1/600/400', caption: 'Interior view' },
+          { url: 'https://picsum.photos/seed/gallery2/600/400', caption: 'Outdoor patio' },
+        ],
         website: 'https://grandview.com',
         curator: {
             name: 'Admin User',
@@ -102,3 +105,4 @@ export const selectAllPlaces = (state: RootState) => state.places.places;
 export const selectPlaceById = (state: RootState, id: string) => state.places.places.find(p => p.id === id);
 
 export default placesSlice.reducer;
+

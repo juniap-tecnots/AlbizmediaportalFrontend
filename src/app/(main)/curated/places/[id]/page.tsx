@@ -38,7 +38,7 @@ export default function PlaceDetailPage() {
         return <div className="text-center p-12">Place not found.</div>
     }
 
-    const { title, category, description, location, openingHours, contactInfo, priceRange, amenities, website, curator, imageUrl } = place;
+    const { title, category, description, location, openingHours, contactInfo, priceRange, amenities, website, curator, imageUrl, photoGallery } = place;
     
     return (
         <div className="p-6 md:p-8">
@@ -74,6 +74,22 @@ export default function PlaceDetailPage() {
                                 />
                             )}
                             <div className="prose max-w-none mt-6" dangerouslySetInnerHTML={{ __html: description }} />
+                        </CardContent>
+                    </Card>
+
+                     <Card>
+                        <CardHeader><CardTitle>Gallery</CardTitle></CardHeader>
+                        <CardContent>
+                           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                {photoGallery && photoGallery.map((photo, index) => (
+                                    <div key={index} className="relative aspect-video">
+                                        <Image src={photo.url} alt={photo.caption || `Gallery image ${index + 1}`} fill className="rounded-md object-cover" />
+                                    </div>
+                                ))}
+                                {(!photoGallery || photoGallery.length === 0) && (
+                                    <p className="text-muted-foreground col-span-full">No gallery images available.</p>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
 
