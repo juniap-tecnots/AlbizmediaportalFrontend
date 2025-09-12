@@ -74,11 +74,6 @@ const curatedMenuItem = {
     href: '/curated/overview',
     children: [
         {
-            id: 'overview',
-            label: 'Overview',
-            href: '/curated/overview',
-        },
-        {
             id: 'top-places',
             label: 'Top Places',
             href: '/curated/places/all',
