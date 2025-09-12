@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
@@ -22,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { RootState } from "@/lib/redux/store";
+import Image from "next/image";
 
 const amenities = [
     { id: 'wifi', label: 'Free Wi-Fi' },
@@ -86,7 +88,7 @@ export default function EditPlacePage() {
     const place = useSelector((state: RootState) => selectPlaceById(state, placeId));
 
     // Form State
-    const [placeName, setPlaceName] = useState('');
+    const [title, setTitle] = useState('');
     const [category, setCategory] = useState<'Restaurant' | 'Attraction' | 'Shopping' | 'Entertainment'>('Restaurant');
     const [address, setAddress] = useState('');
     const [latitude, setLatitude] = useState('');
@@ -104,13 +106,15 @@ export default function EditPlacePage() {
     const [partnershipStatus, setPartnershipStatus] = useState('None');
     const [status, setStatus] = useState<PlaceStatus>('Draft');
     const [internalRating, setInternalRating] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
     const editorRef = useRef<HTMLDivElement>(null);
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
 
     useEffect(() => {
         if (place) {
-            setPlaceName(place.placeName);
+            setTitle(place.title);
             setCategory(place.category);
             setAddress(place.location.address);
             setLatitude(place.location.latitude.toString());
@@ -123,6 +127,7 @@ export default function EditPlacePage() {
             setContactInfo(place.contactInfo);
             setPriceRange(place.priceRange);
             setSelectedAmenities(place.amenities);
+            setImageUrl(place.imageUrl || '');
             setWebsite(place.website || '');
             setAccessibilityInfo(place.accessibilityInfo || '');
             setBestVisitTimes(place.bestVisitTimes || '');
@@ -138,6 +143,17 @@ export default function EditPlacePage() {
         setSelectedAmenities(prev =>
             checked ? [...prev, amenityId] : prev.filter(id => id !== amenityId)
         );
+    };
+
+     const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImageUrl(e.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     };
     
     const handleFormat = (command: string, value?: string) => {
@@ -178,7 +194,8 @@ export default function EditPlacePage() {
 
         const updatedPlace: Place = {
             ...place,
-            placeName,
+            title,
+            slug: title.toLowerCase().replace(/\s+/g, '-'),
             category,
             location: {
                 latitude: parseFloat(latitude) || 0,
@@ -191,6 +208,7 @@ export default function EditPlacePage() {
             priceRange,
             status,
             amenities: selectedAmenities,
+            imageUrl,
             website,
             accessibilityInfo,
             bestVisitTimes,
@@ -205,7 +223,7 @@ export default function EditPlacePage() {
         dispatch(updatePlace(updatedPlace));
         toast({
             title: "Place Updated",
-            description: `"${placeName}" has been successfully updated.`,
+            description: `"${title}" has been successfully updated.`,
         });
         router.push('/curated/places/all');
     };
@@ -242,7 +260,7 @@ export default function EditPlacePage() {
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="placeName">Place Name</Label>
-                                <Input id="placeName" value={placeName} onChange={(e) => setPlaceName(e.target.value)} placeholder="e.g., The Grand View Restaurant" />
+                                <Input id="placeName" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., The Grand View Restaurant" />
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
@@ -348,10 +366,21 @@ export default function EditPlacePage() {
                                 <Textarea id="bestVisitTimes" value={bestVisitTimes} onChange={(e) => setBestVisitTimes(e.target.value)} placeholder="e.g., Best during spring for outdoor seating."/>
                             </div>
                              <div className="space-y-2">
-                                <Label>Photo Gallery</Label>
-                                <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer">
+                                <Label>Featured Image</Label>
+                                {imageUrl && <Image src={imageUrl} alt="Featured image preview" width={200} height={100} className="rounded-md" />}
+                                <div 
+                                    className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer hover:border-primary"
+                                    onClick={() => imageInputRef.current?.click()}
+                                >
                                     <UploadCloud className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                                    <p className="text-sm text-muted-foreground">Drag & drop up to 10 images or click to browse</p>
+                                    <p className="text-sm text-muted-foreground">Drag & drop an image or click to browse</p>
+                                    <input
+                                        type="file"
+                                        ref={imageInputRef}
+                                        onChange={handleImageFileChange}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
                                 </div>
                             </div>
                          </CardContent>

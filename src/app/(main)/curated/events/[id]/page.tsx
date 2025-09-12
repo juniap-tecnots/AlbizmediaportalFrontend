@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { useParams, useRouter } from 'next/navigation'
@@ -10,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, Calendar, Clock, Ticket, User, Info, Link as LinkIcon, Users } from "lucide-react"
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
+import Image from 'next/image'
 
 const InfoRow = ({ icon: Icon, label, value, isLink }: { icon: React.ElementType, label: string, value?: string | number, isLink?: boolean }) => {
     if (!value) return null;
@@ -39,7 +41,7 @@ export default function EventDetailPage() {
         return <div className="text-center p-12">Event not found.</div>
     }
 
-    const { title, eventType, description, startTime, endTime, venueInfo, organizerDetails, ticketInfo, ageRestrictions, dressCode, rsvpLink, socialMediaLinks } = event;
+    const { title, eventType, description, startTime, endTime, venueInfo, organizerDetails, ticketInfo, ageRestrictions, dressCode, rsvpLink, socialMediaLinks, imageUrl } = event;
     
     return (
         <div className="p-6 md:p-8">
@@ -52,6 +54,7 @@ export default function EventDetailPage() {
                 <div className="lg:col-span-2 space-y-8">
                      <Card>
                         <CardHeader>
+                             {imageUrl && <Image src={imageUrl} alt={title} width={800} height={400} className="w-full object-cover rounded-lg mb-4" />}
                             <Badge variant="secondary" className="mb-2 w-fit">{eventType}</Badge>
                             <CardTitle className="text-3xl">{title}</CardTitle>
                              <CardDescription className="text-base">

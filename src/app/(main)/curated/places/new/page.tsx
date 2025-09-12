@@ -22,6 +22,7 @@ import { addPlace, Place, PlaceStatus } from "@/lib/redux/slices/placesSlice";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 const amenities = [
     { id: 'wifi', label: 'Free Wi-Fi' },
@@ -84,7 +85,7 @@ export default function NewPlacePage() {
     const { toast } = useToast();
 
     // Form State
-    const [placeName, setPlaceName] = useState('');
+    const [title, setTitle] = useState('');
     const [category, setCategory] = useState<'Restaurant' | 'Attraction' | 'Shopping' | 'Entertainment'>('Restaurant');
     const [address, setAddress] = useState('');
     const [latitude, setLatitude] = useState('');
@@ -102,6 +103,8 @@ export default function NewPlacePage() {
     const [partnershipStatus, setPartnershipStatus] = useState('None');
     const [status, setStatus] = useState<PlaceStatus>('In-progress');
     const [internalRating, setInternalRating] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
 
     const editorRef = useRef<HTMLDivElement>(null);
@@ -111,6 +114,17 @@ export default function NewPlacePage() {
         setSelectedAmenities(prev =>
             checked ? [...prev, amenityId] : prev.filter(id => id !== amenityId)
         );
+    };
+
+    const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImageUrl(e.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleFormat = (command: string, value?: string) => {
@@ -152,7 +166,7 @@ export default function NewPlacePage() {
 
 
     const handleSubmit = () => {
-        if (!placeName) {
+        if (!title) {
             toast({
                 title: "Place Name is required",
                 description: "Please enter a name for the place.",
@@ -162,7 +176,8 @@ export default function NewPlacePage() {
         }
 
         const newPlace: Omit<Place, 'id' | 'lastUpdated'> = {
-            placeName,
+            title,
+            slug: title.toLowerCase().replace(/\s+/g, '-'),
             category,
             location: {
                 latitude: parseFloat(latitude) || 0,
@@ -175,10 +190,11 @@ export default function NewPlacePage() {
             priceRange,
             status,
             amenities: selectedAmenities,
+            imageUrl,
+            photoGallery: [], // Placeholder for photo gallery
             website,
             accessibilityInfo,
             bestVisitTimes,
-            photoGallery: [], // Placeholder for photo gallery
             curator: {
                 name: curatorName,
                 verificationDate: verificationDate?.toISOString(),
@@ -190,7 +206,7 @@ export default function NewPlacePage() {
         dispatch(addPlace(newPlace as any));
         toast({
             title: "Place Created",
-            description: `"${placeName}" has been successfully added as a draft.`,
+            description: `"${title}" has been successfully added as a draft.`,
         });
         router.push('/curated/places/all');
     };
@@ -224,7 +240,7 @@ export default function NewPlacePage() {
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="placeName">Place Name</Label>
-                                <Input id="placeName" value={placeName} onChange={(e) => setPlaceName(e.target.value)} placeholder="e.g., The Grand View Restaurant" />
+                                <Input id="placeName" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., The Grand View Restaurant" />
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
@@ -418,10 +434,21 @@ export default function NewPlacePage() {
                                 <Textarea id="bestVisitTimes" value={bestVisitTimes} onChange={(e) => setBestVisitTimes(e.target.value)} placeholder="e.g., Best during spring for outdoor seating."/>
                             </div>
                              <div className="space-y-2">
-                                <Label>Photo Gallery</Label>
-                                <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer">
+                                <Label>Featured Image</Label>
+                                {imageUrl && <Image src={imageUrl} alt="Featured image preview" width={200} height={100} className="rounded-md" />}
+                                <div 
+                                    className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer hover:border-primary"
+                                    onClick={() => imageInputRef.current?.click()}
+                                >
                                     <UploadCloud className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                                    <p className="text-sm text-muted-foreground">Drag & drop up to 10 images or click to browse</p>
+                                    <p className="text-sm text-muted-foreground">Drag & drop an image or click to browse</p>
+                                    <input
+                                        type="file"
+                                        ref={imageInputRef}
+                                        onChange={handleImageFileChange}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
                                 </div>
                             </div>
                          </CardContent>

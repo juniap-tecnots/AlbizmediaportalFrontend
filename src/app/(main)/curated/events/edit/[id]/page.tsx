@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
@@ -21,6 +22,7 @@ import { updateEvent, selectAllEvents, Event, EventStatus } from "@/lib/redux/sl
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RootState } from "@/lib/redux/store";
+import Image from "next/image";
 
 type VerificationStatus = 'Verified' | 'Unverified' | 'Pending';
 type PartnershipLevel = 'None' | 'Bronze' | 'Silver' | 'Gold';
@@ -68,7 +70,7 @@ export default function EditEventPage() {
     const event = useSelector((state: RootState) => state.events.events.find(e => e.id === eventId));
 
     // Form State
-    const [eventTitle, setEventTitle] = useState('');
+    const [title, setTitle] = useState('');
     const [eventType, setEventType] = useState<'Concert' | 'Festival' | 'Conference' | 'Sports'>('Conference');
     const [startDate, setStartDate] = useState<Date | undefined>();
     const [startTime, setStartTime] = useState('12:00');
@@ -85,13 +87,15 @@ export default function EditEventPage() {
     const [socialLinks, setSocialLinks] = useState('');
     const [rsvpLink, setRsvpLink] = useState('');
     const [status, setStatus] = useState<EventStatus>('In-progress');
+    const [imageUrl, setImageUrl] = useState('');
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
     const editorRef = useRef<HTMLDivElement>(null);
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
     
     useEffect(() => {
         if (event) {
-            setEventTitle(event.eventTitle);
+            setTitle(event.title);
             setEventType(event.eventType);
             setStartDate(parseISO(event.startTime));
             setStartTime(format(parseISO(event.startTime), 'HH:mm'));
@@ -109,6 +113,7 @@ export default function EditEventPage() {
             setSocialLinks(event.socialMediaLinks.join(', '));
             setRsvpLink(event.rsvpLink);
             setStatus(event.status);
+            setImageUrl(event.imageUrl || '');
         }
     }, [event]);
 
@@ -116,6 +121,17 @@ export default function EditEventPage() {
         if (editorRef.current) {
             editorRef.current.focus();
             document.execCommand(command, false, value);
+        }
+    };
+
+    const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImageUrl(e.target?.result as string);
+            };
+            reader.readAsDataURL(file);
         }
     };
     
@@ -137,7 +153,7 @@ export default function EditEventPage() {
 
         const updatedEvent: Event = {
             ...event,
-            eventTitle,
+            title,
             eventType,
             startTime: formatDateTime(startDate, startTime),
             endTime: formatDateTime(endDate, endTime),
@@ -154,12 +170,13 @@ export default function EditEventPage() {
             socialMediaLinks: socialLinks.split(',').map(s => s.trim()),
             rsvpLink,
             status,
+            imageUrl,
         };
 
         dispatch(updateEvent(updatedEvent));
         toast({
             title: "Event Updated",
-            description: `"${eventTitle}" has been successfully updated.`,
+            description: `"${title}" has been successfully updated.`,
         });
         router.push('/curated/events/all');
     };
@@ -180,7 +197,7 @@ export default function EditEventPage() {
                 </Button>
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Edit Event</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Update the details for "{event.eventTitle}".</p>
+                    <p className="text-sm text-muted-foreground mt-1">Update the details for "{event.title}".</p>
                 </div>
             </div>
 
@@ -193,7 +210,7 @@ export default function EditEventPage() {
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="eventTitle">Event Title</Label>
-                                <Input id="eventTitle" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} />
+                                <Input id="eventTitle" value={title} onChange={(e) => setTitle(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="eventType">Event Type</Label>
@@ -295,6 +312,24 @@ export default function EditEventPage() {
                                  <div className="space-y-2">
                                     <Label htmlFor="rsvpLink">Registration/RSVP Link</Label>
                                     <Input id="rsvpLink" value={rsvpLink} onChange={e => setRsvpLink(e.target.value)} />
+                                </div>
+                            </div>
+                             <div className="space-y-2">
+                                <Label>Event Image</Label>
+                                {imageUrl && <Image src={imageUrl} alt="Event image preview" width={200} height={100} className="rounded-md" />}
+                                <div 
+                                    className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer hover:border-primary"
+                                    onClick={() => imageInputRef.current?.click()}
+                                >
+                                    <UploadCloud className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                                    <p className="text-sm text-muted-foreground">Drag & drop an image or click to browse</p>
+                                    <input
+                                        type="file"
+                                        ref={imageInputRef}
+                                        onChange={handleImageFileChange}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
                                 </div>
                             </div>
                         </CardContent>

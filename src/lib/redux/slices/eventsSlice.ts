@@ -27,6 +27,7 @@ export interface Event {
   socialMediaLinks: string[];
   rsvpLink: string;
   status: EventStatus;
+  imageUrl: string;
 }
 
 interface EventsState {
@@ -49,7 +50,8 @@ const sampleEvents: Event[] = [
       dressCode: 'Business Casual',
       socialMediaLinks: ['https://twitter.com/techsummit'],
       rsvpLink: 'https://example.com/rsvp',
-      status: 'Published'
+      status: 'Published',
+      imageUrl: 'https://picsum.photos/seed/event1/800/400'
     },
     {
       id: 'evt_102',
@@ -66,7 +68,8 @@ const sampleEvents: Event[] = [
       dressCode: 'Casual',
       socialMediaLinks: ['https://instagram.com/summermusicfest'],
       rsvpLink: 'https://example.com/rsvp-fest',
-      status: 'Published'
+      status: 'Published',
+      imageUrl: 'https://picsum.photos/seed/event2/800/400'
     },
   ];
 

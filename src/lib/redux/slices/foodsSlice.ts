@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -16,6 +17,7 @@ export interface FoodVenue {
   diningStyle: 'Fast casual' | 'Fine dining' | 'Cafe';
   description: string;
   status: FoodVenueStatus;
+  imageUrl: string;
 }
 
 interface FoodsState {
@@ -34,6 +36,7 @@ const initialState: FoodsState = {
       diningStyle: 'Fine dining',
       description: 'An exquisite fine dining experience with a modern twist on Italian classics.',
       status: 'Published',
+      imageUrl: 'https://picsum.photos/seed/food1/800/400'
     },
     {
       id: 'food_102',
@@ -45,6 +48,7 @@ const initialState: FoodsState = {
       diningStyle: 'Cafe',
       description: 'Your neighborhood-friendly cafe for the best coffee and pastries.',
       status: 'Published',
+      imageUrl: 'https://picsum.photos/seed/food2/800/400'
     }
   ],
 };

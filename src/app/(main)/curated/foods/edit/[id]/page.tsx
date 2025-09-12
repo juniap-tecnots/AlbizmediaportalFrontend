@@ -1,7 +1,8 @@
 
+
 'use client'
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -12,9 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { updateFoodVenue, FoodVenueStatus } from "@/lib/redux/slices/foodsSlice";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, UploadCloud } from "lucide-react";
 import { RootState } from "@/lib/redux/store";
 import { FoodVenue } from "@/lib/redux/slices/foodsSlice";
+import Image from "next/image";
 
 export default function EditFoodPage() {
     const dispatch = useDispatch();
@@ -26,44 +28,59 @@ export default function EditFoodPage() {
     const venue = useSelector((state: RootState) => state.foods.venues.find(v => v.id === venueId));
 
     // Form State
-    const [restaurantName, setRestaurantName] = useState('');
+    const [title, setTitle] = useState('');
     const [cuisineType, setCuisineType] = useState('');
     const [location, setLocation] = useState('');
     const [priceRange, setPriceRange] = useState<'$' | '$$' | '$$$' | '$$$$'>('$$');
     const [diningStyle, setDiningStyle] = useState<'Fast casual' | 'Fine dining' | 'Cafe'>('Fast casual');
     const [description, setDescription] = useState('');
     const [status, setStatus] = useState<FoodVenueStatus>('In-progress');
+    const [imageUrl, setImageUrl] = useState('');
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (venue) {
-            setRestaurantName(venue.restaurantName);
+            setTitle(venue.title);
             setCuisineType(venue.cuisineType.join(', '));
             setLocation(venue.location);
             setPriceRange(venue.priceRange);
             setDiningStyle(venue.diningStyle);
             setDescription(venue.description);
             setStatus(venue.status);
+            setImageUrl(venue.imageUrl || '');
         }
     }, [venue]);
+
+    const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImageUrl(e.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleSubmit = () => {
         if (!venue) return;
 
         const updatedVenue: FoodVenue = {
             ...venue,
-            restaurantName,
+            title,
             cuisineType: cuisineType.split(',').map(c => c.trim()),
             location,
             priceRange,
             diningStyle,
             description,
             status,
+            imageUrl,
         };
 
         dispatch(updateFoodVenue(updatedVenue));
         toast({
             title: "Restaurant Updated",
-            description: `"${restaurantName}" has been successfully updated.`,
+            description: `"${title}" has been successfully updated.`,
         });
         router.push('/curated/foods/all');
     };
@@ -80,7 +97,7 @@ export default function EditFoodPage() {
                 </Button>
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Edit Restaurant</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Update the details for "{venue.restaurantName}".</p>
+                    <p className="text-sm text-muted-foreground mt-1">Update the details for "{venue.title}".</p>
                 </div>
             </div>
 
@@ -91,7 +108,7 @@ export default function EditFoodPage() {
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
                         <Label htmlFor="restaurantName">Restaurant Name</Label>
-                        <Input id="restaurantName" value={restaurantName} onChange={(e) => setRestaurantName(e.target.value)} />
+                        <Input id="restaurantName" value={title} onChange={(e) => setTitle(e.target.value)} />
                     </div>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
@@ -132,6 +149,24 @@ export default function EditFoodPage() {
                     <div className="space-y-2">
                         <Label htmlFor="description">Description</Label>
                         <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Restaurant Image</Label>
+                        {imageUrl && <Image src={imageUrl} alt="Restaurant image preview" width={200} height={100} className="rounded-md" />}
+                        <div 
+                            className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer hover:border-primary"
+                            onClick={() => imageInputRef.current?.click()}
+                        >
+                            <UploadCloud className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-sm text-muted-foreground">Drag & drop an image or click to browse</p>
+                            <input
+                                type="file"
+                                ref={imageInputRef}
+                                onChange={handleImageFileChange}
+                                className="hidden"
+                                accept="image/*"
+                            />
+                        </div>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="status">Status</Label>

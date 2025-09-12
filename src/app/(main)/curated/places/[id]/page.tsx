@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { useParams, useRouter } from 'next/navigation'
@@ -37,7 +38,7 @@ export default function PlaceDetailPage() {
         return <div className="text-center p-12">Place not found.</div>
     }
 
-    const { title, category, description, location, openingHours, contactInfo, priceRange, amenities, website, curator } = place;
+    const { title, category, description, location, openingHours, contactInfo, priceRange, amenities, website, curator, imageUrl } = place;
     
     return (
         <div className="p-6 md:p-8">
@@ -64,7 +65,7 @@ export default function PlaceDetailPage() {
                         </CardHeader>
                         <CardContent>
                             <Image 
-                                src="https://picsum.photos/seed/place-main/800/500" 
+                                src={imageUrl} 
                                 alt={`Photo of ${title}`}
                                 width={800}
                                 height={500}

@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
@@ -20,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { addEvent, Event, EventStatus } from "@/lib/redux/slices/eventsSlice";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Image from "next/image";
 
 type VerificationStatus = 'Verified' | 'Unverified' | 'Pending';
 type PartnershipLevel = 'None' | 'Bronze' | 'Silver' | 'Gold';
@@ -64,7 +66,7 @@ export default function NewEventPage() {
     const { toast } = useToast();
 
     // Form State
-    const [eventTitle, setEventTitle] = useState('');
+    const [title, setTitle] = useState('');
     const [eventType, setEventType] = useState<'Concert' | 'Festival' | 'Conference' | 'Sports'>('Conference');
     const [startDate, setStartDate] = useState<Date | undefined>();
     const [startTime, setStartTime] = useState('12:00');
@@ -80,6 +82,8 @@ export default function NewEventPage() {
     const [dressCode, setDressCode] = useState('');
     const [socialLinks, setSocialLinks] = useState('');
     const [rsvpLink, setRsvpLink] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
     // Metadata
     const [eventSource, setEventSource] = useState('');
@@ -108,8 +112,19 @@ export default function NewEventPage() {
         setActiveCommands(commands);
     }, []);
 
+    const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImageUrl(e.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = () => {
-        if (!eventTitle) {
+        if (!title) {
             toast({
                 title: "Event Title is required",
                 description: "Please enter a title for the event.",
@@ -125,7 +140,8 @@ export default function NewEventPage() {
         }
 
         const newEvent: Omit<Event, 'id'> = {
-            eventTitle,
+            title,
+            slug: title.toLowerCase().replace(/\s+/g, '-'),
             eventType,
             startTime: formatDateTime(startDate, startTime),
             endTime: formatDateTime(endDate, endTime),
@@ -142,12 +158,13 @@ export default function NewEventPage() {
             socialMediaLinks: socialLinks.split(','),
             rsvpLink,
             status,
+            imageUrl,
         };
 
         dispatch(addEvent(newEvent as any));
         toast({
             title: "Event Created",
-            description: `"${eventTitle}" has been successfully added.`,
+            description: `"${title}" has been successfully added.`,
         });
         router.push('/curated/events/all');
     };
@@ -177,7 +194,7 @@ export default function NewEventPage() {
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="eventTitle">Event Title</Label>
-                                <Input id="eventTitle" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="e.g., Annual Tech Summit 2025" />
+                                <Input id="eventTitle" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., Annual Tech Summit 2025" />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="eventType">Event Type</Label>
@@ -282,10 +299,21 @@ export default function NewEventPage() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label>Event Images/Videos</Label>
-                                <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer">
+                                <Label>Event Image</Label>
+                                {imageUrl && <Image src={imageUrl} alt="Event image preview" width={200} height={100} className="rounded-md" />}
+                                <div 
+                                    className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 text-center cursor-pointer hover:border-primary"
+                                    onClick={() => imageInputRef.current?.click()}
+                                >
                                     <UploadCloud className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                                    <p className="text-sm text-muted-foreground">Drag & drop files or click to browse</p>
+                                    <p className="text-sm text-muted-foreground">Drag & drop an image or click to browse</p>
+                                    <input
+                                        type="file"
+                                        ref={imageInputRef}
+                                        onChange={handleImageFileChange}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
                                 </div>
                             </div>
                         </CardContent>

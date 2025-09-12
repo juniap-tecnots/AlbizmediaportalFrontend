@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { useParams, useRouter } from 'next/navigation'
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, MapPin, DollarSign, Utensils, Info } from "lucide-react"
 import { Badge } from '@/components/ui/badge'
+import Image from 'next/image'
 
 const InfoRow = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value?: string | number }) => {
     if (!value) return null;
@@ -33,7 +35,7 @@ export default function FoodDetailPage() {
         return <div className="text-center p-12">Restaurant not found.</div>
     }
 
-    const { title, cuisineType, description, location, priceRange, diningStyle } = foodVenue;
+    const { title, cuisineType, description, location, priceRange, diningStyle, imageUrl } = foodVenue;
     
     return (
         <div className="p-6 md:p-8">
@@ -46,6 +48,7 @@ export default function FoodDetailPage() {
                 <div className="lg:col-span-2 space-y-8">
                      <Card>
                         <CardHeader>
+                            {imageUrl && <Image src={imageUrl} alt={title} width={800} height={400} className="w-full object-cover rounded-lg mb-4" />}
                             <div className="flex items-center gap-2 mb-2">
                                 {cuisineType.map(cuisine => (
                                     <Badge key={cuisine} variant="secondary">{cuisine}</Badge>

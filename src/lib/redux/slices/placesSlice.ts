@@ -23,6 +23,7 @@ export interface Place {
   priceRange: '$' | '$$' | '$$$' | '$$$$';
   status: PlaceStatus;
   amenities: string[];
+  imageUrl: string;
   photoGallery: { url: string; caption: string }[];
   website?: string;
   accessibilityInfo?: string;
@@ -58,6 +59,7 @@ const initialState: PlacesState = {
         priceRange: '$$$',
         status: 'Published',
         amenities: ['wifi', 'parking', 'outdoor-seating'],
+        imageUrl: 'https://picsum.photos/seed/place-main/800/500',
         photoGallery: [],
         website: 'https://grandview.com',
         curator: {
