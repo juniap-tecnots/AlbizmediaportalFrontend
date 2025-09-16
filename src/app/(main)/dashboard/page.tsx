@@ -123,7 +123,7 @@ export default function DashboardPage() {
           <Notifications />
         </TabsContent>
         <TabsContent value="actions">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Newspaper className="text-primary"/> Create a New Article</CardTitle>
@@ -134,6 +134,20 @@ export default function DashboardPage() {
                             <Button variant="secondary">
                                 <PlusCircle className="mr-2" />
                                 Add New Article
+                            </Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><PenSquare className="text-primary"/> Create New Page</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground mb-4">Create and manage website pages with custom layouts.</p>
+                        <Link href="/content/pages/new">
+                            <Button variant="secondary">
+                                <PlusCircle className="mr-2" />
+                                Add New Page
                             </Button>
                         </Link>
                     </CardContent>

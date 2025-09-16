@@ -20,13 +20,17 @@ import placesReducer from './slices/placesSlice';
 import eventsReducer from './slices/eventsSlice';
 import foodsReducer from './slices/foodsSlice';
 import slaReducer from './slices/slaSlice';
+import pagesReducer from './slices/pagesSlice';
+import blocksReducer from './slices/blocksSlice';
+import menusReducer from './slices/menusSlice';
+import themesReducer from './slices/themesSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from './storage';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['media', 'articles', 'places', 'events', 'foods'], // Prevent large slices from being persisted
+  blacklist: ['media', 'articles', 'places', 'events', 'foods', 'pages', 'blocks', 'menus', 'themes'], // Prevent large slices from being persisted
 };
 
 const rootReducer = combineReducers({
@@ -50,6 +54,10 @@ const rootReducer = combineReducers({
   events: eventsReducer,
   foods: foodsReducer,
   sla: slaReducer,
+  pages: pagesReducer,
+  blocks: blocksReducer,
+  menus: menusReducer,
+  themes: themesReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

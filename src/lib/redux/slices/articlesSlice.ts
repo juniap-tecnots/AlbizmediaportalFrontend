@@ -55,6 +55,7 @@ export interface Article {
   excerpt: string;
   featuredImage: string;
   discussion: 'Open' | 'Closed';
+  themeTemplate?: string;
   assignedEditor?: string;
 }
 

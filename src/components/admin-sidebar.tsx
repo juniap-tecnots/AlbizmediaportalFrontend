@@ -49,6 +49,17 @@ const contentManagementItems = [
         href: '/content/categories',
     },
     {
+        id: 'pages',
+        label: 'Pages',
+        icon: AiOutlineFileText,
+        href: '/content/pages/all',
+        children: [
+            { id: 'all-pages', href: '/content/pages/all', label: 'All Pages' },
+            { id: 'menus', href: '/content/pages/menus/list', label: 'Menus' },
+            { id: 'themes', href: '/content/pages/themes', label: 'Themes' },
+        ]
+    },
+    {
         id: 'media-library',
         label: 'Media Library',
         icon: AiOutlineFolder,
