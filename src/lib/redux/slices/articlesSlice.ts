@@ -13,30 +13,23 @@ interface Block {
 }
 
 export type ArticleStatus = 
-  | 'DRAFT' 
-  | 'IN_PROGRESS' 
-  | 'IDLE' 
-  | 'SUBMITTED_FOR_REVIEW' 
-  | 'UNDER_EDITORIAL_REVIEW' 
-  | 'REQUIRES_REVISION' 
-  | 'IN_REVISION'
-  | 'RESUBMITTED_FOR_REVIEW'
-  | 'LEGAL_REVIEW_REQUIRED'
-  | 'LEGAL_APPROVED'
-  | 'LEGAL_REJECTED'
-  | 'REQUIRES_LEGAL_REVISION'
-  | 'APPROVED_FOR_PUBLICATION' 
-  | 'SCHEDULED_FOR_PUBLICATION' 
-  | 'PUBLISHED_LIVE' 
-  | 'LIVE_WITH_UPDATES' 
-  | 'RETRACTED' 
-  | 'ARCHIVED' 
-  | 'ABANDONED' 
-  | 'REJECTED' 
-  | 'EDITORIAL_INTERVENTION' 
-  | 'RETURNED_TO_AUTHOR' 
-  | 'PUBLICATION_DELAYED' 
-  | 'PULLED_FROM_SCHEDULE';
+  | 'IN_PROGRESS'
+  | 'SUBMITTED_FOR_REVIEW'
+  | 'PENDING_REVIEW'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'COPY_EDIT'
+  | 'FACT_CHECK'
+  | 'READY_TO_PUBLISH'
+  | 'SCHEDULED'
+  | 'PUBLISHED'
+  | 'COMPLETED'
+  | 'RETURNED_TO_AUTHOR'
+  | 'RESUBMITTED'
+  | 'ON_HOLD'
+  | 'ARCHIVED'
+  | 'KILLED';
 
 
 export interface Article {
@@ -55,6 +48,7 @@ export interface Article {
   excerpt: string;
   featuredImage: string;
   discussion: 'Open' | 'Closed';
+  themeTemplate?: string;
   assignedEditor?: string;
 }
 
@@ -73,7 +67,7 @@ const initialState: ArticlesState = {
         categories: ["Uncategorized"],
         tags: [],
         date: "2025-09-01T06:07:00Z",
-        status: "PUBLISHED_LIVE",
+        status: "PUBLISHED",
         content: 'This is the content for Global Update.',
         blocks: [],
         visibility: 'public',
@@ -91,7 +85,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Games"],
         date: "2025-09-01T05:40:00Z",
-        status: "PUBLISHED_LIVE",
+        status: "PUBLISHED",
         content: 'This is the content for One swallow does not make the spring.',
         blocks: [],
         visibility: 'public',
@@ -109,7 +103,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Team"],
         date: "2025-09-01T05:40:00Z",
-        status: "PUBLISHED_LIVE",
+        status: "PUBLISHED",
         content: 'This is the content for Tip of the day: That man again.',
         blocks: [],
         visibility: 'public',
@@ -127,7 +121,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Color"],
         date: "2025-09-01T05:40:00Z",
-        status: "PUBLISHED_LIVE",
+        status: "PUBLISHED",
         content: 'This is the content for Hibs and Ross County fans on final.',
         blocks: [],
         visibility: 'public',
@@ -145,7 +139,7 @@ const initialState: ArticlesState = {
         categories: ["Life Style"],
         tags: ["Content"],
         date: "2025-09-01T05:40:00Z",
-        status: "PUBLISHED_LIVE",
+        status: "PUBLISHED",
         content: 'This is the content for Persuasion is often more effectual than force.',
         blocks: [],
         visibility: 'public',
@@ -181,7 +175,7 @@ const initialState: ArticlesState = {
         categories: ["Tech"],
         tags: ["Drafting"],
         date: "2025-09-02T10:00:00Z",
-        status: "DRAFT",
+        status: "IN_PROGRESS",
         content: 'This is a sample draft.',
         blocks: [],
         visibility: 'public',
@@ -198,12 +192,65 @@ const initialState: ArticlesState = {
         categories: ["Business"],
         tags: ["Planning"],
         date: "2025-10-01T09:00:00Z",
-        status: "SCHEDULED_FOR_PUBLICATION",
+        status: "SCHEDULED",
         content: 'This is a sample scheduled post.',
         blocks: [],
         visibility: 'public',
         excerpt: 'This excerpt is for a post that is scheduled to be published later.',
         featuredImage: 'https://picsum.photos/600/400?random=8',
+        discussion: 'Open',
+        assignedEditor: 'Liam Smith'
+      },
+      {
+        id: '9',
+        title: "Submitted for Review Example",
+        subtitle: "This article has been submitted for editorial review.",
+        slug: 'submitted-for-review-example',
+        author: "albiz",
+        categories: ["Tech"],
+        tags: ["Review"],
+        date: "2025-09-03T14:30:00Z",
+        status: "SUBMITTED_FOR_REVIEW",
+        content: 'This article is waiting for editorial review.',
+        blocks: [],
+        visibility: 'public',
+        excerpt: 'An article that has been submitted and is awaiting review.',
+        featuredImage: 'https://picsum.photos/600/400?random=9',
+        discussion: 'Open',
+      },
+      {
+        id: '10',
+        title: "Under Review Example",
+        subtitle: "This article is currently being reviewed by an editor.",
+        slug: 'under-review-example',
+        author: "albiz",
+        categories: ["News"],
+        tags: ["Editorial"],
+        date: "2025-09-03T16:45:00Z",
+        status: "UNDER_REVIEW",
+        content: 'This article is actively being reviewed.',
+        blocks: [],
+        visibility: 'public',
+        excerpt: 'An article currently under editorial review.',
+        featuredImage: 'https://picsum.photos/600/400?random=10',
+        discussion: 'Open',
+        assignedEditor: 'Ava Davis'
+      },
+      {
+        id: '11',
+        title: "Copy Edit Example",
+        subtitle: "This article is in the copy editing phase.",
+        slug: 'copy-edit-example',
+        author: "albiz",
+        categories: ["Education"],
+        tags: ["Copy-Edit"],
+        date: "2025-09-04T10:15:00Z",
+        status: "COPY_EDIT",
+        content: 'This article is being copy edited for grammar and style.',
+        blocks: [],
+        visibility: 'public',
+        excerpt: 'An article in the copy editing phase.',
+        featuredImage: 'https://picsum.photos/600/400?random=11',
         discussion: 'Open',
         assignedEditor: 'Liam Smith'
       },
@@ -220,7 +267,7 @@ const articlesSlice = createSlice({
         id: (state.articles.length + 1).toString(),
         date: new Date().toISOString(),
         author: 'albiz',
-        status: 'IN_PROGRESS',
+        status: 'SUBMITTED_FOR_REVIEW',
       };
       state.articles.push(newArticle);
     },
@@ -238,12 +285,56 @@ const articlesSlice = createSlice({
 
 export const { addArticle, updateArticle, deleteArticle } = articlesSlice.actions;
 
-export const selectAllArticles = (state: RootState) => state.articles.articles;
-export const selectArticleById = (state: RootState, articleId: string) => state.articles.articles.find(article => article.id === articleId);
-export const selectPublishedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'PUBLISHED_LIVE');
-export const selectDraftArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'DRAFT' || a.status === 'IN_PROGRESS');
-export const selectScheduledArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'SCHEDULED_FOR_PUBLICATION');
-export const selectArchivedArticles = (state: RootState) => state.articles.articles.filter(a => a.status === 'ARCHIVED');
+export const selectAllArticles = (state: any) => state.articles.articles;
+export const selectArticleById = (state: any, articleId: string) => state.articles.articles.find((article: any) => article.id === articleId);
+export const selectPublishedArticles = (state: any) => state.articles.articles.filter((a: any) => a.status === 'PUBLISHED');
+export const selectDraftArticles = (state: any) => state.articles.articles.filter((a: any) => a.status === 'IN_PROGRESS');
+export const selectScheduledArticles = (state: any) => state.articles.articles.filter((a: any) => a.status === 'SCHEDULED');
+export const selectArchivedArticles = (state: any) => state.articles.articles.filter((a: any) => a.status === 'ARCHIVED');
+export const selectSubmittedArticles = (state: any) => state.articles.articles.filter((a: any) => a.status === 'SUBMITTED_FOR_REVIEW');
+export const selectPendingReviewArticles = (state: any) => state.articles.articles.filter((a: any) => a.status === 'PENDING_REVIEW');
+export const selectUnderReviewArticles = (state: any) => state.articles.articles.filter((a: any) => a.status === 'UNDER_REVIEW');
 
+// Helper function to format status display text
+export const formatStatusDisplay = (status: ArticleStatus): string => {
+  switch (status) {
+    case 'IN_PROGRESS':
+      return 'In Progress';
+    case 'SUBMITTED_FOR_REVIEW':
+      return 'Submitted for Review';
+    case 'PENDING_REVIEW':
+      return 'Pending Review';
+    case 'UNDER_REVIEW':
+      return 'Under Review';
+    case 'APPROVED':
+      return 'Approved';
+    case 'REJECTED':
+      return 'Rejected';
+    case 'COPY_EDIT':
+      return 'Copy Edit';
+    case 'FACT_CHECK':
+      return 'Fact Check';
+    case 'READY_TO_PUBLISH':
+      return 'Ready to Publish';
+    case 'SCHEDULED':
+      return 'Scheduled';
+    case 'PUBLISHED':
+      return 'Published';
+    case 'COMPLETED':
+      return 'Completed';
+    case 'RETURNED_TO_AUTHOR':
+      return 'Returned to Author';
+    case 'RESUBMITTED':
+      return 'Resubmitted';
+    case 'ON_HOLD':
+      return 'On Hold';
+    case 'ARCHIVED':
+      return 'Archived';
+    case 'KILLED':
+      return 'Killed';
+    default:
+      return status;
+  }
+};
 
 export default articlesSlice.reducer;

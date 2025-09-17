@@ -18,11 +18,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon, FileImage, Settings, Pen, ArrowLeft } from "lucide-react"
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Eye, Send, Undo, Redo, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, ImageIcon, Video, Smile, List, ListOrdered, Quote, Indent, Outdent, MoreHorizontal, Eraser, Palette, Highlighter, UploadCloud, X as XIcon, FileImage, Settings, Pen, ArrowLeft, Sparkles, Calendar, Edit3 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useDispatch, useSelector } from "react-redux"
 import { addArticle } from "@/lib/redux/slices/articlesSlice"
+import { selectCurrentUser } from "@/lib/redux/slices/authSlice"
 import { useToast } from "@/hooks/use-toast"
 import {
   DropdownMenu,
@@ -65,10 +66,10 @@ const ToolbarButton = ({ command, icon: Icon, tooltip, onClick }: { command: str
                  <Button
                     variant="ghost"
                     size="sm"
-                    className={cn("px-2", { 'bg-accent text-accent-foreground': activeCommands.has(command) })}
+                    className={cn("h-7 w-7 p-0", { 'bg-accent text-accent-foreground': activeCommands.has(command) })}
                     onMouseDown={handleClick}
                 >
-                    <Icon className="w-4 h-4"/>
+                    <Icon className="w-3 h-3"/>
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -99,20 +100,42 @@ export default function NewArticlePage() {
     const [subtitle, setSubtitle] = useState('');
     const [content, setContent] = useState('');
     const [slug, setSlug] = useState('');
+    const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
     const [excerpt, setExcerpt] = useState('');
     const [featuredImage, setFeaturedImage] = useState('');
     
     const allCategories = useSelector(selectAllCategories);
     const allTags = useSelector(selectAllTags);
+    const currentUser = useSelector(selectCurrentUser);
+
+    // Slug generation function
+    const generateSlug = (text: string) => {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    };
+
+    // Auto-generate slug when title changes
+    useEffect(() => {
+        if (title && !isSlugManuallyEdited) {
+            setSlug(generateSlug(title));
+        }
+    }, [title, isSlugManuallyEdited]);
     
     const [categories, setCategories] = useState<string[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [newCategory, setNewCategory] = useState('');
     const [newTag, setNewTag] = useState('');
+    const [themeTemplate, setThemeTemplate] = useState('default-blog-post');
     
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [isTagsOpen, setIsTagsOpen] = useState(true);
     const [isExcerptOpen, setIsExcerptOpen] = useState(false);
+    const [isSeoOpen, setIsSeoOpen] = useState(false);
+    const [visibility, setVisibility] = useState<'visible' | 'hidden'>('hidden');
 
     const [activeCommands, setActiveCommands] = useState(new Set<string>());
     
@@ -179,10 +202,12 @@ export default function NewArticlePage() {
             content: editorRef.current?.innerHTML || '',
             categories,
             tags,
-            visibility: 'public',
+            visibility: visibility === 'visible' ? 'public' : 'private',
             excerpt,
             featuredImage,
-            discussion: 'Open'
+            discussion: 'Open',
+            themeTemplate,
+            author: getAuthorDisplayName()
         };
         dispatch(addArticle(articleData as any));
         toast({
@@ -198,10 +223,23 @@ export default function NewArticlePage() {
             editorRef.current.innerHTML = '';
         }
         setSlug('');
+        setIsSlugManuallyEdited(false);
         setExcerpt('');
         setFeaturedImage('');
         setCategories([]);
         setTags([]);
+        setThemeTemplate('default-blog-post');
+        setVisibility('hidden');
+    };
+
+    // Handler functions for title and slug
+    const handleTitleChange = (value: string) => {
+        setTitle(value);
+    };
+
+    const handleSlugChange = (value: string) => {
+        setSlug(value);
+        setIsSlugManuallyEdited(true); // Set flag when slug is manually edited
     };
 
     const handleInsertImage = () => {
@@ -279,6 +317,13 @@ export default function NewArticlePage() {
         setTags(tags.filter(tag => tag !== tagToRemove));
     };
 
+    const getAuthorDisplayName = () => {
+        if (currentUser) {
+            return `${currentUser.firstName} ${currentUser.lastName}`;
+        }
+        return 'Unknown User';
+    };
+
     const editorContextValue = {
         handleFormat,
         activeCommands
@@ -287,201 +332,241 @@ export default function NewArticlePage() {
   return (
     <EditorContext.Provider value={editorContextValue}>
       <TooltipProvider>
-        <div className="flex flex-col h-full bg-background p-4 md:p-6">
-            <header className="flex items-center justify-between pb-4 border-b">
+        <div className="min-h-screen bg-gray-50">
+            {/* Header */}
+            <header className="px-6 py-4">
+                <div className="flex items-center justify-between">
                  <div className="flex items-center gap-4">
-                    <Button variant="outline" size="icon" onClick={() => router.back()}>
+                        <Button variant="ghost" size="icon" onClick={() => router.back()}>
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
-                    <h1 className="text-2xl font-bold">Add New Article</h1>
+                        <h1 className="text-xl font-semibold">Create New Article</h1>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline">
+                        <Button variant="outline" size="sm">
                         <Eye className="mr-2 h-4 w-4" />
                         Preview
                     </Button>
-                    <Button onClick={handlePublish}>
+                        <Button onClick={handlePublish} size="sm">
                         <Send className="mr-2 h-4 w-4" />
-                        Save Progress
+                            Publish
                     </Button>
-                     <Button variant="ghost" size="icon">
-                        <Settings className="h-5 w-5" />
-                    </Button>
+                    </div>
                 </div>
             </header>
 
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 items-start">
-                <div className="lg:col-span-3 space-y-6">
-                    <Card>
-                        <CardContent className="p-0">
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Column - Main Content */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Title and Content Section */}
+                        <Card className="bg-white rounded-lg shadow-sm">
+                            <CardContent className="p-6">
+                                <div className="space-y-6">
+                                    {/* Title Section */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
+                                        <div className="relative">
                            <Input 
                                 id="title" 
-                                placeholder="Add title" 
+                                                placeholder="e.g., Blog about your latest products or deals"
                                 value={title} 
-                                onChange={(e) => setTitle(e.target.value)} 
-                                className="text-xl font-bold border-0 focus-visible:ring-0 shadow-none p-4 h-auto"
-                            />
-                            <Input 
-                                id="subtitle" 
-                                placeholder="Add subtitle" 
-                                value={subtitle} 
-                                onChange={(e) => setSubtitle(e.target.value)} 
-                                className="text-lg border-0 focus-visible:ring-0 shadow-none p-4 pt-0 h-auto"
-                            />
-                        </CardContent>
-                    </Card>
-                    <Card>
-                         <div className="p-2 border-b">
-                        <div className="flex items-center gap-x-1 text-gray-600 flex-wrap">
-                             <Tooltip>
-                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('undo'); }}><Undo className="w-4 h-4" /></Button></TooltipTrigger>
-                                <TooltipContent><p>Undo (Ctrl+Z)</p></TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2" onMouseDown={(e) => { e.preventDefault(); handleFormat('redo'); }}><Redo className="w-4 h-4" /></Button></TooltipTrigger>
-                                <TooltipContent><p>Redo (Ctrl+Y)</p></TooltipContent>
-                            </Tooltip>
-                            <Separator orientation="vertical" className="h-6 mx-1" />
+                                onChange={(e) => handleTitleChange(e.target.value)} 
+                                                className="pr-10 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                            />
+                                            <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                                            >
+                                                <Sparkles className="h-4 w-4 text-blue-500" />
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {/* Slug Section */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="slug" className="text-sm font-medium text-gray-700">Slug</Label>
+                                        <Input 
+                                            id="slug" 
+                                            placeholder="Auto-generated from title"
+                                            value={slug} 
+                                            onChange={(e) => handleSlugChange(e.target.value)} 
+                                            className="text-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                        />
+                                        <p className="text-xs text-gray-500">URL-friendly version of your title. Auto-generated but can be customized.</p>
+                                    </div>
+
+                                    {/* Content Section */}
+                                    <div className="space-y-4">
+                                        <Label className="text-sm font-medium text-gray-700">Content</Label>
+                                    
+                                        {/* Toolbar */}
+                                        <div className="flex items-center gap-1 p-2 bg-gray-50 rounded-lg border">
+                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                                <Sparkles className="h-3 w-3 text-blue-500" />
+                                            </Button>
+                                            <Separator orientation="vertical" className="h-5" />
                             <Select defaultValue="p" onValueChange={(value) => handleFormat('formatBlock', value)}>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <SelectTrigger className="w-auto border-0 text-sm focus:ring-0">
-                                            <SelectValue placeholder="Normal" />
+                                                <SelectTrigger className="w-auto h-7 border-0 bg-transparent text-xs">
+                                                    <SelectValue placeholder="Paragraph" />
                                         </SelectTrigger>
-                                    </TooltipTrigger>
-                                    <TooltipContent><p>Format</p></TooltipContent>
-                                </Tooltip>
                                 <SelectContent>
-                                    <SelectItem value="p">Normal</SelectItem>
+                                                    <SelectItem value="p">Paragraph</SelectItem>
                                     <SelectItem value="h1">Heading 1</SelectItem>
                                     <SelectItem value="h2">Heading 2</SelectItem>
                                     <SelectItem value="h3">Heading 3</SelectItem>
-                                    <SelectItem value="h4">Heading 4</SelectItem>
-                                    <SelectItem value="h5">Heading 5</SelectItem>
-                                    <SelectItem value="h6">Heading 6</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Separator orientation="vertical" className="h-6 mx-1" />
-                            <ToolbarButton command="bold" icon={Bold} tooltip="Bold (Ctrl+B)" />
-                            <ToolbarButton command="italic" icon={Italic} tooltip="Italic (Ctrl+I)" />
-                            <ToolbarButton command="underline" icon={Underline} tooltip="Underline (Ctrl+U)" />
-                            <ToolbarButton command="strikeThrough" icon={Strikethrough} tooltip="Strikethrough" />
-                             <Separator orientation="vertical" className="h-6 mx-1" />
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="px-2 relative">
-                                        <Palette className="w-4 h-4"/>
-                                        <input type="color" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(e) => handleFormat('foreColor', e.currentTarget.value)} />
+                                            <Separator orientation="vertical" className="h-5" />
+                                            <ToolbarButton command="bold" icon={Bold} tooltip="Bold" />
+                                            <ToolbarButton command="italic" icon={Italic} tooltip="Italic" />
+                                            <ToolbarButton command="underline" icon={Underline} tooltip="Underline" />
+                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                                <span className="text-xs font-bold">A</span>
                                     </Button>
-                                </TooltipTrigger>
-                                <TooltipContent><p>Text Color</p></TooltipContent>
-                            </Tooltip>
-                             <Tooltip>
-                                <TooltipTrigger asChild>
-                                     <Button variant="ghost" size="sm" className="px-2 relative">
-                                        <Highlighter className="w-4 h-4"/>
-                                        <input type="color" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(e) => handleFormat('hiliteColor', e.currentTarget.value)} />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent><p>Highlight Color</p></TooltipContent>
-                            </Tooltip>
-                            <Separator orientation="vertical" className="h-6 mx-1" />
-                             <Tooltip>
-                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><LinkIcon className="w-4 h-4"/></Button></TooltipTrigger>
-                                <TooltipContent><p>Insert Link</p></TooltipContent>
-                            </Tooltip>
-                            <ToolbarButton command="" icon={ImageIcon} tooltip="Insert Image" onClick={() => setShowImageDialog(true)} />
-                            <ToolbarButton command="" icon={Video} tooltip="Insert Video" onClick={() => setShowVideoDialog(true)} />
-                             <Tooltip>
-                                <TooltipTrigger asChild><Button variant="ghost" size="sm" className="px-2"><Smile className="w-4 h-4"/></Button></TooltipTrigger>
-                                <TooltipContent><p>Emoji</p></TooltipContent>
-                            </Tooltip>
-                            <Separator orientation="vertical" className="h-6 mx-1" />
-                            <DropdownMenu>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="sm" className="px-2">
-                                                <MoreHorizontal className="w-4 h-4"/>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                    </TooltipTrigger>
-                                    <TooltipContent><p>More options</p></TooltipContent>
-                                </Tooltip>
-                                <DropdownMenuContent>
-                                    <div className="flex">
+                                            <Separator orientation="vertical" className="h-5" />
                                         <ToolbarButton command="justifyLeft" icon={AlignLeft} tooltip="Align Left" />
                                         <ToolbarButton command="justifyCenter" icon={AlignCenter} tooltip="Align Center" />
                                         <ToolbarButton command="justifyRight" icon={AlignRight} tooltip="Align Right" />
-                                        <ToolbarButton command="justifyFull" icon={AlignJustify} tooltip="Justify" />
+                                            <ToolbarButton command="insertUnorderedList" icon={List} tooltip="Bullet List" />
+                                            <ToolbarButton command="insertOrderedList" icon={ListOrdered} tooltip="Numbered List" />
+                                            <Separator orientation="vertical" className="h-5" />
+                                            <ToolbarButton command="" icon={LinkIcon} tooltip="Insert Link" />
+                                            <ToolbarButton command="" icon={ImageIcon} tooltip="Insert Image" onClick={() => setShowImageDialog(true)} />
+                                            <ToolbarButton command="" icon={Video} tooltip="Insert Video" onClick={() => setShowVideoDialog(true)} />
+                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                                <MoreHorizontal className="h-3 w-3" />
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 ml-auto">
+                                                <span className="text-xs">&lt;/&gt;</span>
+                                            </Button>
                                     </div>
-                                    <DropdownMenuSeparator />
-                                     <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertUnorderedList'); }}>
-                                        <List className="w-4 h-4 mr-2"/>Bulleted list
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('insertOrderedList'); }}>
-                                        <ListOrdered className="w-4 h-4 mr-2"/>Numbered list
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('formatBlock', 'blockquote'); }}>
-                                        <Quote className="w-4 h-4 mr-2"/>Quote
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('outdent'); }}>
-                                        <Outdent className="w-4 h-4 mr-2"/>Decrease indent
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('indent'); }}>
-                                        <Indent className="w-4 h-4 mr-2"/>Increase indent
-                                    </DropdownMenuItem>
-                                     <DropdownMenuSeparator />
-                                     <DropdownMenuItem onMouseDown={(e) => { e.preventDefault(); handleFormat('removeFormat'); }}>
-                                        <Eraser className="w-4 h-4 mr-2"/>Clear formatting
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    </div>
-                    <CardContent className="p-4 min-h-[400px]">
+                                        
+                                        {/* Editor */}
                         <div
                             ref={editorRef}
                             contentEditable
-                            className="w-full h-full border-0 focus-visible:ring-0 p-0 shadow-none resize-none focus:outline-none"
+                                            className="min-h-[250px] w-full border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 empty:before:pointer-events-none"
                             onInput={(e) => setContent(e.currentTarget.innerHTML)}
                             onBlur={updateActiveCommands}
                             onFocus={updateActiveCommands}
                             onClick={updateActiveCommands}
                             onKeyUp={updateActiveCommands}
-                            placeholder="Type '/' for commands"
-                        />
+                                            data-placeholder="Start writing your content here..."
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Excerpt Section */}
+                        <Card className="bg-white rounded-lg shadow-sm">
+                            <CardContent className="p-6">
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-sm font-medium text-gray-700">Excerpt</Label>
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                            <Edit3 className="h-4 w-4 text-gray-500" />
+                                        </Button>
+                                    </div>
+                                    <p className="text-sm text-gray-500">Add a summary of the post to appear on your home page or blog.</p>
+                                    <Textarea 
+                                        placeholder="Write an excerpt..."
+                                        value={excerpt}
+                                        onChange={(e) => setExcerpt(e.target.value)}
+                                        className="min-h-[80px] border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                    />
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Search Engine Listing Section */}
+                        <Card className="bg-white rounded-lg shadow-sm">
+                            <CardContent className="p-6">
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-sm font-medium text-gray-700">Search engine listing</Label>
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                            <Edit3 className="h-4 w-4 text-gray-500" />
+                                        </Button>
+                                    </div>
+                                    <p className="text-sm text-gray-500">Add a title and description to see how this blog post might appear in a search engine listing</p>
+                                    <div className="space-y-3">
+                                        <Input 
+                                            placeholder="SEO Title"
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                        />
+                                        <Textarea 
+                                            placeholder="SEO Description"
+                                            value={excerpt}
+                                            onChange={(e) => setExcerpt(e.target.value)}
+                                            className="min-h-[60px] border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                </div>
                     </CardContent>
                     </Card>
                 </div>
 
-                <div className="space-y-6 lg:sticky top-6">
-                    <Card>
-                        <CardContent className="p-0">
-                            <div className="flex items-center justify-between border-b px-4 py-2">
-                                <h3 className="text-base font-semibold">Post</h3>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                    <XIcon className="h-4 w-4" />
+                    {/* Right Column - Sidebar */}
+                    <div className="space-y-6">
+                        {/* Combined Sidebar Card */}
+                        <Card className="bg-white rounded-lg shadow-sm">
+                            <CardContent className="p-6">
+                                <div className="space-y-6">
+                                    {/* Visibility Section */}
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <Label className="text-sm font-medium text-gray-700">Visibility</Label>
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                                <Calendar className="h-4 w-4 text-gray-500" />
                                 </Button>
                             </div>
-                            <div className="p-4 space-y-4">
-                                <div className="flex items-center gap-2 text-sm">
-                                    <Pen className="h-4 w-4" />
-                                    <span>{title || 'No title'}</span>
-                                    <MoreHorizontal className="h-4 w-4 ml-auto" />
+                                        <div className="space-y-2">
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="radio"
+                                                    id="visible"
+                                                    name="visibility"
+                                                    value="visible"
+                                                    checked={visibility === 'visible'}
+                                                    onChange={(e) => setVisibility(e.target.value as 'visible' | 'hidden')}
+                                                    className="h-4 w-4 text-blue-600"
+                                                />
+                                                <Label htmlFor="visible" className="text-sm">Visible</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="radio"
+                                                    id="hidden"
+                                                    name="visibility"
+                                                    value="hidden"
+                                                    checked={visibility === 'hidden'}
+                                                    onChange={(e) => setVisibility(e.target.value as 'visible' | 'hidden')}
+                                                    className="h-4 w-4 text-blue-600"
+                                                />
+                                                <Label htmlFor="hidden" className="text-sm">Hidden</Label>
+                                            </div>
+                                        </div>
                                 </div>
 
-                                {featuredImage ? (
-                                    <div className="relative">
-                                        <Image src={featuredImage} alt="Featured image" width={300} height={200} className="rounded-md w-full h-auto" />
-                                        <Button variant="secondary" className="w-full mt-2" onClick={() => handleSelectFilesClick('featured')}>Change image</Button>
+                                    {/* Image Section */}
+                                    <div className="space-y-4">
+                                        <Label className="text-sm font-medium text-gray-700">Image</Label>
+                                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                            <Button 
+                                                variant="outline" 
+                                                onClick={() => handleSelectFilesClick('featured')}
+                                                className="mb-2"
+                                            >
+                                                Add image
+                                            </Button>
+                                            <p className="text-sm text-gray-500">or drop an image to upload</p>
                                     </div>
-                                ) : (
-                                    <Button variant="outline" className="w-full" onClick={() => handleSelectFilesClick('featured')}>
-                                        Set featured image
-                                    </Button>
-                                )}
                                  <input
                                     type="file"
                                     ref={featuredImageInputRef}
@@ -489,85 +574,74 @@ export default function NewArticlePage() {
                                     className="hidden"
                                     accept="image/*"
                                 />
-
-                                <button onClick={() => setIsExcerptOpen(true)} className="text-primary text-sm hover:underline">Add an excerpt...</button>
-                                
-                                <Separator />
-
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between"><span>Status</span><span className="font-medium">In-progress</span></div>
-                                    <div className="flex justify-between items-center">
-                                        <Label htmlFor="slug">Slug</Label>
-                                        <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} className="w-1/2 h-8 text-right border-0" placeholder="auto-generates" />
+                                        {featuredImage && (
+                                            <div className="mt-4">
+                                                <Image src={featuredImage} alt="Featured image" width={300} height={200} className="rounded-md w-full h-auto" />
                                     </div>
-                                    <div className="flex justify-between"><span>Author</span><span className="font-medium">albiz</span></div>
+                                        )}
                                 </div>
                                 
-                                <Separator />
-                                
-                                <Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
-                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                        <span>Categories</span>
-                                        {isCategoriesOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="mt-2 space-y-2">
-                                         <div className="space-y-2 max-h-40 overflow-y-auto">
-                                            {allCategories.map(cat => (
-                                                <div key={cat.slug} className="flex items-center gap-2">
-                                                    <input type="checkbox" id={`cat-${cat.slug}`} checked={categories.includes(cat.name)} onChange={() => handleToggleCategory(cat.name)} />
-                                                    <Label htmlFor={`cat-${cat.slug}`}>{cat.name}</Label>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <a href="#" className="text-primary text-sm hover:underline mt-2 inline-block">Add new category</a>
-                                    </CollapsibleContent>
-                                </Collapsible>
-
-                                <Separator />
-
-                                <Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen}>
-                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                        <span>Tags</span>
-                                        {isTagsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="mt-2">
-                                        <div className="flex flex-wrap gap-2">
-                                            {tags.map(tag => (
-                                                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                                                    {tag}
-                                                    <button onClick={() => handleRemoveTag(tag)}><XIcon className="h-3 w-3" /></button>
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-2">
+                                    {/* Organization Section */}
+                                    <div className="space-y-4">
+                                        <Label className="text-sm font-medium text-gray-700">Organization</Label>
+                                        
+                                        {/* Author Field */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="author" className="text-sm font-medium text-gray-700">Author</Label>
                                             <Input 
-                                                placeholder="Add new tag" 
-                                                value={newTag}
-                                                onChange={(e) => setNewTag(e.target.value)}
-                                                onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+                                                id="author"
+                                                value={getAuthorDisplayName()}
+                                                readOnly
+                                                className="bg-gray-50 text-gray-600 cursor-not-allowed"
                                             />
                                         </div>
-                                    </CollapsibleContent>
-                                </Collapsible>
-                                
-                                <Separator />
-                                 <Collapsible open={isExcerptOpen} onOpenChange={setIsExcerptOpen}>
-                                    <CollapsibleTrigger className="w-full flex justify-between text-sm font-medium">
-                                        <span>Excerpt</span>
-                                        {isExcerptOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="mt-2">
-                                        <Textarea 
-                                            placeholder="Write an excerpt (optional)"
-                                            value={excerpt}
-                                            onChange={(e) => setExcerpt(e.target.value)}
-                                        />
-                                    </CollapsibleContent>
-                                </Collapsible>
 
+                                        {/* Category Field */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="category" className="text-sm font-medium text-gray-700">Category</Label>
+                                            <Select value={categories.length > 0 ? categories[0] : ""} onValueChange={(value) => {
+                                                if (value && !categories.includes(value)) {
+                                                    setCategories([value]);
+                                                }
+                                            }}>
+                                                <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                    <SelectValue placeholder="Select category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {allCategories.map((category: any) => (
+                                                        <SelectItem key={category.slug} value={category.name}>
+                                                            {category.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {/* Tags Field */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="tags" className="text-sm font-medium text-gray-700">Tags</Label>
+                                            <Select value={tags.length > 0 ? tags[0] : ""} onValueChange={(value) => {
+                                                if (value && !tags.includes(value)) {
+                                                    setTags([value]);
+                                                }
+                                            }}>
+                                                <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                    <SelectValue placeholder="Select tags" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {allTags.map((tag: any) => (
+                                                        <SelectItem key={tag.slug} value={tag.name}>
+                                                            {tag.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
                             </div>
                         </CardContent>
                     </Card>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableHeader,
@@ -27,6 +27,33 @@ export default function CategoriesPageContent() {
     const [slug, setSlug] = useState('');
     const [parentCategory, setParentCategory] = useState('none');
     const [description, setDescription] = useState('');
+    const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
+
+    // Function to generate slug from name
+    const generateSlug = (text: string) => {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    };
+
+    // Auto-generate slug when name changes (only if slug hasn't been manually edited)
+    useEffect(() => {
+        if (name && !isSlugManuallyEdited) {
+            setSlug(generateSlug(name));
+        }
+    }, [name, isSlugManuallyEdited]);
+
+    const handleNameChange = (value: string) => {
+        setName(value);
+    };
+
+    const handleSlugChange = (value: string) => {
+        setSlug(value);
+        setIsSlugManuallyEdited(true);
+    };
 
     const handleAddCategory = () => {
         if (!name || !slug) return;
@@ -35,6 +62,7 @@ export default function CategoriesPageContent() {
         setSlug('');
         setParentCategory('none');
         setDescription('');
+        setIsSlugManuallyEdited(false);
     }
 
   return (
@@ -44,13 +72,13 @@ export default function CategoriesPageContent() {
             <h3 className="text-lg font-medium">Add New Category</h3>
             <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Category Name" />
+                <Input id="name" value={name} onChange={e => handleNameChange(e.target.value)} placeholder="Category Name" />
                 <p className="text-sm text-muted-foreground">The name is how it appears on your site.</p>
             </div>
                 <div className="space-y-2">
                 <Label htmlFor="slug">Slug</Label>
-                <Input id="slug" value={slug} onChange={e => setSlug(e.target.value)} placeholder="category-slug" />
-                    <p className="text-sm text-muted-foreground">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
+                <Input id="slug" value={slug} onChange={e => handleSlugChange(e.target.value)} placeholder="category-slug" />
+                    <p className="text-sm text-muted-foreground">The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens. Auto-generated from the name above.</p>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="parent-category">Parent Category</Label>

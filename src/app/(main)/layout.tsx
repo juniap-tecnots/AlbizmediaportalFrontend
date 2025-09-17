@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { Header } from "@/components/header";
@@ -15,6 +15,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
 
   useEffect(() => {
@@ -31,6 +32,21 @@ export default function DashboardLayout({
     );
   }
 
+  // Check if current page is a theme page (preview, customize, builder)
+  const isThemePage = pathname.includes('/content/pages/themes/preview/') || 
+                     pathname.includes('/content/pages/themes/customize/') || 
+                     pathname.includes('/content/pages/themes/builder');
+
+  // For theme pages, render without sidebar and header
+  if (isThemePage) {
+    return (
+      <div className="min-h-screen w-full bg-white">
+        {children}
+      </div>
+    );
+  }
+
+  // For all other pages, render with sidebar and header
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <AdminSidebar />
