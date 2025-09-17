@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select"
 import { ArrowUpDown, Pencil, Trash2, Send } from "lucide-react"
 import { useSelector, useDispatch } from "react-redux"
-import { selectAllArticles, deleteArticle, updateArticle } from "@/lib/redux/slices/articlesSlice"
+import { selectAllArticles, deleteArticle, updateArticle, formatStatusDisplay } from "@/lib/redux/slices/articlesSlice"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 
@@ -93,7 +93,6 @@ export default function AllArticlesPage() {
               <TableHead>Author</TableHead>
               <TableHead>Categories</TableHead>
               <TableHead>Tags</TableHead>
-              <TableHead>Assigned Editor</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>
                 <Button variant="ghost" size="sm">
@@ -104,7 +103,7 @@ export default function AllArticlesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {articles.map((article, index) => (
+            {articles.map((article: any, index: number) => (
               <TableRow key={index}>
                 <TableCell>
                   <Checkbox />
@@ -114,23 +113,22 @@ export default function AllArticlesPage() {
                 </TableCell>
                 <TableCell>{article.author}</TableCell>
                 <TableCell>
-                  {article.categories.map((cat, i) => (
+                  {article.categories.map((cat: any, i: number) => (
                     <a href="#" key={i} className="hover:underline">{cat}</a>
                   ))}
                 </TableCell>
                 <TableCell>
-                   {article.tags.length > 0 ? article.tags.map((tag, i) => (
+                   {article.tags.length > 0 ? article.tags.map((tag: any, i: number) => (
                     <a href="#" key={i} className="hover:underline">{tag}</a>
                   )) : '—'}
                 </TableCell>
-                 <TableCell>{article.assignedEditor || 'Unassigned'}</TableCell>
-                <TableCell>{article.status}</TableCell>
+                <TableCell>{formatStatusDisplay(article.status)}</TableCell>
                 <TableCell>
                     <span className="text-muted-foreground">{new Date(article.date).toLocaleString()}</span>
                 </TableCell>
                 <TableCell>
                     <div className="flex items-center gap-2">
-                        {article.status === 'DRAFT' && (
+                        {article.status === 'IN_PROGRESS' && (
                             <Button variant="outline" size="icon" onClick={() => handleStatusUpdate(article, 'SUBMITTED_FOR_REVIEW')} className="h-8 w-8 text-blue-500 border-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-600">
                                 <Send className="h-4 w-4" />
                             </Button>

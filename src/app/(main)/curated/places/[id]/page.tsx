@@ -35,12 +35,12 @@ export default function PlaceDetailPage() {
             {/* Header */}
             <div className="border-b border-gray-200 px-6 py-4">
                 <Button variant="ghost" size="sm" onClick={() => router.back()} className="mb-4">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Places
-                </Button>
-                
-                <div className="flex justify-between items-start">
-                    <div>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Places
+            </Button>
+            
+                        <div className="flex justify-between items-start">
+                            <div>
                         <h1 className="text-4xl font-bold text-green-700 mb-2">{title}</h1>
                         <div className="flex items-center gap-4 mb-2">
                             <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export default function PlaceDetailPage() {
                                     <a href="#" className="text-green-600 hover:underline">Improve this listing</a>
                                 </p>
                             </div>
-                        </div>
+                            </div>
                     </div>
 
                     {/* Right Sidebar */}
@@ -141,17 +141,17 @@ export default function PlaceDetailPage() {
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Hours</CardTitle>
                                     <ChevronDown className="h-4 w-4 text-gray-500" />
-                                </div>
-                            </CardHeader>
-                            <CardContent>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
                                 <div className="space-y-2">
                                     <div className="text-green-600 font-medium">Open now</div>
                                     <div className="text-sm text-gray-600">
                                         {openingHours || "Tuesday 12:00 AM - 11:59 PM"}
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
+                    </CardContent>
+                </Card>
 
                         {/* Location Info */}
                         <Card className="border border-gray-200">
@@ -173,7 +173,7 @@ export default function PlaceDetailPage() {
                                             <div>
                                                 <p className="font-medium">{contactInfo}</p>
                                             </div>
-                                        </div>
+                                            </div>
                                     )}
                                     {website && (
                                         <div className="flex items-start gap-3">
@@ -182,8 +182,8 @@ export default function PlaceDetailPage() {
                                                 <a href={website} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">
                                                     Visit website
                                                 </a>
+                    </div>
                                             </div>
-                                        </div>
                                     )}
                                 </div>
                             </CardContent>

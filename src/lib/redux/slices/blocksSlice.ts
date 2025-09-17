@@ -576,3 +576,4 @@ export const selectBlocksByType = (state: RootState, blockType: BlockType) =>
 export const selectBlockRegistry = (state: RootState) => state.blocks.blockRegistry;
 
 export default blocksSlice.reducer;
+

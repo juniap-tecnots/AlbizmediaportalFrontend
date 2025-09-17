@@ -24,13 +24,14 @@ import pagesReducer from './slices/pagesSlice';
 import blocksReducer from './slices/blocksSlice';
 import menusReducer from './slices/menusSlice';
 import themesReducer from './slices/themesSlice';
+import pageBuilderReducer from './slices/pageBuilderSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from './storage';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['media', 'articles', 'places', 'events', 'foods', 'pages', 'blocks', 'menus', 'themes'], // Prevent large slices from being persisted
+  blacklist: ['media', 'articles', 'places', 'events', 'foods', 'pages', 'blocks', 'menus', 'themes', 'pageBuilder'], // Prevent large slices from being persisted
 };
 
 const rootReducer = combineReducers({
@@ -58,6 +59,7 @@ const rootReducer = combineReducers({
   blocks: blocksReducer,
   menus: menusReducer,
   themes: themesReducer,
+  pageBuilder: pageBuilderReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

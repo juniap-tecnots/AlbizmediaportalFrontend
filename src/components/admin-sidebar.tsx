@@ -16,10 +16,11 @@ import {
     AiOutlineRight,
     AiOutlineDown,
     AiOutlineCarryOut,
-    AiOutlineExclamationCircle,
-    AiOutlineHistory,
-    AiOutlineNodeIndex,
-} from 'react-icons/ai'
+      AiOutlineExclamationCircle,
+      AiOutlineHistory,
+      AiOutlineNodeIndex,
+      AiOutlineCreditCard,
+  } from 'react-icons/ai'
 import { FaGem } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 import { User, Star, MapPin, Calendar, Utensils } from 'lucide-react'
@@ -37,10 +38,10 @@ const contentManagementItems = [
         href: '/content/articles/all'
     },
     {
-        id: 'profiles',
-        label: 'ProfileCards',
-        icon: User,
-        href: '/profiles/all'
+        id: 'media-library',
+        label: 'Media Library',
+        icon: AiOutlineFolder,
+        href: '/content/media/images',
     },
     {
         id: 'categories',
@@ -49,38 +50,19 @@ const contentManagementItems = [
         href: '/content/categories',
     },
     {
-        id: 'pages',
-        label: 'Pages',
-        icon: AiOutlineFileText,
-        href: '/content/pages/all',
-        children: [
-            { id: 'all-pages', href: '/content/pages/all', label: 'All Pages' },
-            { id: 'menus', href: '/content/pages/menus/list', label: 'Menus' },
-            { id: 'themes', href: '/content/pages/themes', label: 'Themes' },
-        ]
-    },
-    {
-        id: 'media-library',
-        label: 'Media Library',
-        icon: AiOutlineFolder,
-        href: '/content/media/images',
-    },
-    {
         id: 'comments',
         label: 'Comments',
         icon: AiOutlineComment,
         children: [
-            { id: 'all-comments', href: '/content/comments/all', label: 'All Comments' },
-            { id: 'moderation', href: '/content/comments/moderation', label: 'Pending Moderation' },
-            { id: 'flagged-content', href: '/content/comments/flagged', label: 'Flagged Content' },
-            { id: 'spam-queue', href: '/content/comments/spam', label: 'Spam Queue' },
+            { id: 'all-comments', href: '/content/comments/all-comments', label: 'All Comments' },
+            { id: 'settings', href: '/content/comments/settings', label: 'Settings' },
         ]
     }
 ];
 
 const curatedMenuItem = {
     id: 'curated',
-    label: 'Curated',
+    label: 'Curated Content',
     icon: Star,
     href: '/curated/overview',
     children: [
@@ -99,6 +81,51 @@ const curatedMenuItem = {
             label: 'Foods',
             href: '/curated/foods/all',
         }
+    ]
+};
+
+const profilesMenuItem = {
+    id: 'profiles',
+    label: 'Profiles',
+    icon: User,
+    href: '/profiles/all',
+    children: [
+        {
+            id: 'profile-cards',
+            label: 'Profile Cards',
+            href: '/profiles/all',
+        }
+    ]
+};
+
+const pageBuilderMenuItem = {
+    id: 'page-builder',
+    label: 'Page Builder',
+    icon: AiOutlineFileText,
+    href: '/page-builder',
+    children: [
+        { id: 'pages', href: '/page-builder/pages', label: 'Pages' },
+        { id: 'all-pages', href: '/content/pages/all', label: 'All Pages' },
+        { id: 'menus', href: '/content/pages/menus/list', label: 'Menus' },
+        { id: 'templates', href: '/page-builder/templates', label: 'Templates' },
+        { id: 'themes', href: '/page-builder/themes', label: 'Themes' },
+        { id: 'navigation', href: '/page-builder/navigation', label: 'Navigation' },
+        { id: 'widgets', href: '/page-builder/widgets', label: 'Widgets' },
+        { id: 'analytics', href: '/page-builder/analytics', label: 'Analytics' },
+        { id: 'settings', href: '/page-builder/settings', label: 'Settings' },
+    ]
+};
+
+const subscriptionsBillingMenuItem = {
+    id: 'subscriptions-billing',
+    label: 'Subscriptions & Billing',
+    icon: AiOutlineCreditCard,
+    href: '/subscriptions-billing',
+    children: [
+        { id: 'subscription-plans', href: '/subscriptions-billing/plans', label: 'Subscription Plans' },
+        { id: 'assign-plans', href: '/subscriptions-billing/assign-plans', label: 'Assign Plans to Users' },
+        { id: 'pricing-features', href: '/subscriptions-billing/pricing-features', label: 'Pricing & Features Config' },
+        { id: 'billing', href: '/subscriptions-billing/billing', label: 'Billing' },
     ]
 };
 
@@ -147,7 +174,6 @@ const settingsMenuItem = {
         { id: 'roles', href: '/settings/roles', label: 'Roles' },
         { id: 'permissions', href: '/settings/permissions', label: 'Permissions' },
         { id: 'hierarchy', href: '/settings/hierarchy', label: 'Hierarchy' },
-        { id: 'subscriptions', href: '/settings/subscriptions', label: 'Subscriptions' },
     ]
 };
 
@@ -163,7 +189,7 @@ interface MenuItemProps {
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['content-management', 'workflow-management', 'contracts', 'curated']);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => 
@@ -206,7 +232,7 @@ export function AdminSidebar() {
         active = false;
     }
     
-    const isExpanded = expandedItems.includes(item.id) || (anyChildActive && item.id !== 'curated' && item.id !== 'settings');
+    const isExpanded = expandedItems.includes(item.id);
 
     const MenuItemContent = () => (
         <div
@@ -284,12 +310,55 @@ export function AdminSidebar() {
         <div className="pt-6">
           <div className="px-3 mb-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Content
+              Content Management
             </span>
           </div>
           <div className="space-y-1">
             {contentManagementItems.map(item => renderMenuItem(item as MenuItemProps))}
+          </div>
+        </div>
+
+        <div className="pt-6">
+          <div className="px-3 mb-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Curated Content
+            </span>
+          </div>
+          <div className="space-y-1">
             {renderMenuItem(curatedMenuItem as MenuItemProps)}
+          </div>
+        </div>
+
+        <div className="pt-6">
+          <div className="px-3 mb-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Profiles
+            </span>
+          </div>
+          <div className="space-y-1">
+            {renderMenuItem(profilesMenuItem as MenuItemProps)}
+          </div>
+        </div>
+
+        <div className="pt-6">
+          <div className="px-3 mb-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Page Builder
+            </span>
+          </div>
+          <div className="space-y-1">
+            {renderMenuItem(pageBuilderMenuItem as MenuItemProps)}
+          </div>
+        </div>
+
+        <div className="pt-6">
+          <div className="px-3 mb-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Subscriptions & Billing
+            </span>
+          </div>
+          <div className="space-y-1">
+            {renderMenuItem(subscriptionsBillingMenuItem as MenuItemProps)}
           </div>
         </div>
         

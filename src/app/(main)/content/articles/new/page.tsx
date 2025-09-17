@@ -100,12 +100,30 @@ export default function NewArticlePage() {
     const [subtitle, setSubtitle] = useState('');
     const [content, setContent] = useState('');
     const [slug, setSlug] = useState('');
+    const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
     const [excerpt, setExcerpt] = useState('');
     const [featuredImage, setFeaturedImage] = useState('');
     
     const allCategories = useSelector(selectAllCategories);
     const allTags = useSelector(selectAllTags);
     const currentUser = useSelector(selectCurrentUser);
+
+    // Slug generation function
+    const generateSlug = (text: string) => {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    };
+
+    // Auto-generate slug when title changes
+    useEffect(() => {
+        if (title && !isSlugManuallyEdited) {
+            setSlug(generateSlug(title));
+        }
+    }, [title, isSlugManuallyEdited]);
     
     const [categories, setCategories] = useState<string[]>([]);
     const [tags, setTags] = useState<string[]>([]);
@@ -205,12 +223,23 @@ export default function NewArticlePage() {
             editorRef.current.innerHTML = '';
         }
         setSlug('');
+        setIsSlugManuallyEdited(false);
         setExcerpt('');
         setFeaturedImage('');
         setCategories([]);
         setTags([]);
         setThemeTemplate('default-blog-post');
         setVisibility('hidden');
+    };
+
+    // Handler functions for title and slug
+    const handleTitleChange = (value: string) => {
+        setTitle(value);
+    };
+
+    const handleSlugChange = (value: string) => {
+        setSlug(value);
+        setIsSlugManuallyEdited(true); // Set flag when slug is manually edited
     };
 
     const handleInsertImage = () => {
@@ -343,7 +372,7 @@ export default function NewArticlePage() {
                                 id="title" 
                                                 placeholder="e.g., Blog about your latest products or deals"
                                 value={title} 
-                                onChange={(e) => setTitle(e.target.value)} 
+                                onChange={(e) => handleTitleChange(e.target.value)} 
                                                 className="pr-10 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                                             />
                                             <Button 
@@ -354,6 +383,19 @@ export default function NewArticlePage() {
                                                 <Sparkles className="h-4 w-4 text-blue-500" />
                                             </Button>
                                         </div>
+                                    </div>
+
+                                    {/* Slug Section */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="slug" className="text-sm font-medium text-gray-700">Slug</Label>
+                                        <Input 
+                                            id="slug" 
+                                            placeholder="Auto-generated from title"
+                                            value={slug} 
+                                            onChange={(e) => handleSlugChange(e.target.value)} 
+                                            className="text-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                        />
+                                        <p className="text-xs text-gray-500">URL-friendly version of your title. Auto-generated but can be customized.</p>
                                     </div>
 
                                     {/* Content Section */}
@@ -554,14 +596,46 @@ export default function NewArticlePage() {
                                             />
                                         </div>
 
-                                        {/* Blog Field */}
+                                        {/* Category Field */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="blog" className="text-sm font-medium text-gray-700">Blog</Label>
-                                            <Input 
-                                                id="blog"
-                                                placeholder="Select blog"
-                                                className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                                            />
+                                            <Label htmlFor="category" className="text-sm font-medium text-gray-700">Category</Label>
+                                            <Select value={categories.length > 0 ? categories[0] : ""} onValueChange={(value) => {
+                                                if (value && !categories.includes(value)) {
+                                                    setCategories([value]);
+                                                }
+                                            }}>
+                                                <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                    <SelectValue placeholder="Select category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {allCategories.map((category: any) => (
+                                                        <SelectItem key={category.slug} value={category.name}>
+                                                            {category.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {/* Tags Field */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="tags" className="text-sm font-medium text-gray-700">Tags</Label>
+                                            <Select value={tags.length > 0 ? tags[0] : ""} onValueChange={(value) => {
+                                                if (value && !tags.includes(value)) {
+                                                    setTags([value]);
+                                                }
+                                            }}>
+                                                <SelectTrigger className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                                    <SelectValue placeholder="Select tags" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {allTags.map((tag: any) => (
+                                                        <SelectItem key={tag.slug} value={tag.name}>
+                                                            {tag.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                     </div>
                             </div>
